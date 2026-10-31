@@ -46,3 +46,8 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local environment configuration. Copy config/env.example.json and pass the
+# file with --dart-define-from-file (the Makefile does it for you).
+/config/env.dev.json
+/config/env.pro.json

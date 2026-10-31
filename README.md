@@ -17,10 +17,10 @@ Android.
 
 ```
 lib/
-├── main.dart                     # arranque: Env + Firebase + ProviderScope
+├── main.dart                     # arranque: Firebase + ProviderScope
 ├── app.dart                      # MaterialApp, tema global y home
 ├── core/                         # compartido, sin lógica de negocio
-│   ├── config/env.dart           # lectura de config/env.json
+│   ├── config/env.dart           # lectura de los --dart-define
 │   └── theme/                    # tokens de diseño
 │       ├── app_colors.dart       # paleta
 │       ├── app_dimensions.dart   # espaciado, radios, alturas
@@ -40,34 +40,47 @@ Regla: las pantallas nunca hardcodean colores, tamaños ni estilos. Todo sale de
 
 ## Configuración
 
-`config/env.json` es un asset versionado, sin secretos, con la configuración
-por entorno:
+La configuración entra en tiempo de compilación con `--dart-define-from-file`
+(no hay assets ni `rootBundle`). El único archivo versionado es la plantilla
+`config/env.example.json`:
 
 ```json
 {
   "APP_ENV": "dev",
-  "API_BASE_URL": ""
+  "API_BASE_URL": "https://api-pro.baleadafit.com"
 }
 ```
 
-Se lee con `Env` (`lib/core/config/env.dart`): `Env.apiBaseUrl` lanza
-`EnvException` con un mensaje claro si el valor está vacío. Nunca pongas
-credenciales, tokens ni claves privadas en ese archivo.
+Los archivos reales (`config/env.dev.json`, `config/env.pro.json`) están en
+`.gitignore`; creá el tuyo con `make setup` (copia la plantilla) y editá los
+valores. `Env` (`lib/core/config/env.dart`) es el único lector:
+`Env.environment`, `Env.hasApiBaseUrl` y `Env.apiBaseUrl`, que lanza
+`EnvException` si el define falta o está vacío.
 
-Firebase está configurado para Android e iOS con
-`flutterfire configure --project=baleadafit --platforms=android,ios`. Regenerá
-los archivos con ese mismo comando si cambia el proyecto.
+Un define ausente no falla: llega como string vacío. Por eso todos los comandos
+del `Makefile` pasan `--dart-define-from-file`, y `Env.apiBaseUrl` explota en
+vez de devolver `""`. Si corrés `flutter` a mano, acordate del flag:
+
+```bash
+flutter run --dart-define-from-file=config/env.dev.json
+```
+
+Nunca pongas credenciales, tokens ni claves privadas en `config/*.json`.
 
 ## Comandos
 
 ```bash
 flutter pub get
-flutter analyze
-flutter test
-flutter run                  # elegí un dispositivo iOS o Android
-flutter build apk --debug
-flutter build ipa            # requiere firma
+make setup                   # crea config/env.dev.json desde la plantilla
+make analyze                 # flutter analyze
+make test                    # flutter test
+make run                     # flutter run con el env file
+make build-apk
+make build-ios               # --no-codesign
 ```
+
+`make test-defines` corre los tests con un `--dart-define` real para probar el
+camino de configuración compilada.
 
 Para modelos con `json_serializable`:
 

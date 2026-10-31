@@ -1,31 +1,34 @@
 import 'package:baleadafit/core/config/env.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('Env', () {
-    tearDown(() => Env.loadFromJson('{}'));
+    tearDown(Env.resetOverride);
 
-    test('reads the configured environment name', () {
-      Env.loadFromJson('{"APP_ENV": "prod"}');
-
-      expect(Env.environment, 'prod');
-    });
-
-    test('falls back to dev when the environment is not set', () {
-      Env.loadFromJson('{}');
+    test('falls back to dev when no environment name is defined', () {
+      Env.override(environment: '');
 
       expect(Env.environment, 'dev');
     });
 
-    test('exposes the API base URL when it is configured', () {
-      Env.loadFromJson('{"API_BASE_URL": "https://api.example.test"}');
+    test('reads the environment name injected at build time', () {
+      Env.override(environment: 'pro');
+
+      expect(Env.environment, 'pro');
+    });
+
+    test('exposes the API base URL when it is defined', () {
+      Env.override(apiBaseUrl: 'https://api.example.test');
 
       expect(Env.hasApiBaseUrl, isTrue);
       expect(Env.apiBaseUrl, 'https://api.example.test');
     });
 
     test('reports an empty API base URL instead of returning a blank string', () {
-      Env.loadFromJson('{"API_BASE_URL": ""}');
+      Env.override(apiBaseUrl: '');
 
       expect(Env.hasApiBaseUrl, isFalse);
       expect(
@@ -40,19 +43,18 @@ void main() {
       );
     });
 
-    test('rejects a configuration that is not a flat JSON object', () {
-      expect(
-        () => Env.loadFromJson('[1, 2, 3]'),
-        throwsA(isA<EnvException>()),
-      );
-    });
+    test('does not ship the configuration as a bundled asset', () async {
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
 
-    testWidgets('loads the config/env.json asset shipped with the app', (
-      tester,
-    ) async {
-      await Env.load();
-
-      expect(Env.environment, isNotEmpty);
+      expect(manifest.listAssets(), isNot(contains('config/env.json')));
     });
+  });
+
+  group('Env with --dart-define values', () {
+    const hasDefine = bool.hasEnvironment('API_BASE_URL');
+
+    test('reads the value passed with --dart-define', () {
+      expect(Env.apiBaseUrl, const String.fromEnvironment('API_BASE_URL'));
+    }, skip: hasDefine ? false : 'run through `make test-defines`');
   });
 }

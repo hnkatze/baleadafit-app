@@ -1,69 +1,69 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
-/// Per-environment configuration loaded from `config/env.json`.
+/// Build-time configuration injected with `--dart-define-from-file`.
 ///
-/// The file is a versioned asset with no secrets in it: it only holds the
-/// public API base URL and the environment name. Call [load] once, before
-/// `runApp`; values are read lazily so a missing key fails where it is used.
+/// Values are compile-time constants (`String.fromEnvironment`), so they are
+/// baked into the binary and there is nothing to load before `runApp`. A
+/// missing define yields an empty string silently, which is why every command
+/// in the `Makefile` passes the env file explicitly.
+///
+/// Local files (`config/env.dev.json`, ...) are git-ignored; the tracked
+/// template is `config/env.example.json`.
 abstract final class Env {
-  static const String assetPath = 'config/env.json';
   static const String apiBaseUrlKey = 'API_BASE_URL';
   static const String environmentKey = 'APP_ENV';
 
-  static Map<String, String> _values = const {};
+  static const String exampleFile = 'config/env.example.json';
+  static const String devFile = 'config/env.dev.json';
 
-  /// Reads [asset] and makes its values available to the getters below.
-  ///
-  /// A missing asset is surfaced as an [EnvException] instead of a bare
-  /// asset-bundle error, so startup failures name the real problem.
-  static Future<void> load({AssetBundle? bundle, String asset = assetPath}) async {
-    try {
-      final source = await (bundle ?? rootBundle).loadString(asset);
-      loadFromJson(source);
-    } on Object catch (error) {
-      throw EnvException('Could not read $asset: $error');
-    }
+  static const String _definedApiBaseUrl = String.fromEnvironment(apiBaseUrlKey);
+  static const String _definedEnvironment = String.fromEnvironment(
+    environmentKey,
+  );
+
+  static String? _apiBaseUrlOverride;
+  static String? _environmentOverride;
+
+  /// Current environment name, `dev` when [environmentKey] is not defined.
+  static String get environment {
+    final value = _environmentOverride ?? _definedEnvironment;
+    return value.isEmpty ? 'dev' : value;
   }
-
-  /// Parses a flat JSON object of string values. Exposed for tests and for
-  /// callers that already hold the configuration in memory.
-  @visibleForTesting
-  static void loadFromJson(String source) {
-    final decoded = jsonDecode(source);
-    if (decoded is! Map<String, dynamic>) {
-      throw const EnvException('Configuration must be a flat JSON object.');
-    }
-
-    _values = {
-      for (final entry in decoded.entries) entry.key: '${entry.value}',
-    };
-  }
-
-  /// Current environment name, `dev` unless the file says otherwise.
-  static String get environment =>
-      _value(environmentKey) ?? 'dev';
 
   /// True when a base URL was configured, so callers can decide to stay offline.
-  static bool get hasApiBaseUrl => (_value(apiBaseUrlKey) ?? '').isNotEmpty;
+  static bool get hasApiBaseUrl => _apiBaseUrl.isNotEmpty;
 
   /// Base URL of the BaleadaFit API, without a trailing slash.
   static String get apiBaseUrl {
-    final value = _value(apiBaseUrlKey);
-    if (value == null || value.isEmpty) {
+    final value = _apiBaseUrl;
+    if (value.isEmpty) {
       throw const EnvException(
-        '$apiBaseUrlKey is empty. Fill it in $assetPath.',
+        '$apiBaseUrlKey is empty. Run Flutter with '
+        '--dart-define-from-file=$devFile (copy $exampleFile first).',
       );
     }
     return value;
   }
 
-  static String? _value(String key) => _values[key];
+  static String get _apiBaseUrl => _apiBaseUrlOverride ?? _definedApiBaseUrl;
+
+  /// Replaces the build-time values. Exposed so tests can cover both the
+  /// configured and the missing case without rebuilding the binary.
+  @visibleForTesting
+  static void override({String? apiBaseUrl, String? environment}) {
+    _apiBaseUrlOverride = apiBaseUrl;
+    _environmentOverride = environment;
+  }
+
+  /// Drops every [override] and goes back to the values baked at build time.
+  @visibleForTesting
+  static void resetOverride() {
+    _apiBaseUrlOverride = null;
+    _environmentOverride = null;
+  }
 }
 
-/// Thrown when the configuration is missing, unreadable or incomplete.
+/// Thrown when the configuration is missing or incomplete.
 class EnvException implements Exception {
   const EnvException(this.message);
 
