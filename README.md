@@ -18,9 +18,12 @@ Android.
 ```
 lib/
 ├── main.dart                     # arranque: Firebase + ProviderScope
-├── app.dart                      # MaterialApp, tema global y home
+├── app.dart                      # MaterialApp.router, tema global y router
 ├── core/                         # compartido, sin lógica de negocio
 │   ├── config/env.dart           # lectura de los --dart-define
+│   ├── router/                   # rutas y GoRouter
+│   │   ├── app_routes.dart       # constantes de location
+│   │   └── app_router.dart       # createAppRouter + routerProvider
 │   └── theme/                    # tokens de diseño
 │       ├── app_colors.dart       # paleta
 │       ├── app_dimensions.dart   # espaciado, radios, alturas
@@ -34,6 +37,25 @@ lib/
     ├── data/                     # repositorios y servicios
     └── ui/                       # pantallas, widgets y notifiers
 ```
+
+Features actuales: `auth` (formulario de login, sin lógica todavía), `home`
+(placeholder del panel) y `showcase` (galería del design system).
+
+## Navegación
+
+`go_router` con las rutas declaradas en `AppRoutes` y un único router expuesto
+por `routerProvider` (Riverpod). `MaterialApp.router` lo consume, así que un
+provider de sesión puede reconstruirlo sin tocar `lib/app.dart`.
+
+| Ruta | Pantalla | Estado |
+|---|---|---|
+| `/login` | `features/auth/ui/login_screen.dart` | entrada de la app |
+| `/home` | `features/home/ui/home_screen.dart` | placeholder |
+| `/showcase` | `features/showcase/ui/theme_gallery_screen.dart` | galería, herramienta de desarrollo |
+
+Cualquier otra location cae en `NotFoundScreen`, que muestra la ruta pedida.
+El redirect por sesión y por rol llega con el issue #4; hasta entonces la app
+arranca siempre en `/login`.
 
 Regla: las pantallas nunca hardcodean colores, tamaños ni estilos. Todo sale de
 `Theme.of(context)` y de `AppDimensions`.
@@ -108,8 +130,8 @@ dart run build_runner build --delete-conflicting-outputs
 ## Design system
 
 `lib/features/showcase/ui/theme_gallery_screen.dart` renderiza la paleta, la
-escala tipográfica y los componentes base. Es la pantalla de arranque temporal:
-la reemplaza el router cuando aterrice la navegación por rol.
+escala tipográfica y los componentes base. Se abre desde home en `/showcase` y
+no forma parte del flujo del producto.
 
 Paleta principal: verde `#168648` (acción, 4.57:1 sobre blanco), verde claro
 `#E9F6EE` (contenedores), mango `#F2A63B` (acento), neutros `#F6F9F7` a

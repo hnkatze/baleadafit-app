@@ -6,10 +6,11 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_text_field.dart';
 
-/// Temporary home screen: renders the palette, the type scale and the base
+/// Design-system gallery: renders the palette, the type scale and the base
 /// components, so every change to the design tokens is visible in one place.
 ///
-/// The router replaces it as home once feature #1 (navegación) lands.
+/// It is a development aid reached from home (`/showcase`), not part of the
+/// product flow.
 class ThemeGalleryScreen extends StatelessWidget {
   const ThemeGalleryScreen({super.key});
 
