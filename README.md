@@ -67,6 +67,23 @@ flutter run --dart-define-from-file=config/env.dev.json
 
 Nunca pongas credenciales, tokens ni claves privadas en `config/*.json`.
 
+## Archivos de Google (no versionados)
+
+Estos archivos son configuración de cliente por desarrollador/integración y no
+se commitean. Se regeneran con:
+
+```bash
+flutterfire configure --project=baleadafit --platforms=android,ios
+```
+
+- `android/app/google-services.json`
+- `ios/Runner/GoogleService-Info.plist`
+- `lib/firebase_options.dart`
+
+Un clon nuevo **no compila** hasta correr ese comando (o copiar los archivos
+que te pasen por un canal privado). Verificá que sigan en `.gitignore` antes de
+agregar nada: `git status` no debe listarlos.
+
 ## Comandos
 
 ```bash
