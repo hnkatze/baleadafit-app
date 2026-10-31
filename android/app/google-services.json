@@ -29,6 +29,13 @@
             {
               "client_id": "840274381799-qr8nd7pk7fgbb6u6fk0thhrr60c2rgko.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "840274381799-n0otkm3qj4luff5rgrh6fdqbp308laip.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.baleada.baleadafit"
+              }
             }
           ]
         }
