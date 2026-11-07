@@ -15,7 +15,7 @@ void main() {
         }),
       );
 
-      final data = await ApiClient(dioWith(adapter)).get('/auth/me');
+      final data = await ApiClient(dioWith(adapter)).get('/auth/me', fromJson: (json) => json);
 
       expect(data, {'rol': 'paciente'});
       expect(adapter.requests.single.path, '/auth/me');
@@ -33,7 +33,7 @@ void main() {
       );
 
       await expectLater(
-        ApiClient(dioWith(adapter)).get('/auth/me'),
+        ApiClient(dioWith(adapter)).get('/auth/me', fromJson: (json) => json),
         throwsA(
           isA<ApiFailure>()
               .having((f) => f.codigo, 'codigo', 'VALIDACION')
@@ -55,7 +55,7 @@ void main() {
       );
 
       await expectLater(
-        ApiClient(dioWith(adapter)).get('/auth/me'),
+        ApiClient(dioWith(adapter)).get('/auth/me', fromJson: (json) => json),
         throwsA(
           isA<ApiFailure>()
               .having((f) => f.isUnauthenticated, 'isUnauthenticated', isTrue)
@@ -70,7 +70,7 @@ void main() {
       );
 
       await expectLater(
-        ApiClient(dioWith(adapter)).get('/auth/me'),
+        ApiClient(dioWith(adapter)).get('/auth/me', fromJson: (json) => json),
         throwsA(
           isA<ApiFailure>().having(
             (f) => f.mensaje,
@@ -90,7 +90,7 @@ void main() {
       );
 
       await expectLater(
-        ApiClient(dioWith(adapter)).get('/auth/me'),
+        ApiClient(dioWith(adapter)).get('/auth/me', fromJson: (json) => json),
         throwsA(
           isA<ApiFailure>().having(
             (f) => f.mensaje,
@@ -100,5 +100,21 @@ void main() {
         ),
       );
     });
+  });
+
+  test('decodes the payload with the caller fromJson', () async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': true,
+        'data': {'saludo': 'hola', 'total': 2},
+      }),
+    );
+
+    final result = await ApiClient(dioWith(adapter)).get(
+      '/saludo',
+      fromJson: (json) => '${json['saludo']}:${json['total']}',
+    );
+
+    expect(result, 'hola:2');
   });
 }

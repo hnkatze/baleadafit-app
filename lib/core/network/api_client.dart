@@ -5,8 +5,8 @@ import 'api_failure.dart';
 /// Thin wrapper over [Dio] that speaks the BaleadaFit envelope.
 ///
 /// The API wraps every success in `{ok: true, data: …}` and every failure in
-/// `{ok: false, error: {…}}`. Callers get the payload or an [ApiFailure]; they
-/// never see raw Dio errors.
+/// `{ok: false, error: {…}}`. Callers ask for a path and the type they expect;
+/// they get that value or an [ApiFailure], never a raw Dio error.
 class ApiClient {
   ApiClient(this._dio);
 
@@ -16,21 +16,40 @@ class ApiClient {
   /// JSON GET (uploads, streams).
   Dio get dio => _dio;
 
-  /// GET [path], optionally with [bearerToken] already in hand.
+  /// GET [path] and decode its `data` with [fromJson].
   ///
-  /// Passing the token is how a caller guarantees the request carries a token
-  /// issued in this same flow instead of whatever the interceptor caches.
-  Future<Map<String, dynamic>> get(String path, {String? bearerToken}) async {
+  /// [bearerToken] is passed when the caller already holds a token issued in
+  /// this same flow, instead of the one the interceptor caches.
+  Future<T> get<T>(
+    String path, {
+    required T Function(Map<String, dynamic> json) fromJson,
+    String? bearerToken,
+  }) async {
+    final Response<Object?> response;
     try {
-      final response = await _dio.get<Object?>(
+      response = await _dio.get<Object?>(
         path,
         options: bearerToken == null
             ? null
             : Options(headers: {'Authorization': 'Bearer $bearerToken'}),
       );
-      return _unwrap(response.data, response.statusCode);
     } on DioException catch (exception) {
       throw ApiFailure.fromDio(exception);
+    }
+    return _decode(response, fromJson);
+  }
+
+  T _decode<T>(
+    Response<Object?> response,
+    T Function(Map<String, dynamic> json) fromJson,
+  ) {
+    final data = _unwrap(response.data, response.statusCode);
+    try {
+      return fromJson(data);
+    } on TypeError {
+      // The payload does not have the shape the caller expects: report it as a
+      // typed API failure instead of letting a cast error reach the UI.
+      throw ApiFailure.unexpectedBody(statusCode: response.statusCode);
     }
   }
 
