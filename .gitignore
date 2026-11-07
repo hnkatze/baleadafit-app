@@ -58,3 +58,7 @@ app.*.map.json
 /android/app/google-services.json
 /ios/Runner/GoogleService-Info.plist
 /lib/firebase_options.dart
+
+# Local swagger-mcp spec store (docs/openapi.json mirror). Rebuild with
+# `swagger-mcp index --refresh https://raw.githubusercontent.com/hnkatze/baleadafit-api/main/docs/openapi.json`.
+/swa-mcp/

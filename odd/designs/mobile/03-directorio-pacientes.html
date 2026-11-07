@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#e7eeff", "on-primary-container": "#00422b", "surface-bright": "#f9f9ff", "tertiary-fixed-dim": "#45dfa4", "primary-fixed": "#6ffbbe", "secondary-fixed-dim": "#8bd6b6", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-variant": "#d8e3fb", "primary-fixed-dim": "#4edea3", "primary-container": "#10b981", "on-primary-fixed-variant": "#005236", "outline": "#6c7a71", "inverse-on-surface": "#ecf1ff", "outline-variant": "#bbcabf", "surface-container-lowest": "#ffffff", "surface-tint": "#006c49", "on-error": "#ffffff", "on-tertiary-fixed": "#002114", "error-container": "#ffdad6", "on-tertiary": "#ffffff", "primary": "#006c49", "surface-container-highest": "#d8e3fb", "on-secondary-fixed": "#002116", "background": "#f9f9ff", "on-secondary": "#ffffff", "surface": "#f9f9ff", "on-tertiary-container": "#00422c", "on-primary-fixed": "#002113", "inverse-primary": "#4edea3", "on-surface": "#111c2d", "tertiary": "#006c4b", "surface-dim": "#cfdaf2", "secondary": "#1b6b51", "inverse-surface": "#263143", "error": "#ba1a1a", "secondary-container": "#a6f2d1", "on-secondary-fixed-variant": "#00513b", "surface-container-high": "#dee8ff", "tertiary-container": "#00b982", "on-background": "#111c2d", "secondary-fixed": "#a6f2d1", "on-tertiary-fixed-variant": "#005137", "on-surface-variant": "#3c4a42", "surface-container-low": "#f0f3ff", "on-secondary-container": "#237157", "tertiary-fixed": "#68fcbf" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "space-sm": "0.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1rem", "margin-desktop": "2rem", "space-xl": "2rem" }, fontFamily: { "body-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "code-data": ["JetBrains Mono"] }, fontSize: { "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "0em", fontWeight: "400" }], "title-md": ["16px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "600" }], "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }], "title-sm": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "600" }], "label-lg": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }], "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "body-sm": ["13px", { lineHeight: "18px", letterSpacing: "0.005em", fontWeight: "400" }], "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "display-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "800" }], "code-data": ["13px", { lineHeight: "18px", letterSpacing: "-0.01em", fontWeight: "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}#clinical-drawer:checked ~ #drawer-backdrop{display:block;}#clinical-drawer:checked ~ #drawer-panel{transform:translateX(0);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen relative"><input class="hidden peer" id="clinical-drawer" type="checkbox"/><header class="fixed top-0 inset-x-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><label aria-label="Abrir menú clínico" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer select-none" for="clinical-drawer"><span class="material-symbols-outlined text-[24px]">menu</span></label><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Monogram" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><div class="flex flex-col"><span class="font-title-sm text-title-sm text-primary tracking-tight leading-none">BaleadaFit Pro</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">Pacientes</span></div></div></div><div class="flex items-center gap-space-xs"><div class="flex items-center gap-space-xs bg-secondary-container/40 px-space-xs py-0.5 rounded-full"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-secondary-container font-semibold hidden xs:inline">HN-DISPONIBLE</span></div><button class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity peer-checked:block" id="drawer-backdrop"><label class="w-full h-full block cursor-pointer" for="clinical-drawer"></label></div><aside class="fixed top-0 bottom-0 left-0 z-50 w-[290px] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(15,23,42,0.1)] -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe" id="drawer-panel"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-low/60"><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><span class="font-title-md text-title-md text-primary font-bold">BaleadaFit Pro</span></div><label class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-variant cursor-pointer" for="clinical-drawer"><span class="material-symbols-outlined text-[20px]">close</span></label></div><div class="p-space-md mx-space-sm my-space-xs rounded-xl bg-surface-container-low flex items-center gap-space-sm"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-title-sm text-title-sm text-on-surface truncate">Dra. Karla Méndez</span><span class="font-label-sm text-label-sm text-primary font-semibold">Nutrición Clínica • TCA-HN</span></div></div><nav class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-0.5" data-active-classes="bg-secondary-container/50 text-primary font-bold"><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Navegación Clínica</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-title-sm text-title-sm">Inicio</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-3 rounded-lg transition-colors bg-secondary-container/50 text-primary font-bold" data-path="pacientes" href="#"><span class="material-symbols-outlined text-[22px]">groups</span><span class="font-title-sm text-title-sm">Pacientes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="disenador-de-dietas" href="#"><span class="material-symbols-outlined text-[22px]">restaurant_menu</span><span class="font-title-sm text-title-sm">Diseñador de Dietas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-alimentos-tca-hn" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-title-sm text-title-sm">Catálogo de Alimentos TCA-HN</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="agenda-de-citas" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-title-sm text-title-sm">Agenda de Citas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="auditoria-ia" href="#"><span class="material-symbols-outlined text-[22px] text-tertiary-container">auto_awesome</span><span class="font-title-sm text-title-sm">Auditoría IA</span><span class="ml-auto bg-primary-container/20 text-on-primary-fixed-variant text-label-sm font-label-sm px-1.5 py-0.5 rounded-full">PRO</span></a><div class="my-space-xs"></div><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Administración HN</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="facturacion-sar" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-title-sm text-title-sm">Facturación SAR</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="configuracion" href="#"><span class="material-symbols-outlined text-[22px]">settings</span><span class="font-title-sm text-title-sm">Configuración</span></a></nav><div class="p-space-md bg-surface-container-low/40"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-error hover:bg-error-container/20 transition-colors" data-path="cerrar-sesion" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-title-sm text-title-sm font-semibold">Cerrar Sesión</span></a></div></aside><main class="flex flex-col relative w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full pb-24">
+<!-- Sticky Search & Filter Command Center -->
+<section class="sticky top-16 z-30 bg-surface/95 backdrop-blur-md px-margin py-space-sm shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-9 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-colors" id="patient-search-input" placeholder="Buscar por nombre, expediente o ID (+504)..." type="text"/>
+<button class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-1" id="clear-search-btn">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+<button aria-label="Abrir filtros avanzados" class="h-10 w-10 flex items-center justify-center rounded-lg bg-surface-container-low text-primary hover:bg-surface-container transition-colors shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+<!-- Filter Chips Scrollable Strip -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5" id="filter-chip-group">
+<button class="filter-chip active flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-lg text-label-lg bg-primary text-on-primary transition-all shrink-0 shadow-sm" data-filter="all">
+<span>Todos</span>
+<span class="bg-primary-container/30 text-on-primary px-1.5 py-0.2 rounded-full font-code-data text-[10px]">42</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-lg text-label-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all shrink-0" data-filter="waiting">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span>En Espera</span>
+<span class="bg-surface-variant text-on-surface-variant px-1.5 py-0.2 rounded-full font-code-data text-[10px]">3</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-lg text-label-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all shrink-0" data-filter="plan">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+<span>Con Plan HN</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-lg text-label-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all shrink-0" data-filter="hypertrophy">
+<span class="material-symbols-outlined text-[14px]">fitness_center</span>
+<span>Hipertrofia</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-lg text-label-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all shrink-0" data-filter="diabetic">
+<span class="material-symbols-outlined text-[14px]">monitor_heart</span>
+<span>Diabéticos</span>
+</button>
+</div>
+</section>
+<!-- Clinical Dashboard Banner & Counter -->
+<section class="px-margin pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Directorio Clínico</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-secondary-container">TCA-HN 2024</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-code-data font-semibold text-primary">42</span> pacientes registrados
+            <span class="text-outline-variant">•</span>
+<span class="inline-flex items-center gap-1 text-tertiary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+              3 en sala hoy
+            </span>
+</p>
+</div>
+</div>
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm shadow-md transition-all active:scale-95 shrink-0">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>+ Nuevo</span>
+</button>
+</div>
+<!-- Daily Clinic Status Micro-card -->
+<div class="bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low rounded-xl p-space-sm flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">nutrition</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface truncate">Sincronización TCA-HN Activa</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">BaleadaFit v2.4 calibrada con frijol criollo y cuajada</span>
+</div>
+</div>
+<span class="font-code-data text-label-sm text-primary font-bold bg-primary-fixed/40 px-2 py-1 rounded-full shrink-0">100% OK</span>
+</div>
+</section>
+<!-- Patient Cards Stack -->
+<section class="px-margin pt-space-md flex flex-col gap-space-md" id="patient-card-stack">
+<!-- Card 1: Carlos Eduardo Mendoza (Detailed, Active, Hipertrofia) -->
+<article class="patient-card group bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden" data-category="hypertrophy">
+<div class="p-space-md flex flex-col gap-space-sm">
+<!-- Header row -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-xl object-cover shadow-sm bg-surface-container" data-alt="Candid, warm portrait of a 34-year-old Honduran athletic male smiling confidently in a modern bright fitness center. Natural daylight, high definition, authentic clinic patient photograph styled in fresh emerald and slate tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdJyERtpixvf8WyozwB2RglbGoVbi1AoknBPAvwEuTiP0NYhw6W1kMozaOAAXORTCdGQ7jfV753qqmxZUinPsxCBMeyxXm-D9pPKNOC96-CpeBY6WN8NbDWHzYQ9HIYkgNSg0qEvf_dkhjTY6FT00X4GlDfH48wLz7maHmXlVHX8Bie_ruMeqryoS-2xYmz5myzsMbLjTqAgN-MSKXLAZkgCYJJSa9qC3i3V-_MoxH"/>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-primary-container ring-2 ring-surface-container-lowest flex items-center justify-center" title="En sala de espera">
+<span class="material-symbols-outlined text-on-primary-container text-[11px] font-bold">check</span>
+</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<h2 class="font-title-md text-title-md text-on-surface font-bold truncate">Carlos Eduardo Mendoza</h2>
+<span class="font-code-data text-label-sm text-primary bg-primary-fixed/40 px-1.5 py-0.5 rounded">#HN-0492</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">34 años <span class="text-outline-variant">•</span> Tegucigalpa, FM</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-secondary-container text-on-secondary-container font-semibold shrink-0">En Sala</span>
+</div>
+<!-- Clinical Target & Plan Details -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">fitness_center</span>
+<span class="font-title-sm text-title-sm font-semibold">Hipertrofia con BaleadaFit Pro</span>
+</div>
+<span class="font-code-data text-label-sm text-tertiary font-bold">96% Adherencia</span>
+</div>
+<!-- Macro/Progress Linear Gauge -->
+<div class="w-full bg-surface-variant rounded-full h-2 overflow-hidden flex">
+<div class="bg-primary-container h-full transition-all duration-500" style="width: 96%"></div>
+</div>
+<!-- Metric Pills -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="bg-surface-container-lowest rounded-md px-2.5 py-1.5 flex items-center justify-between shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Peso Actual</span>
+<span class="font-code-data text-title-sm font-bold text-on-surface">84.2 kg</span>
+</div>
+<div class="bg-surface-container-lowest rounded-md px-2.5 py-1.5 flex items-center justify-between shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Evolución</span>
+<span class="font-code-data text-title-sm font-bold text-primary flex items-center">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+                -7.8 kg
+              </span>
+</div>
+</div>
+</div>
+<!-- Quick Interaction Actions -->
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-primary">folder_open</span>
+<span>Ver Expediente</span>
+</button>
+<a class="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-tertiary-container text-on-primary-container font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors shadow-xs" href="https://wa.me/50498765432" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+<span>WhatsApp (+504)</span>
+</a>
+<button aria-label="Más opciones" class="h-9 w-9 rounded-lg bg-surface-container-low hover:bg-surface-variant text-on-surface-variant flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: María José Flores (Telemedicina, Déficit Catracho) -->
+<article class="patient-card group bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden" data-category="plan">
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-xl object-cover shadow-sm bg-surface-container" data-alt="Professional crisp headshot of a 28-year-old Honduran woman with natural light, warm smile, wearing pastel clothing in a bright contemporary medical health consultation room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdUJWtfcGjZ02ID35BVq9NORCxd6J6Ejj3gEwuAtRQSHOAEAnDEPs4Ysbubm-FEv83KgSXZLxn-JyM6cy_-D04stjENZqKaT1HKRM7muNo--PsslpTfvFpluR9v5rO_UEInfa8qSnhpyaqnbKQWuuhVgWtIJA9WQ8qeXk2kcQR2qdDPVrdUOalsapNDT0F-ufApHW5LhtXbV5oEF3-KHpaZIQ6XK-xJxuZtgftHT6G"/>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-secondary-fixed-dim ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<h2 class="font-title-md text-title-md text-on-surface font-bold truncate">María José Flores</h2>
+<span class="font-code-data text-label-sm text-secondary bg-secondary-fixed/50 px-1.5 py-0.5 rounded">#HN-0511</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">28 años <span class="text-outline-variant">•</span> San Pedro Sula</p>
+</div>
+</div>
+<div class="flex items-center gap-1 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span>Telemedicina</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">rice_bowl</span>
+<span class="font-title-sm text-title-sm font-semibold">Déficit Calórico Catracho</span>
+</div>
+<span class="font-code-data text-label-sm text-on-surface-variant">Semana 4 / 12</span>
+</div>
+<!-- Compact metric strip -->
+<div class="flex items-center justify-between bg-surface-container-lowest rounded-md px-3 py-1.5 shadow-xs">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Control de Masa Corporal</span>
+<span class="font-code-data text-title-sm font-bold text-on-surface">62.4 kg <span class="font-label-sm text-label-sm text-outline font-normal">(-3.1 kg)</span></span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-secondary">videocam</span>
+<span>Iniciar Consulta Virtual</span>
+</button>
+<a class="h-9 px-3 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1 transition-colors" href="https://wa.me/50495551234" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px] text-primary">chat</span>
+<span>WA</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Card 3: Kevin Banegas (Recomposición corporal, Control pendiente) -->
+<article class="patient-card group bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden" data-category="waiting">
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-xl object-cover shadow-sm bg-surface-container" data-alt="Natural medical portrait of a 41-year-old Honduran man in casual clinical intake clothing, serious yet friendly expression, high fidelity studio clinical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVV5ZrEOagwxiORfpM9Z5ERsOqXfwxKBeyjxOA-N2dlDSCqcw23MebewgvW0cosB5pPPR2byi4fWDBZtzlCg5DyiY8jKTQl68ZUhsz1PQbHlo14f09otnUUglID1qdynLICUNFH3PWw0mYQpdFtdpoK4-fMFsrM8XpHXm74TOglqdaCMWWaUgn16OkPge7Af1xLusXAa4rmNAFaKtvRXUN2sDpRWuzzL5g6j1QY8NL"/>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-error ring-2 ring-surface-container-lowest" title="Control pendiente"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<h2 class="font-title-md text-title-md text-on-surface font-bold truncate">Kevin Banegas</h2>
+<span class="font-code-data text-label-sm text-on-surface-variant bg-surface-variant px-1.5 py-0.5 rounded">#HN-0388</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">41 años <span class="text-outline-variant">•</span> La Ceiba, Atlántida</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold shrink-0">Control Pendiente</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-outline text-[18px]">straighten</span>
+<span class="font-title-sm text-title-sm font-semibold">Recomposición Corporal</span>
+</div>
+<span class="font-code-data text-title-sm font-bold text-on-surface">89.1 kg</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm bg-surface-container-lowest p-2 rounded-md">
+<span class="material-symbols-outlined text-[16px] text-error">event_busy</span>
+<span>Último control hace 18 días · Requiere bioimpedancia</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_add_on</span>
+<span>Agendar Cita</span>
+</button>
+<a class="h-9 px-3.5 rounded-lg bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors" href="https://wa.me/50497880011" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">notifications_active</span>
+<span>Recordar</span>
+</a>
+</div>
+</div>
+</article>
+<!-- Card 4: Andrea Villeda (Primera Consulta, Pago verificado ACH) -->
+<article class="patient-card group bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden" data-category="waiting">
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-xl object-cover shadow-sm bg-surface-container" data-alt="Portrait of a 22-year-old young Honduran female student smiling in an intake reception area, crisp natural light, modern clean clinical aesthetic with soft green accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtrGiC_sYStZe79iW8kcK7VU1t4Kyhixe42ArwbVnbHKpfQ36lxi08jOHz_C7opCU5F3cECVy9k_fXqMhJSqOh2H8rF8RcRhPbPjKhakiol_pgSHjhTDRe9XGVWXRx2aKe3JWH54qYl-JOFpYGTTkh-unB54HGWD-B_bo5gDhWZ5cB5zEKrzY9Mzm8Nkhm7UkrHcvBvTe_mdtb1_mPqbi13k0zzRkolAMUtH1vlRoM"/>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-primary-container ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<h2 class="font-title-md text-title-md text-on-surface font-bold truncate">Andrea Villeda</h2>
+<span class="font-code-data text-label-sm text-primary bg-primary-fixed/40 px-1.5 py-0.5 rounded">#HN-0520</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">22 años <span class="text-outline-variant">•</span> Choluteca</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-fixed/60 text-on-primary-fixed-variant font-semibold shrink-0">Primera Consulta</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="font-title-sm text-title-sm font-semibold">Pago Verificado ACH Pronto</span>
+</div>
+<span class="font-code-data text-label-sm text-primary font-bold">L. 850.00</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm bg-surface-container-lowest p-2 rounded-md">
+<span class="material-symbols-outlined text-[16px] text-tertiary">assignment</span>
+<span>Cuestionario anamnesis completado al 100%</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+<span>Iniciar Anamnesis</span>
+</button>
+<a class="h-9 px-3 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1 transition-colors" href="https://wa.me/50494443322" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px] text-primary">chat</span>
+<span>WA</span>
+</a>
+</div>
+</div>
+</article>
+</section>
+<!-- Interactive UX Cue & Clinical Flow Notice -->
+<footer class="px-margin mt-space-lg mb-space-sm">
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-2 shadow-xs">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">touch_app</span>
+<span class="font-title-sm text-title-sm font-bold tracking-tight">Guía de Navegación Rápida</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        📋 <strong class="text-on-surface">NOTAS DE FLUJO:</strong> Tap en cualquier card abre expediente completo en stack view con animación slide-horizontal; swipe hacia la izquierda en card revela acciones rápidas (Llamar, WhatsApp, Archivar).
+      </p>
+<div class="flex items-center gap-3 pt-1 border-t border-outline-variant/30 text-outline font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">swipe_left</span> Deslizar = Acciones</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">ads_click</span> Tap = Expediente</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">lock</span> Encriptación HIPAA/SAR</span>
+</div>
+</div>
+</footer>
+</div>
+<script>
+  // Simple micro-interactions for search and filter filtering
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('patient-search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+    const filterButtons = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('.patient-card');
+
+    // Search filter
+    if (searchInput && clearBtn) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        clearBtn.classList.toggle('hidden', query.length === 0);
+
+        cards.forEach((card) => {
+          const text = card.textContent.toLowerCase();
+          if (text.includes(query)) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.classList.add('hidden');
+        cards.forEach((card) => card.classList.remove('hidden'));
+        searchInput.focus();
+      });
+    }
+
+    // Filter Chips toggling
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => {
+          b.classList.remove('bg-primary', 'text-on-primary');
+          b.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+
+        btn.classList.add('bg-primary', 'text-on-primary');
+        btn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+
+        const filterVal = btn.getAttribute('data-filter');
+        cards.forEach((card) => {
+          const category = card.getAttribute('data-category');
+          if (filterVal === 'all' || category === filterVal) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  });
+</script></main></body></html>
