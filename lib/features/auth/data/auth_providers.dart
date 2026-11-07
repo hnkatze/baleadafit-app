@@ -31,7 +31,9 @@ final dioProvider = Provider<Dio>((ref) {
       sendTimeout: const Duration(seconds: 15),
     ),
   );
-  dio.interceptors.add(AuthInterceptor(ref.watch(tokenSourceProvider)));
+  dio.interceptors.add(
+    AuthInterceptor(ref.watch(tokenSourceProvider), baseUrl: Env.apiBaseUrl),
+  );
   return dio;
 });
 

@@ -20,7 +20,9 @@ void main() {
   test('adds the bearer header when a token exists', () async {
     final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
     final dio = dioWith(adapter);
-    dio.interceptors.add(AuthInterceptor(_FakeTokenSource('token-123')));
+    dio.interceptors.add(
+      AuthInterceptor(_FakeTokenSource('token-123'), baseUrl: 'https://api.test'),
+    );
 
     await dio.get<Object?>('/auth/me');
 
@@ -34,7 +36,9 @@ void main() {
     final source = _FakeTokenSource(null);
     final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
     final dio = dioWith(adapter);
-    dio.interceptors.add(AuthInterceptor(source));
+    dio.interceptors.add(
+      AuthInterceptor(source, baseUrl: 'https://api.test'),
+    );
 
     await dio.get<Object?>('/auth/me');
 

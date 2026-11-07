@@ -26,20 +26,28 @@ class FirebaseTokenSource implements TokenSource {
   }
 }
 
-/// Adds `Authorization: Bearer <token>` to every request.
+/// Adds `Authorization: Bearer <token>` to requests aimed at [baseUrl].
 ///
-/// Without a token the header is omitted and the API answers 401, which is the
-/// behavior the app wants: no client-side guessing about session validity.
+/// Requests whose origin is not the API origin get no header, so a stray
+/// absolute URL can never carry the session token. An already present header
+/// wins, which is how a caller sends a freshly issued token.
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor(this._tokens);
+  AuthInterceptor(this._tokens, {required String baseUrl})
+    : _origin = Uri.parse(baseUrl).origin;
 
   final TokenSource _tokens;
+  final String _origin;
 
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final hasHeader = options.headers.containsKey('Authorization');
+    if (hasHeader || options.uri.origin != _origin) {
+      return handler.next(options);
+    }
+
     final token = await _tokens.idToken();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';

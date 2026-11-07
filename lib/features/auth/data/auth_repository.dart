@@ -43,10 +43,15 @@ class AuthRepository {
     if (token == null) throw const UnauthenticatedFailure();
 
     try {
-      final data = await _api.get('/auth/me');
+      final data = await _api.get('/auth/me', bearerToken: token);
       return AuthSession.fromMeData(data);
     } on ApiFailure catch (failure) {
       throw _mapApiFailure(failure);
+    } on ArgumentError {
+      // The API answered a rol this app does not know.
+      throw const UnknownAuthFailure(
+        'Tu cuenta tiene un rol que esta versión no reconoce. Actualizá la app.',
+      );
     } on FormatException catch (error) {
       throw UnknownAuthFailure(error.message);
     }
@@ -66,7 +71,23 @@ class AuthRepository {
     } on Object catch (error) {
       throw _mapError(error);
     }
-    return currentSession();
+
+    try {
+      return await currentSession();
+    } on Object {
+      // No session for the API means no session at all: leaving the provider
+      // signed in would silently re-authenticate on the next launch.
+      await _signOutQuietly();
+      rethrow;
+    }
+  }
+
+  Future<void> _signOutQuietly() async {
+    try {
+      await _gateway.signOut();
+    } on Object {
+      // Best effort: the failure being reported is the original one.
+    }
   }
 
   AuthFailure _mapApiFailure(ApiFailure failure) {

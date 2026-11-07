@@ -12,13 +12,22 @@ class ApiClient {
 
   final Dio _dio;
 
-  /// Exposes the underlying client for tests and for callers that need
-  /// something other than a JSON GET (uploads, streams).
+  /// Exposes the underlying client for callers that need something other than a
+  /// JSON GET (uploads, streams).
   Dio get dio => _dio;
 
-  Future<Map<String, dynamic>> get(String path) async {
+  /// GET [path], optionally with [bearerToken] already in hand.
+  ///
+  /// Passing the token is how a caller guarantees the request carries a token
+  /// issued in this same flow instead of whatever the interceptor caches.
+  Future<Map<String, dynamic>> get(String path, {String? bearerToken}) async {
     try {
-      final response = await _dio.get<Object?>(path);
+      final response = await _dio.get<Object?>(
+        path,
+        options: bearerToken == null
+            ? null
+            : Options(headers: {'Authorization': 'Bearer $bearerToken'}),
+      );
       return _unwrap(response.data, response.statusCode);
     } on DioException catch (exception) {
       throw ApiFailure.fromDio(exception);

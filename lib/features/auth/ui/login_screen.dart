@@ -39,12 +39,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // A user who is already signed in with Firebase goes straight in.
-    unawaited(
-      Future.microtask(
-        () => ref.read(sessionControllerProvider.notifier).restore(),
-      ),
-    );
+    // A user who is already signed in with Firebase goes straight in, unless
+    // they just signed out on purpose.
+    if (ref.read(sessionControllerProvider).status == SessionStatus.unknown) {
+      unawaited(
+        Future.microtask(
+          () => ref.read(sessionControllerProvider.notifier).restore(),
+        ),
+      );
+    }
   }
 
   @override
