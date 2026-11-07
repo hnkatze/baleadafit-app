@@ -117,4 +117,40 @@ void main() {
 
     expect(result, 'hola:2');
   });
+
+  test('decodes a list payload with its meta', () async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': true,
+        'data': [
+          {'nombre': 'Carlos'},
+          {'nombre': 'Mariana'},
+        ],
+        'meta': {'limit': 2, 'offset': 0, 'total': 7, 'hasMore': true},
+      }),
+    );
+
+    final page = await ApiClient(dioWith(adapter)).getPaged(
+      '/pacientes',
+      itemFromJson: (json) => json['nombre'] as String,
+    );
+
+    expect(page.items, ['Carlos', 'Mariana']);
+    expect(page.meta.total, 7);
+    expect(page.meta.hasMore, isTrue);
+  });
+
+  test('a list payload wrapped in an error is an ApiFailure', () async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': false,
+        'error': {'codigo': 'SIN_PERMISO', 'mensaje': 'Sin acceso.'},
+      }, status: 403),
+    );
+
+    await expectLater(
+      ApiClient(dioWith(adapter)).getPaged('/pacientes', itemFromJson: (json) => json),
+      throwsA(isA<ApiFailure>()),
+    );
+  });
 }
