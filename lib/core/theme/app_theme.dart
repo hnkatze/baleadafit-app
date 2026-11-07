@@ -7,7 +7,8 @@ import 'app_typography.dart';
 /// Builds the app-wide [ThemeData].
 ///
 /// Every screen inherits its colors, type scale and component defaults from
-/// here, so features never hardcode styles.
+/// here, so features never hardcode styles. The values come from the Clinical
+/// Mint design system the mobile screens are drawn with.
 abstract final class AppTheme {
   static ThemeData get light {
     final colorScheme =
@@ -19,19 +20,32 @@ abstract final class AppTheme {
           onPrimary: AppColors.onPrimary,
           primaryContainer: AppColors.primaryContainer,
           onPrimaryContainer: AppColors.onPrimaryContainer,
-          secondary: AppColors.accent,
-          onSecondary: AppColors.neutral900,
-          secondaryContainer: AppColors.accentContainer,
-          onSecondaryContainer: AppColors.neutral900,
-          surface: AppColors.white,
-          onSurface: AppColors.neutral900,
-          surfaceContainerLowest: AppColors.white,
-          surfaceContainerLow: AppColors.neutral50,
-          surfaceContainerHighest: AppColors.neutral100,
+          secondary: AppColors.secondary,
+          onSecondary: AppColors.onSecondary,
+          secondaryContainer: AppColors.secondaryContainer,
+          onSecondaryContainer: AppColors.onSecondaryContainer,
+          tertiary: AppColors.tertiary,
+          onTertiary: AppColors.onTertiary,
+          tertiaryContainer: AppColors.tertiaryContainer,
+          onTertiaryContainer: AppColors.onTertiaryContainer,
+          surface: AppColors.surface,
+          onSurface: AppColors.onSurface,
+          onSurfaceVariant: AppColors.onSurfaceVariant,
+          surfaceContainerLowest: AppColors.surfaceContainerLowest,
+          surfaceContainerLow: AppColors.surfaceContainerLow,
+          surfaceContainer: AppColors.surfaceContainer,
+          surfaceContainerHigh: AppColors.surfaceContainerHigh,
+          surfaceContainerHighest: AppColors.surfaceContainerHighest,
+          surfaceTint: AppColors.surfaceTint,
+          inverseSurface: AppColors.inverseSurface,
+          onInverseSurface: AppColors.inverseOnSurface,
+          inversePrimary: AppColors.inversePrimary,
           error: AppColors.error,
-          onError: AppColors.white,
-          outline: AppColors.neutral300,
-          outlineVariant: AppColors.neutral200,
+          onError: AppColors.onError,
+          errorContainer: AppColors.errorContainer,
+          onErrorContainer: AppColors.onErrorContainer,
+          outline: AppColors.outline,
+          outlineVariant: AppColors.outlineVariant,
         );
 
     final textTheme = AppTypography.textTheme;
@@ -40,27 +54,25 @@ abstract final class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: textTheme,
-      scaffoldBackgroundColor: AppColors.neutral50,
-      appBarTheme: const AppBarThemeData(
-        backgroundColor: AppColors.neutral50,
-        foregroundColor: AppColors.neutral900,
+      scaffoldBackgroundColor: AppColors.surface,
+      appBarTheme: AppBarThemeData(
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.onSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: AppColors.neutral900,
+        titleTextStyle: textTheme.headlineSmall?.copyWith(
+          color: AppColors.onSurface,
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.white,
+        color: AppColors.surfaceContainerLowest,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
-          side: const BorderSide(color: AppColors.neutral200),
+          side: const BorderSide(color: AppColors.outlineVariant),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -68,7 +80,7 @@ abstract final class AppTheme {
           minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
           textStyle: textTheme.labelLarge,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
         ),
       ),
@@ -76,44 +88,59 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
           textStyle: textTheme.labelLarge,
-          foregroundColor: AppColors.primary,
-          side: const BorderSide(color: AppColors.primary),
+          foregroundColor: AppColors.onSurface,
+          backgroundColor: AppColors.surfaceContainerLowest,
+          side: const BorderSide(color: AppColors.outlineVariant),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
           ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
-          textStyle: textTheme.labelLarge,
+          padding: EdgeInsets.zero,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          textStyle: textTheme.labelMedium,
           foregroundColor: AppColors.primary,
         ),
       ),
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: AppColors.surfaceContainerLow,
+        isDense: true,
+        constraints: const BoxConstraints(minHeight: AppDimensions.fieldHeight),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.spaceMd,
-          vertical: AppDimensions.spaceMd,
+          horizontal: 14,
+          vertical: 13,
         ),
-        labelStyle: const TextStyle(color: AppColors.neutral700),
-        hintStyle: const TextStyle(color: AppColors.neutral500),
-        border: _inputBorder(AppColors.neutral300),
-        enabledBorder: _inputBorder(AppColors.neutral300),
-        focusedBorder: _inputBorder(AppColors.primary, width: 1.6),
-        errorBorder: _inputBorder(AppColors.error),
-        focusedErrorBorder: _inputBorder(AppColors.error, width: 1.6),
+        labelStyle: textTheme.labelMedium?.copyWith(
+          color: AppColors.onSurfaceVariant,
+        ),
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: AppColors.outlineVariant,
+        ),
+        border: _inputBorder(BorderSide.none),
+        enabledBorder: _inputBorder(BorderSide.none),
+        focusedBorder: _inputBorder(
+          const BorderSide(color: AppColors.primary, width: 1.6),
+        ),
+        errorBorder: _inputBorder(BorderSide(color: AppColors.error)),
+        focusedErrorBorder: _inputBorder(
+          const BorderSide(color: AppColors.error, width: 1.6),
+        ),
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.neutral200,
+        color: AppColors.surfaceContainerHighest,
         thickness: 1,
         space: 1,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.neutral900,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: AppColors.white),
+        backgroundColor: AppColors.inverseSurface,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: AppColors.inverseOnSurface,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
         ),
@@ -121,10 +148,10 @@ abstract final class AppTheme {
     );
   }
 
-  static OutlineInputBorder _inputBorder(Color color, {double width = 1}) {
+  static OutlineInputBorder _inputBorder(BorderSide side) {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-      borderSide: BorderSide(color: color, width: width),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+      borderSide: side,
     );
   }
 }

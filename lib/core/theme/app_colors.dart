@@ -1,54 +1,58 @@
 import 'package:flutter/material.dart';
 
-/// Raw color tokens of the BaleadaFit brand.
+/// Color tokens of the BaleadaFit brand.
 ///
-/// Widgets normally read colors from `Theme.of(context).colorScheme`, so a
-/// future dark theme keeps working without touching feature code. These tokens
-/// exist to build that scheme and for the few brand cases Material roles do
-/// not cover.
+/// These are the exact tokens of the **Clinical Mint Precision** design system
+/// that the mobile screens are drawn with (see `odd/designs/mobile/`), so the
+/// app and the reference share one palette instead of two similar ones.
+///
+/// Widgets normally read colors from `Theme.of(context).colorScheme`; these
+/// tokens exist to build that scheme and for the few cases Material roles do
+/// not cover. Never hardcode a hex value in a widget.
 abstract final class AppColors {
-  // Brand — leaf green.
-  static const Color green50 = Color(0xFFE9F6EE);
-  static const Color green100 = Color(0xFFC9EAD6);
-  static const Color green200 = Color(0xFFA0DBB6);
-  static const Color green300 = Color(0xFF72C995);
-  static const Color green400 = Color(0xFF46B673);
-  static const Color green500 = Color(0xFF1FA25B);
-  static const Color green600 = Color(0xFF168648);
-  static const Color green700 = Color(0xFF0F6A38);
-  static const Color green800 = Color(0xFF094E29);
-  static const Color green900 = Color(0xFF05351C);
+  // Primary — the mint that carries actions and the brand.
+  static const Color primary = Color(0xFF006C49);
+  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color primaryContainer = Color(0xFF10B981);
+  static const Color onPrimaryContainer = Color(0xFF00422B);
+  static const Color primaryFixed = Color(0xFF6FFBBE);
+  static const Color primaryFixedDim = Color(0xFF4EDEA3);
+  static const Color onPrimaryFixedVariant = Color(0xFF005236);
 
-  /// Accent for energy, calories and highlighted metrics.
-  static const Color mango100 = Color(0xFFFDF0D8);
-  static const Color mango300 = Color(0xFFF8CD88);
-  static const Color mango500 = Color(0xFFF2A63B);
-  static const Color mango700 = Color(0xFFC97C1B);
+  // Secondary — soft mint used for fast, non-primary actions.
+  static const Color secondary = Color(0xFF1B6B51);
+  static const Color onSecondary = Color(0xFFFFFFFF);
+  static const Color secondaryContainer = Color(0xFFA6F2D1);
+  static const Color onSecondaryContainer = Color(0xFF237157);
 
-  // Neutrals.
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color neutral50 = Color(0xFFF6F9F7);
-  static const Color neutral100 = Color(0xFFEDF1EE);
-  static const Color neutral200 = Color(0xFFDCE3DE);
-  static const Color neutral300 = Color(0xFFC2CCC6);
-  static const Color neutral500 = Color(0xFF8A968F);
-  static const Color neutral700 = Color(0xFF55625B);
-  static const Color neutral900 = Color(0xFF1C211E);
-  static const Color black = Color(0xFF0E120F);
+  // Tertiary — deep green for positive metrics (adherence, goals met).
+  static const Color tertiary = Color(0xFF006C4B);
+  static const Color onTertiary = Color(0xFFFFFFFF);
+  static const Color tertiaryContainer = Color(0xFF00B982);
+  static const Color onTertiaryContainer = Color(0xFF00422C);
 
-  // Semantic roles.
-  static const Color success = green600;
-  static const Color warning = mango700;
-  static const Color error = Color(0xFFC62828);
-  static const Color info = Color(0xFF1565C0);
+  // Surfaces — the blue-tinted off-white the screens sit on.
+  static const Color surface = Color(0xFFF9F9FF);
+  static const Color onSurface = Color(0xFF111C2D);
+  static const Color onSurfaceVariant = Color(0xFF3C4A42);
+  static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
+  static const Color surfaceContainerLow = Color(0xFFF0F3FF);
+  static const Color surfaceContainer = Color(0xFFE7EEFF);
+  static const Color surfaceContainerHigh = Color(0xFFDEE8FF);
+  static const Color surfaceContainerHighest = Color(0xFFD8E3FB);
+  static const Color surfaceTint = Color(0xFF006C49);
 
-  /// Main action color. 4.57:1 against white text.
-  static const Color primary = green600;
-  static const Color onPrimary = white;
-  static const Color primaryContainer = green50;
-  static const Color onPrimaryContainer = green900;
+  static const Color inverseSurface = Color(0xFF263143);
+  static const Color inverseOnSurface = Color(0xFFECF1FF);
+  static const Color inversePrimary = Color(0xFF4EDEA3);
 
-  /// Brand accent. Pair it with [neutral900] for text, never with white.
-  static const Color accent = mango500;
-  static const Color accentContainer = mango100;
+  // Lines and borders.
+  static const Color outline = Color(0xFF6C7A71);
+  static const Color outlineVariant = Color(0xFFBBCABF);
+
+  // Feedback.
+  static const Color error = Color(0xFFBA1A1A);
+  static const Color onError = Color(0xFFFFFFFF);
+  static const Color errorContainer = Color(0xFFFFDAD6);
+  static const Color onErrorContainer = Color(0xFF93000A);
 }
