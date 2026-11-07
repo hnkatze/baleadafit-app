@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimensions.dart';
 
 /// Visual weight of an [AppButton].
 enum AppButtonVariant {
   /// Filled brand button for the main action of a screen.
   primary,
+
+  /// Filled soft-mint button for a fast, secondary action (biometric sign in,
+  /// shortcuts).
+  tonal,
 
   /// Outlined button for secondary actions.
   secondary,
@@ -48,6 +53,14 @@ class AppButton extends StatelessWidget {
         : _Label(label: label, icon: icon);
     final button = switch (variant) {
       AppButtonVariant.primary => FilledButton(onPressed: onPressed, child: child),
+      AppButtonVariant.tonal => FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.secondaryContainer,
+          foregroundColor: AppColors.onSecondaryContainer,
+        ),
+        child: child,
+      ),
       AppButtonVariant.secondary => OutlinedButton(onPressed: onPressed, child: child),
       AppButtonVariant.text => TextButton(onPressed: onPressed, child: child),
     };
@@ -88,15 +101,16 @@ class _LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = switch (variant) {
+      AppButtonVariant.primary => colorScheme.onPrimary,
+      AppButtonVariant.tonal => colorScheme.onSecondaryContainer,
+      AppButtonVariant.secondary || AppButtonVariant.text => colorScheme.primary,
+    };
     return SizedBox.square(
       dimension: AppDimensions.iconSm,
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          variant == AppButtonVariant.primary
-              ? colorScheme.onPrimary
-              : colorScheme.primary,
-        ),
+        valueColor: AlwaysStoppedAnimation<Color>(color),
       ),
     );
   }

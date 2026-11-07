@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#e7eeff", "on-primary-container": "#00422b", "surface-bright": "#f9f9ff", "tertiary-fixed-dim": "#45dfa4", "primary-fixed": "#6ffbbe", "secondary-fixed-dim": "#8bd6b6", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-variant": "#d8e3fb", "primary-fixed-dim": "#4edea3", "primary-container": "#10b981", "on-primary-fixed-variant": "#005236", "outline": "#6c7a71", "inverse-on-surface": "#ecf1ff", "outline-variant": "#bbcabf", "surface-container-lowest": "#ffffff", "surface-tint": "#006c49", "on-error": "#ffffff", "on-tertiary-fixed": "#002114", "error-container": "#ffdad6", "on-tertiary": "#ffffff", "primary": "#006c49", "surface-container-highest": "#d8e3fb", "on-secondary-fixed": "#002116", "background": "#f9f9ff", "on-secondary": "#ffffff", "surface": "#f9f9ff", "on-tertiary-container": "#00422c", "on-primary-fixed": "#002113", "inverse-primary": "#4edea3", "on-surface": "#111c2d", "tertiary": "#006c4b", "surface-dim": "#cfdaf2", "secondary": "#1b6b51", "inverse-surface": "#263143", "error": "#ba1a1a", "secondary-container": "#a6f2d1", "on-secondary-fixed-variant": "#00513b", "surface-container-high": "#dee8ff", "tertiary-container": "#00b982", "on-background": "#111c2d", "secondary-fixed": "#a6f2d1", "on-tertiary-fixed-variant": "#005137", "on-surface-variant": "#3c4a42", "surface-container-low": "#f0f3ff", "on-secondary-container": "#237157", "tertiary-fixed": "#68fcbf" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "space-sm": "0.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1rem", "margin-desktop": "2rem", "space-xl": "2rem" }, fontFamily: { "body-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "code-data": ["JetBrains Mono"] }, fontSize: { "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "0em", fontWeight: "400" }], "title-md": ["16px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "600" }], "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }], "title-sm": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "600" }], "label-lg": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }], "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "body-sm": ["13px", { lineHeight: "18px", letterSpacing: "0.005em", fontWeight: "400" }], "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "display-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "800" }], "code-data": ["13px", { lineHeight: "18px", letterSpacing: "-0.01em", fontWeight: "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}#clinical-drawer:checked ~ #drawer-backdrop{display:block;}#clinical-drawer:checked ~ #drawer-panel{transform:translateX(0);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen relative"><input class="hidden peer" id="clinical-drawer" type="checkbox"/><header class="fixed top-0 inset-x-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><label aria-label="Abrir menú clínico" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer select-none" for="clinical-drawer"><span class="material-symbols-outlined text-[24px]">menu</span></label><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Monogram" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><div class="flex flex-col"><span class="font-title-sm text-title-sm text-primary tracking-tight leading-none">BaleadaFit Pro</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">Inicio</span></div></div></div><div class="flex items-center gap-space-xs"><div class="flex items-center gap-space-xs bg-secondary-container/40 px-space-xs py-0.5 rounded-full"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-secondary-container font-semibold hidden xs:inline">HN-DISPONIBLE</span></div><button class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity peer-checked:block" id="drawer-backdrop"><label class="w-full h-full block cursor-pointer" for="clinical-drawer"></label></div><aside class="fixed top-0 bottom-0 left-0 z-50 w-[290px] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(15,23,42,0.1)] -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe" id="drawer-panel"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-low/60"><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><span class="font-title-md text-title-md text-primary font-bold">BaleadaFit Pro</span></div><label class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-variant cursor-pointer" for="clinical-drawer"><span class="material-symbols-outlined text-[20px]">close</span></label></div><div class="p-space-md mx-space-sm my-space-xs rounded-xl bg-surface-container-low flex items-center gap-space-sm"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-title-sm text-title-sm text-on-surface truncate">Dra. Karla Méndez</span><span class="font-label-sm text-label-sm text-primary font-semibold">Nutrición Clínica • TCA-HN</span></div></div><nav class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-0.5" data-active-classes="bg-secondary-container/50 text-primary font-bold"><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Navegación Clínica</div><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-3 rounded-lg transition-colors bg-secondary-container/50 text-primary font-bold" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-title-sm text-title-sm">Inicio</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="pacientes" href="#"><span class="material-symbols-outlined text-[22px]">groups</span><span class="font-title-sm text-title-sm">Pacientes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="disenador-de-dietas" href="#"><span class="material-symbols-outlined text-[22px]">restaurant_menu</span><span class="font-title-sm text-title-sm">Diseñador de Dietas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-alimentos-tca-hn" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-title-sm text-title-sm">Catálogo de Alimentos TCA-HN</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="agenda-de-citas" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-title-sm text-title-sm">Agenda de Citas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="auditoria-ia" href="#"><span class="material-symbols-outlined text-[22px] text-tertiary-container">auto_awesome</span><span class="font-title-sm text-title-sm">Auditoría IA</span><span class="ml-auto bg-primary-container/20 text-on-primary-fixed-variant text-label-sm font-label-sm px-1.5 py-0.5 rounded-full">PRO</span></a><div class="my-space-xs"></div><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Administración HN</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="facturacion-sar" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-title-sm text-title-sm">Facturación SAR</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="configuracion" href="#"><span class="material-symbols-outlined text-[22px]">settings</span><span class="font-title-sm text-title-sm">Configuración</span></a></nav><div class="p-space-md bg-surface-container-low/40"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-error hover:bg-error-container/20 transition-colors" data-path="cerrar-sesion" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-title-sm text-title-sm font-semibold">Cerrar Sesión</span></a></div></aside><main class="flex flex-col relative w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full pb-safe">
+<!-- CLINICAL HEADER & GREETING -->
+<section class="px-margin pt-space-md pb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Jueves, 24 de Octubre</span>
+</div>
+<div class="flex items-center gap-1.5 px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm font-semibold">InBody BLE Activo</span>
+</div>
+</div>
+<div class="flex flex-col">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Buenos días, Dra. Sofía</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Centro Nutricional Tegucigalpa • 8 citas programadas</p>
+</div>
+</section>
+<!-- QUICK ACCESS DRAWER BANNER -->
+<section class="px-margin py-space-xs">
+<label class="cursor-pointer group flex items-center justify-between p-space-md rounded-xl bg-gradient-to-r from-primary to-secondary text-on-primary shadow-md transition-all active:scale-[0.99]" for="clinical-drawer">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest/15 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">menu_open</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm font-bold truncate">Navegación del Ecosistema</span>
+<span class="font-label-sm text-label-sm text-primary-fixed opacity-90 truncate">Menú lateral con los 7 módulos clínicos</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1 shrink-0">arrow_forward_ios</span>
+</label>
+</section>
+<!-- NEXT IMMEDIATE APPOINTMENT CARD (HERO TICKET) -->
+<section class="px-margin py-space-sm">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-lowest p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between border-none pb-0">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wider uppercase">Próxima Consulta Inmediata</span>
+</div>
+<span class="font-code-data text-code-data bg-error-container text-on-error-container px-2 py-0.5 rounded-full font-bold animate-pulse">En 15 min</span>
+</div>
+<div class="flex items-start gap-space-sm pt-1">
+<div class="relative shrink-0">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="Close-up clinical portrait of a 34-year-old Hispanic male patient wearing a comfortable casual navy shirt, soft natural medical clinic lighting, clear realistic skin textures, gentle smile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAJ0NuKAfU3cFb2OCI9_tH6HnOANJyFUBwA4ZzYQ8lonJEQJVJhQQvz_Q1fVQSOsMyHTyYu055Y54ToFmYwddTQByhgPco0J9FHnFzaW_zgCZ5Nw7uUtmLpF0Zp_GfJ52eeFqVCqyH1Qj9SNyC5yEAyrjWITUQXZVQh3D9T78ifbDYM0plz6cHkrGf_8W5VNmBUHNM6ArI0QvewpAVVYwXDRtiRJ2h4h_Zlr-Uow0L"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-primary-container"></span>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Carlos E. Mendoza</h2>
+<span class="font-code-data text-code-data text-primary font-bold">09:30 AM</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">34 años • Control Déficit + TCA Catracho</span>
+</div>
+</div>
+<!-- STATUS BADGES -->
+<div class="flex flex-wrap gap-space-xs pt-1">
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm">En sala de espera</span>
+</div>
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/60 text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px]">devices_other</span>
+<span class="font-label-sm text-label-sm font-semibold">InBody 270 sincronizado</span>
+</div>
+</div>
+<!-- IN-LINE MACRO PREVIEW -->
+<div class="rounded-lg bg-surface-container-low p-space-sm flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Meta calórica ajustada (Baleada Fit)</span>
+<span class="font-code-data text-code-data font-semibold text-primary">1,850 kcal / día</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden flex">
+<div class="bg-primary-container h-full w-[45%]" title="Proteína"></div>
+<div class="bg-tertiary h-full w-[35%]" title="Carbohidratos"></div>
+<div class="bg-secondary-fixed-dim h-full w-[20%]" title="Grasas"></div>
+</div>
+</div>
+<!-- DIRECT ACTIONS -->
+<div class="grid grid-cols-5 gap-space-xs pt-1">
+<button class="col-span-4 h-11 bg-primary-container text-on-primary-container font-title-sm text-title-sm font-bold rounded-lg flex items-center justify-center gap-space-xs shadow-sm hover:brightness-105 active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">meeting_room</span>
+<span>Pasar a Consulta</span>
+</button>
+<button aria-label="Llamada rápida al paciente" class="col-span-1 h-11 bg-surface-container text-on-surface rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">call</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 2x2 COMPACT METRICS GRID -->
+<section class="px-margin py-space-xs flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Rendimiento de Hoy</span>
+<span class="font-label-sm text-label-sm text-primary">Actualizado 09:12 AM</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Citas Hoy -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary text-[22px]">event_available</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant">2 en espera</span>
+</div>
+<div class="flex flex-col mt-space-sm">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-extrabold leading-none">8</span>
+<span class="font-title-sm text-title-sm text-on-surface mt-1">Citas Hoy</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">6 virtuales • 2 presenciales</span>
+</div>
+</div>
+<!-- Pacientes Activos -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-secondary text-[22px]">diversity_1</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container">TCA-HN</span>
+</div>
+<div class="flex flex-col mt-space-sm">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-extrabold leading-none">42</span>
+<span class="font-title-sm text-title-sm text-on-surface mt-1">Pacientes Activos</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Planes típicos activos</span>
+</div>
+</div>
+<!-- Adherencia Promedio -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary-container text-[22px]">donut_large</span>
+<span class="font-code-data text-label-sm text-primary font-bold">+3.1%</span>
+</div>
+<div class="flex flex-col mt-space-sm">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-extrabold leading-none">94.2%</span>
+<span class="font-title-sm text-title-sm text-on-surface mt-1">Adherencia</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Frijol, huevo, cuajada light</span>
+</div>
+</div>
+<!-- WhatsApp Bot Confirmaciones -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-tertiary-container text-[22px]">smart_toy</span>
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</div>
+<div class="flex flex-col mt-space-sm">
+<span class="font-display-lg-mobile text-display-lg-mobile text-on-surface font-extrabold leading-none">14</span>
+<span class="font-title-sm text-title-sm text-on-surface mt-1">WhatsApp Bot</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Confirmaciones automáticas</span>
+</div>
+</div>
+</div>
+</section>
+<!-- MONITORING & PRIORITARY FOLLOW-UPS -->
+<section class="px-margin py-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">flag</span>
+<h2 class="font-title-md text-title-md text-on-surface">Seguimiento Prioritario</h2>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Ver lista completa</span>
+</div>
+<!-- PATIENT 1 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a young adult Central American woman with tied-back dark hair and a joyful expression, clinic intake setting, natural lighting, wearing a simple olive blouse." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZbkpDs4EUKTfMEvClS_AjJI06vq3kfj_X0WO4vXgMmbmgwxUGS6mOC3PlE47TSFcFlzgK8qCvl-JE7BPCZoBrljAeuWF2b7v1xqoIVEciDetVQZOBPATeFxGOqss_HYbUldIXkuNkua3XnFl5OctTWMfpNSPXhWDKo6AwlX8Ah2yxOEWWnmFC1F-tsCdeMyctXxoiNTpj592byhryweFhf706V_V-MqTh-B2njTnl"/>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Mariana Valladares</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Semana 4 • Plan Baleada Sin Grasa</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-bold">Meta +4.2kg</span>
+</div>
+<div class="grid grid-cols-3 gap-space-xs pt-1">
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Peso</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">64.8 kg</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Grasa Corp.</span>
+<span class="font-code-data text-code-data text-primary font-bold">21.4% (-1.8%)</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Adherencia</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">96%</span>
+</div>
+</div>
+</div>
+<!-- PATIENT 2 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Professional clinical headshot of a middle-aged Honduran man with short trimmed beard, confident, soft ambient sunlight in a modern health clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCmGjiyD06Sxf6Lzmg_XkiBy9HCVSG45N9IwuOcsr5xX2TV9EP5VDuYBkgqlC8bEg9t6IsQyy4F6cL8jV0Zlyp4CTG7J07RL8yLMbmMLOf0yAucOVpsWmBHm6HttUcTS547ySmrwjMyXQFZNYsVOmTPYV_FOzbmIqDXOYlqVz9IlWPjjAsGWGoGvF1kDRQbMl9P4sls7iQl8ktmYphy5_REZvNseiORAFNCH_HTi9o"/>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Lic. Roberto Cálix</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Semana 8 • Control Glucémico</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Revisar Cena</span>
+</div>
+<div class="grid grid-cols-3 gap-space-xs pt-1">
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Peso</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">88.2 kg</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Glucosa Ayuno</span>
+<span class="font-code-data text-code-data text-error font-bold">118 mg/dL</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Adherencia</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">81%</span>
+</div>
+</div>
+</div>
+<!-- PATIENT 3 -->
+<div class="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-title-sm font-bold">
+            GS
+          </div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Gabriela Salinas</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Semana 2 • Transición Catracha</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Excelente</span>
+</div>
+<div class="grid grid-cols-3 gap-space-xs pt-1">
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Peso</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">58.1 kg</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Masa Magra</span>
+<span class="font-code-data text-code-data text-primary font-bold">23.9 kg</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Adherencia</span>
+<span class="font-code-data text-code-data text-on-surface font-bold">98%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- QUICK SHORTCUT STRIP -->
+<section class="px-margin py-space-xs">
+<div class="grid grid-cols-3 gap-space-xs">
+<button class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center justify-center gap-1 active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-primary text-[24px]">person_add</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">Nuevo Paciente</span>
+</button>
+<button class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center justify-center gap-1 active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-tertiary-container text-[24px]">restaurant</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">Diseñar Dieta</span>
+</button>
+<button class="p-space-sm rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center justify-center gap-1 active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-secondary text-[24px]">sync</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">Sinc. InBody</span>
+</button>
+</div>
+</section>
+<!-- EXPANDABLE CLINICAL FLOW & UX DESIGN NOTES -->
+<section class="px-margin pt-space-sm pb-space-lg">
+<details class="group rounded-xl bg-surface-container-low overflow-hidden transition-all duration-300">
+<summary class="list-none p-space-md flex items-center justify-between cursor-pointer select-none">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[20px]">design_services</span>
+<span class="font-title-sm text-title-sm text-on-surface font-bold">📐 Notas de Flujo &amp; Interacción</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-space-md pb-space-md pt-0 flex flex-col gap-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex flex-col gap-1">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">swipe_right</span>
+<span class="font-label-sm text-label-sm font-bold">Apertura Gestual del Drawer</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Apertura inmediata mediante swipe hacia la derecha desde el borde izquierdo del smartphone o toque directo al botón de menú hamburguesa en el navbar.
+          </p>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex flex-col gap-1">
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[16px]">drag_handle</span>
+<span class="font-label-sm text-label-sm font-bold">Bottom-Sheet Dinámica</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Al tocar sobre cualquier paciente o cita, se despliega una hoja inferior nativa que permite reprogramar horario, ajustar calorías o registrar pago SAR sin abandonar la vista activa.
+          </p>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex flex-col gap-1">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[16px]">sync_saved_locally</span>
+<span class="font-label-sm text-label-sm font-bold">Pull-to-Refresh InBody BLE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Gesto de arrastre vertical para forzar el escaneo de impedancia bioeléctrica con la báscula InBody en cabina médica y refrescar métricas de adherencia comunitaria.
+          </p>
+</div>
+</div>
+</details>
+</section>
+</div>
+<script>
+  // Micro-interacción: Feedback táctil al activar llamadas o pasar a consulta
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(15);
+      }
+    });
+  });
+</script></main></body></html>

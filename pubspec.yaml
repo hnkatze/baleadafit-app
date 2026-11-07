@@ -40,6 +40,8 @@ dependencies:
   firebase_core: ^5.1.0
   firebase_auth: ^7.0.1
   json_annotation: ^4.12.0
+  google_fonts: ^6.3.2
+  google_sign_in: ^7.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -63,6 +65,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Brand fonts, bundled so there is no network dependency at runtime and the
+  # widget tests stay hermetic. google_fonts resolves these file names from the
+  # asset manifest instead of downloading them (see lib/core/theme/app_typography.dart).
+  assets:
+    - assets/fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

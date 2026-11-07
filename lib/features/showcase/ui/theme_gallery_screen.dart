@@ -86,7 +86,7 @@ class ThemeGalleryScreen extends StatelessWidget {
           AppCard(
             child: Row(
               children: [
-                Icon(Icons.restaurant_menu, color: AppColors.green600),
+                Icon(Icons.restaurant_menu, color: AppColors.primary),
                 const SizedBox(width: AppDimensions.spaceMd),
                 Expanded(
                   child: Column(
@@ -154,18 +154,19 @@ void _noop() {}
 const List<({String name, Color color})> _swatches = [
   (name: 'primary', color: AppColors.primary),
   (name: 'primaryContainer', color: AppColors.primaryContainer),
-  (name: 'green300', color: AppColors.green300),
-  (name: 'accent', color: AppColors.accent),
-  (name: 'accentContainer', color: AppColors.accentContainer),
-  (name: 'success', color: AppColors.success),
-  (name: 'warning', color: AppColors.warning),
+  (name: 'primaryFixedDim', color: AppColors.primaryFixedDim),
+  (name: 'secondary', color: AppColors.secondary),
+  (name: 'secondaryContainer', color: AppColors.secondaryContainer),
+  (name: 'tertiary', color: AppColors.tertiary),
+  (name: 'tertiaryContainer', color: AppColors.tertiaryContainer),
+  (name: 'surface', color: AppColors.surface),
+  (name: 'surfaceContainerLow', color: AppColors.surfaceContainerLow),
+  (name: 'surfaceContainerHighest', color: AppColors.surfaceContainerHighest),
+  (name: 'onSurface', color: AppColors.onSurface),
+  (name: 'onSurfaceVariant', color: AppColors.onSurfaceVariant),
+  (name: 'outline', color: AppColors.outline),
   (name: 'error', color: AppColors.error),
-  (name: 'info', color: AppColors.info),
-  (name: 'neutral50', color: AppColors.neutral50),
-  (name: 'neutral200', color: AppColors.neutral200),
-  (name: 'neutral500', color: AppColors.neutral500),
-  (name: 'neutral700', color: AppColors.neutral700),
-  (name: 'neutral900', color: AppColors.neutral900),
+  (name: 'inverseSurface', color: AppColors.inverseSurface),
 ];
 
 class _SectionTitle extends StatelessWidget {
@@ -203,7 +204,7 @@ class _PaletteGrid extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: swatch.color,
                     borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                    border: Border.all(color: AppColors.neutral200),
+                    border: Border.all(color: AppColors.outlineVariant),
                   ),
                 ),
                 const SizedBox(height: AppDimensions.spaceXs),
@@ -252,7 +253,7 @@ class _SpacingScale extends StatelessWidget {
                   width: step.value * 4,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: AppColors.green200,
+                    color: AppColors.primaryFixedDim,
                     borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
                   ),
                 ),

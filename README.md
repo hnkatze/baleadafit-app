@@ -127,12 +127,58 @@ Para modelos con `json_serializable`:
 dart run build_runner build --delete-conflicting-outputs
 ```
 
+## Autenticación
+
+El login es por Firebase Auth (correo + contraseña, o Google) y el rol lo
+decide la API, nunca la app: después de iniciar sesión se llama
+`GET /auth/me` con el ID token y la respuesta (`nutricionista`, `paciente` o
+`sin_perfil`) define a dónde navega el router. Sin sesión, cualquier ruta
+distinta de `/login` vuelve al login.
+
+Capas: `features/auth/data` (gateway de Firebase, repositorio, fallos con
+mensaje en español), `features/auth/application` (estado de sesión y reglas de
+redirección) y `features/auth/ui` (pantalla). Los tests no tocan plugins: usan
+`AuthGateway` y un adaptador HTTP falsos.
+
+### Google Sign-In
+
+Los botones y el flujo ya están implementados, pero el proveedor tiene que
+existir en el proyecto de Firebase:
+
+1. Firebase console → Authentication → Sign-in method → habilitar **Google**.
+2. Android: registrar la huella **SHA-1** del keystore de debug y de release
+   (`cd android && ./gradlew signingReport`), y volver a bajar
+   `google-services.json`.
+3. Copiar el **Web client ID** (el OAuth client de tipo web del proyecto) en
+   `config/env.dev.json` como `GOOGLE_SERVER_CLIENT_ID`. Android lo necesita para
+   devolver un `idToken`; ese archivo no se versiona.
+4. iOS: el `REVERSED_CLIENT_ID` ya está registrado como URL scheme en
+   `ios/Runner/Info.plist` (`CFBundleURLTypes`). Sin ese registro, Google
+   Sign-In **mata la app** al inicializar con un `NSInvalidArgumentException`
+   ("missing support for the following URL schemes"). Es un identificador
+   público —viaja dentro de cualquier IPA y no da acceso a nada— así que se
+   versiona para que un clon nuevo no crashee; los archivos que sí llevan
+   llaves (`GoogleService-Info.plist`, `google-services.json`,
+   `firebase_options.dart`) siguen fuera del repo. Si alguna vez cambia el
+   cliente OAuth de iOS, hay que actualizar el scheme en ese mismo archivo.
+
+## Diseños
+
+Las seis pantallas mobile con las que se dibuja la app están en
+`odd/designs/mobile/` (HTML exportado de Stitch, más el design system en
+`stitch-design-system.json`) y las marcas en `odd/designs/brand/`. El documento
+de la feature, con specs y tareas, vive en `odd/tasks/`.
+
 ## Design system
 
 `lib/features/showcase/ui/theme_gallery_screen.dart` renderiza la paleta, la
 escala tipográfica y los componentes base. Se abre desde home en `/showcase` y
 no forma parte del flujo del producto.
 
-Paleta principal: verde `#168648` (acción, 4.57:1 sobre blanco), verde claro
-`#E9F6EE` (contenedores), mango `#F2A63B` (acento), neutros `#F6F9F7` a
-`#1C211E`, y semánticos de éxito, advertencia, error e info.
+Los tokens son los del design system **Clinical Mint Precision** con el que
+están dibujadas las pantallas: primario `#006C49`, contenedor primario
+`#10B981`, superficie `#F9F9FF`, texto `#111C2D`, borde `#6C7A71`, y semánticos
+de error `#BA1A1A`. La tipografía es **Plus Jakarta Sans** (display 800,
+headlines 700/600, body 400) y los números clínicos usan **JetBrains Mono**;
+ambas se empaquetan en `assets/fonts/` para que la app no dependa de la red y
+los tests no descarguen nada.

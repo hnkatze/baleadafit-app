@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#e7eeff", "on-primary-container": "#00422b", "surface-bright": "#f9f9ff", "tertiary-fixed-dim": "#45dfa4", "primary-fixed": "#6ffbbe", "secondary-fixed-dim": "#8bd6b6", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-variant": "#d8e3fb", "primary-fixed-dim": "#4edea3", "primary-container": "#10b981", "on-primary-fixed-variant": "#005236", "outline": "#6c7a71", "inverse-on-surface": "#ecf1ff", "outline-variant": "#bbcabf", "surface-container-lowest": "#ffffff", "surface-tint": "#006c49", "on-error": "#ffffff", "on-tertiary-fixed": "#002114", "error-container": "#ffdad6", "on-tertiary": "#ffffff", "primary": "#006c49", "surface-container-highest": "#d8e3fb", "on-secondary-fixed": "#002116", "background": "#f9f9ff", "on-secondary": "#ffffff", "surface": "#f9f9ff", "on-tertiary-container": "#00422c", "on-primary-fixed": "#002113", "inverse-primary": "#4edea3", "on-surface": "#111c2d", "tertiary": "#006c4b", "surface-dim": "#cfdaf2", "secondary": "#1b6b51", "inverse-surface": "#263143", "error": "#ba1a1a", "secondary-container": "#a6f2d1", "on-secondary-fixed-variant": "#00513b", "surface-container-high": "#dee8ff", "tertiary-container": "#00b982", "on-background": "#111c2d", "secondary-fixed": "#a6f2d1", "on-tertiary-fixed-variant": "#005137", "on-surface-variant": "#3c4a42", "surface-container-low": "#f0f3ff", "on-secondary-container": "#237157", "tertiary-fixed": "#68fcbf" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "space-sm": "0.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1rem", "margin-desktop": "2rem", "space-xl": "2rem" }, fontFamily: { "body-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "code-data": ["JetBrains Mono"] }, fontSize: { "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "0em", fontWeight: "400" }], "title-md": ["16px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "600" }], "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }], "title-sm": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "600" }], "label-lg": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }], "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "body-sm": ["13px", { lineHeight: "18px", letterSpacing: "0.005em", fontWeight: "400" }], "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "display-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "800" }], "code-data": ["13px", { lineHeight: "18px", letterSpacing: "-0.01em", fontWeight: "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}#clinical-drawer:checked ~ #drawer-backdrop{display:block;}#clinical-drawer:checked ~ #drawer-panel{transform:translateX(0);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen relative"><input class="hidden peer" id="clinical-drawer" type="checkbox"/><header class="fixed top-0 inset-x-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><label aria-label="Abrir menú clínico" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer select-none" for="clinical-drawer"><span class="material-symbols-outlined text-[24px]">menu</span></label><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Monogram" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><div class="flex flex-col"><span class="font-title-sm text-title-sm text-primary tracking-tight leading-none">BaleadaFit Pro</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">Diseñador De Dietas</span></div></div></div><div class="flex items-center gap-space-xs"><div class="flex items-center gap-space-xs bg-secondary-container/40 px-space-xs py-0.5 rounded-full"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-secondary-container font-semibold hidden xs:inline">HN-DISPONIBLE</span></div><button class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity peer-checked:block" id="drawer-backdrop"><label class="w-full h-full block cursor-pointer" for="clinical-drawer"></label></div><aside class="fixed top-0 bottom-0 left-0 z-50 w-[290px] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(15,23,42,0.1)] -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe" id="drawer-panel"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-low/60"><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><span class="font-title-md text-title-md text-primary font-bold">BaleadaFit Pro</span></div><label class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-variant cursor-pointer" for="clinical-drawer"><span class="material-symbols-outlined text-[20px]">close</span></label></div><div class="p-space-md mx-space-sm my-space-xs rounded-xl bg-surface-container-low flex items-center gap-space-sm"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-title-sm text-title-sm text-on-surface truncate">Dra. Karla Méndez</span><span class="font-label-sm text-label-sm text-primary font-semibold">Nutrición Clínica • TCA-HN</span></div></div><nav class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-0.5" data-active-classes="bg-secondary-container/50 text-primary font-bold"><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Navegación Clínica</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-title-sm text-title-sm">Inicio</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="pacientes" href="#"><span class="material-symbols-outlined text-[22px]">groups</span><span class="font-title-sm text-title-sm">Pacientes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="disenador-de-dietas" href="#"><span class="material-symbols-outlined text-[22px]">restaurant_menu</span><span class="font-title-sm text-title-sm">Diseñador de Dietas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-alimentos-tca-hn" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-title-sm text-title-sm">Catálogo de Alimentos TCA-HN</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="agenda-de-citas" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-title-sm text-title-sm">Agenda de Citas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="auditoria-ia" href="#"><span class="material-symbols-outlined text-[22px] text-tertiary-container">auto_awesome</span><span class="font-title-sm text-title-sm">Auditoría IA</span><span class="ml-auto bg-primary-container/20 text-on-primary-fixed-variant text-label-sm font-label-sm px-1.5 py-0.5 rounded-full">PRO</span></a><div class="my-space-xs"></div><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Administración HN</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="facturacion-sar" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-title-sm text-title-sm">Facturación SAR</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="configuracion" href="#"><span class="material-symbols-outlined text-[22px]">settings</span><span class="font-title-sm text-title-sm">Configuración</span></a></nav><div class="p-space-md bg-surface-container-low/40"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-error hover:bg-error-container/20 transition-colors" data-path="cerrar-sesion" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-title-sm text-title-sm font-semibold">Cerrar Sesión</span></a></div></aside><main class="flex flex-col relative w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full pb-32">
+<!-- Top Patient & Prescription Overview -->
+<section class="px-margin pt-space-sm pb-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold text-headline-sm">
+            CM
+          </div>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-primary-container ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate">Carlos Mendoza</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">34a</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Obj: Hipertrofia • Protocolo TCA-HN Catracho</p>
+</div>
+</div>
+<button class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary hover:bg-surface-variant transition-colors" title="Cambiar paciente">
+<span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+</button>
+</div>
+<!-- Day selector horizontal scrollable pills -->
+<div class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar -mx-margin px-margin" id="day-selector">
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-primary text-on-primary shadow-sm" data-day="Lun">Lun 14</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Mar">Mar 15</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Mie">Mié 16</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Jue">Jue 17</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Vie">Vie 18</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Sab">Sáb 19</button>
+<button class="day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" data-day="Dom">Dom 20</button>
+</div>
+</section>
+<!-- Compact Macro Monitor Header Card -->
+<section class="px-margin mb-space-md">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">bolt</span>
+<span class="font-title-sm text-title-sm text-on-surface">Meta Calórica Diaria</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">1,800</span>
+<span class="font-label-lg text-label-lg text-on-surface-variant">/ 2,250 kcal</span>
+</div>
+</div>
+<!-- Linear progress bar -->
+<div class="w-full h-2.5 bg-surface-container rounded-full overflow-hidden flex">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 80%;"></div>
+</div>
+<!-- Macro breakdown mini pills -->
+<div class="grid grid-cols-3 gap-2 pt-1">
+<div class="bg-surface-container-low rounded-lg p-2 flex flex-col items-center justify-center">
+<div class="flex items-center gap-1 mb-0.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Proteína</span>
+</div>
+<span class="font-code-data text-code-data font-bold text-on-surface">165g <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">/ 175g</span></span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2 flex flex-col items-center justify-center">
+<div class="flex items-center gap-1 mb-0.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Carbos</span>
+</div>
+<span class="font-code-data text-code-data font-bold text-on-surface">240g <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">/ 260g</span></span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2 flex flex-col items-center justify-center">
+<div class="flex items-center gap-1 mb-0.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Grasas</span>
+</div>
+<span class="font-code-data text-code-data font-bold text-on-surface">62g <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">/ 70g</span></span>
+</div>
+</div>
+</div>
+</section>
+<!-- Meal Accordion / Cards List -->
+<section class="px-margin flex flex-col gap-space-md">
+<!-- Desayuno Clínico -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm transition-all" id="card-desayuno">
+<div class="p-space-md flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">sunny</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface">Desayuno Clínico</h2>
+<span class="bg-secondary-container px-2 py-0.5 rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">TCA-HN 01</span>
+</div>
+<p class="font-code-data text-code-data text-primary font-bold">490 kcal • 34g P • 52g C • 16g G</p>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container" onclick="toggleDetails('desayuno-content', this)">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-200">expand_less</span>
+</button>
+</div>
+<div class="relative w-full h-32 rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A clean, appetizing, clinical overhead food photography shot of a healthy reformulated Honduran baleada on a handcrafted ceramic plate with sliced fresh Hass avocado, warm comal whole wheat tortilla, and fluffy scrambled egg whites. Soft morning natural light, clinical SaaS presentation style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4JlCg9uWrIYNelzJ0Yaic9b_Nt1yzg28lKReZtD-0FkQ7PGre4hhtbMjQE65JdhwirT7uVWlNWW5hj_-FP9OE6naz16epBtG1hXKrpMg6xmJe87GDf4u0c7d1zQAFTMZKQNppjzz0jGdD16-oM-qjo1LPSpY-Npdl81rm8hll9q6tJTI6k_FKvreuzuxiUy-2rqcuMv-9l1D5JbQPyBpVU8MGiuLwu22l1H2MRI0N"/>
+<div class="absolute bottom-2 left-2 bg-inverse-surface/80 backdrop-blur-md px-2.5 py-1 rounded-md text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-fixed">verified</span>
+            Baleada Tradicional Optimizada
+          </div>
+</div>
+<!-- Ingredients List -->
+<div class="flex flex-col gap-2" id="desayuno-content">
+<ul class="flex flex-col gap-1.5">
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">grain</span>
+<span class="text-on-surface">Tortilla integral de comal artesanal</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">1 ud (60g)</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">soup_kitchen</span>
+<span class="text-on-surface">Frijoles rojos machacados sin manteca</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">1/2 taza (90g)</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">egg</span>
+<span class="text-on-surface">Claras de huevo revueltas con tomate</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">3 claras (100g)</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">nutrition</span>
+<span class="text-on-surface">Cuajada descremada pasteurizada HN</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">30g</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">eco</span>
+<span class="text-on-surface">Aguacate Hass fresco</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">40g</span>
+</li>
+</ul>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors" onclick="openSubstitutionModal('Desayuno', 'Cuajada descremada pasteurizada HN')">
+<span class="material-symbols-outlined text-[18px]">find_replace</span>
+              Sustituir ingrediente
+            </button>
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface" title="Ajuste gramaje manual">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Almuerzo Metabólico -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm transition-all" id="card-almuerzo">
+<div class="p-space-md flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">lunch_dining</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface">Almuerzo Metabólico</h2>
+<span class="bg-secondary-container px-2 py-0.5 rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">TCA-HN 04</span>
+</div>
+<p class="font-code-data text-code-data text-primary font-bold">700 kcal • 56g P • 82g C • 18g G</p>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container" onclick="toggleDetails('almuerzo-content', this)">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-200">expand_less</span>
+</button>
+</div>
+<div class="relative w-full h-32 rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A delicious, high-protein Honduran traditional lunch plate viewed at 45 degrees. Sliced grilled achiote chicken breast alongside seasoned casamiento rice and black beans cooked oil-free, vivid crisp Honduran chismol salsa, and golden baked plantain strips on a white matte clinical dishware." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4uDuj4FATORJhEECpQfIBBzVct0Ib3IbNQF9wPWB01gAVGwKt0VPP0GceHVhKnDTUJ_y1wtvWcI7l5VAY7yAWXd6e2NpV77W8lYMiRFVMxES6-jMBtPGAYO04E-2WeGWSK6AkiWrrHXEl58tpKlj5URR2MZeMuAZgAjVSOdzyliHj2a6hIqs0pQ0YPRFVqD6sUvR8u9n27Ip62KTrSknZELj7YteOHV6Iw5NcG4vX"/>
+<div class="absolute bottom-2 left-2 bg-inverse-surface/80 backdrop-blur-md px-2.5 py-1 rounded-md text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-fixed">restaurant</span>
+            Plato Típico Catracho Clínico
+          </div>
+</div>
+<div class="flex flex-col gap-2" id="almuerzo-content">
+<ul class="flex flex-col gap-1.5">
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">skillet</span>
+<span class="text-on-surface">Pechuga asada macerada con achiote</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">180g</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">rice_bowl</span>
+<span class="text-on-surface">Casamiento sin manteca (arroz + frijol)</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">1 cup (160g)</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">local_florist</span>
+<span class="text-on-surface">Chismol fresco (tomate, cebolla, cilantro, limón)</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">100g</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">bakery_dining</span>
+<span class="text-on-surface">Tajadas de plátano verde horneadas</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">65g</span>
+</li>
+</ul>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-primary text-on-primary font-title-sm text-title-sm flex items-center justify-center gap-1.5 hover:bg-secondary transition-colors shadow-sm" onclick="optimizePortionsToast()">
+<span class="material-symbols-outlined text-[18px]">auto_fix_high</span>
+              Optimizar porciones
+            </button>
+<button class="p-2 rounded-lg bg-surface-container text-primary hover:bg-surface-variant" onclick="openSubstitutionModal('Almuerzo', 'Pechuga con achiote')" title="Sustituir ingredientes">
+<span class="material-symbols-outlined text-[18px]">swap_calls</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Merienda & Cena Ligera Collapsible Units -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">coffee</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface">Merienda de la Tarde</h2>
+<p class="font-code-data text-code-data text-primary font-bold">220 kcal • 14g P • 24g C • 7g G</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded-md">16:30 hrs</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface">Batido de Pinol Proteico HN</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pinol de maíz tostado + Whey Isolate + leche almendra</span>
+</div>
+<button class="text-primary hover:text-secondary p-1" onclick="openSubstitutionModal('Merienda', 'Pinol Proteico')">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</article>
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm p-space-md flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">bedtime</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface">Cena Ligera Reparadora</h2>
+<span class="bg-secondary-container px-2 py-0.5 rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">TCA-HN 08</span>
+</div>
+<p class="font-code-data text-code-data text-primary font-bold">390 kcal • 26g P • 44g C • 12g G</p>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container" onclick="toggleDetails('cena-content', this)">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-200">expand_more</span>
+</button>
+</div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Traditional hearty Honduran black bean and tender squash broth served in a rustic clay bowl garnished with fresh cilantro and cubed white farm cheese. Clean studio lighting, healthy nutrition photography style, top-down view." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHChlHCjFQc6oYQc4l6Kc18qLadTSSeIIE6Eel8ab9AgDLX30QAqCiuCHcaDg4qqYW4WAo4cDLpyfUxJBAJB9TPYxjATxlazhS1q5wLx6NNl2eIlkFef8tB-oHZihXlxJ-Hw3I7BcFotnUWkPSliyl-aEUDUPVYap-HVLNO94ctZZlsoz-O1zv36FyUmR4Mckgjb65nmEypjUmTTaxslRCf-O_7-QoW-hkj8Zy2cCp"/>
+<div class="absolute bottom-2 left-2 bg-inverse-surface/80 backdrop-blur-md px-2.5 py-1 rounded-md text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-fixed">soup_kitchen</span>
+          Sopa de frijoles con ayote tierno y queso fresco
+        </div>
+</div>
+<div class="hidden flex-col gap-2" id="cena-content">
+<ul class="flex flex-col gap-1.5">
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface">Caldo de frijol colado casero (sin tocino)</span>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">250 ml</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface">Ayote tierno picado en cubos</span>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">100g</span>
+</li>
+<li class="flex items-center justify-between text-body-sm font-body-sm p-1.5 rounded-lg bg-surface-container-low">
+<span class="text-on-surface">Queso fresco artesanal Olanchano</span>
+<span class="font-code-data text-code-data text-on-surface-variant font-medium">45g</span>
+</li>
+</ul>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-variant text-primary font-title-sm text-title-sm flex items-center justify-center gap-1.5 transition-colors" onclick="openSubstitutionModal('Cena', 'Queso fresco Olanchano')">
+<span class="material-symbols-outlined text-[18px]">find_replace</span>
+            Sustituir ingredientes
+          </button>
+</div>
+</div>
+</article>
+<!-- Panel Técnico de Notas de Interacción -->
+<div class="bg-surface-container-high rounded-xl p-space-md flex flex-col gap-2">
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined text-[20px] text-tertiary-container animate-pulse">offline_bolt</span>
+<span class="font-title-sm text-title-sm uppercase tracking-wide">NOTAS DE INTERACCIÓN CLÍNICA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        ⚡ <strong>Modal bottom-sheet:</strong> al pulsar ‘Sustituir’ se realiza consulta en tiempo real a la tabla bromatológica nacional <strong>TCA-HN</strong>.
+      </p>
+<div class="grid grid-cols-1 gap-1.5 text-label-sm font-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">sync_alt</span>
+<span>Cálculo reactivo de macronutrientes por WebSocket en vivo</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">drag_indicator</span>
+<span>Drag-and-drop y reordenamiento háptico de alimentos</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Sticky Bottom Quick Action Bar -->
+<div class="fixed bottom-0 inset-x-0 z-30 bg-surface/95 backdrop-blur-md px-margin py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] pb-safe">
+<button class="w-full h-12 bg-primary-container text-on-primary-container font-title-md text-title-md font-bold rounded-xl flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform" onclick="sendWhatsappPrescription()">
+<span class="material-symbols-outlined text-[22px]">send</span>
+<span>Guardar y Enviar a WhatsApp</span>
+<span class="bg-on-primary-container/15 px-2 py-0.5 rounded-full text-label-sm font-label-sm">1-TAP</span>
+</button>
+</div>
+<!-- Bottom Sheet Simulation Modal (TCA-HN Replacement) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden flex-col justify-end transition-opacity" id="tca-sheet">
+<div class="bg-surface-container-lowest rounded-t-2xl p-space-md max-h-[751px] overflow-y-auto flex flex-col gap-space-md shadow-2xl">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">Tabla TCA-HN • Equivalentes</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="sheet-title">Sustituir Alimento</h3>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-variant" onclick="closeSubstitutionModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Quick Search input within the sheet -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-low text-on-surface text-body-md font-body-md pl-10 pr-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Buscar sustituto en TCA-HN..." type="text"/>
+</div>
+<!-- Substitution Suggestions -->
+<div class="flex flex-col gap-2">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Equivalentes bioidénticos calculados</span>
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-secondary-container/30 cursor-pointer transition-colors flex items-center justify-between" onclick="applySubstitution('Queso Ricotta Descremado (45g)')">
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Queso Ricotta o Requesón Catracho</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 45g • Δ -15 kcal</span>
+</div>
+<span class="font-code-data text-code-data text-primary font-bold">+7g Prot</span>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-secondary-container/30 cursor-pointer transition-colors flex items-center justify-between" onclick="applySubstitution('Huevo duro picado (1 ud)')">
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Huevo de campo sancochado</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 1 ud (50g) • Δ +8 kcal</span>
+</div>
+<span class="font-code-data text-code-data text-primary font-bold">+6g Prot</span>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-low hover:bg-secondary-container/30 cursor-pointer transition-colors flex items-center justify-between" onclick="applySubstitution('Cuajada seca magra (25g)')">
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface font-semibold">Cuajada seca magra de Juticalpa</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 25g • Equivalencia exacta</span>
+</div>
+<span class="font-code-data text-code-data text-on-surface font-medium">±0g Prot</span>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full py-3 rounded-lg bg-surface-container text-on-surface font-title-sm text-title-sm" onclick="closeSubstitutionModal()">
+          Cancelar y regresar
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification element -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full font-title-sm text-title-sm shadow-xl flex items-center gap-2 transition-all opacity-0 pointer-events-none -translate-y-4" id="toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="toast-icon">check_circle</span>
+<span id="toast-msg">Mensaje clínico</span>
+</div>
+</div>
+<script>
+  function toggleDetails(id, btn) {
+    const el = document.getElementById(id);
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (el.classList.contains('hidden')) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      if (icon) icon.textContent = 'expand_less';
+    } else {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+      if (icon) icon.textContent = 'expand_more';
+    }
+  }
+
+  function showToast(message, icon = 'check_circle') {
+    const toast = document.getElementById('toast');
+    const msg = document.getElementById('toast-msg');
+    const ico = document.getElementById('toast-icon');
+    msg.textContent = message;
+    ico.textContent = icon;
+    toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 2800);
+  }
+
+  function openSubstitutionModal(meal, ingredient) {
+    const sheet = document.getElementById('tca-sheet');
+    const title = document.getElementById('sheet-title');
+    title.textContent = `Sustituir: ${ingredient}`;
+    sheet.classList.remove('hidden');
+    sheet.classList.add('flex');
+  }
+
+  function closeSubstitutionModal() {
+    const sheet = document.getElementById('tca-sheet');
+    sheet.classList.add('hidden');
+    sheet.classList.remove('flex');
+  }
+
+  function applySubstitution(item) {
+    closeSubstitutionModal();
+    showToast(`Aplicado sustituto TCA-HN: ${item}`);
+  }
+
+  function optimizePortionsToast() {
+    showToast('Porciones recalculadas con éxito a 700 kcal', 'auto_fix_high');
+  }
+
+  function sendWhatsappPrescription() {
+    showToast('Plan diario sincronizado y enviado a WhatsApp (+504 9876-5432)', 'send');
+  }
+
+  // Day Selector Pill Interactions
+  document.querySelectorAll('.day-chip').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.day-chip').forEach(c => {
+        c.className = 'day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container';
+      });
+      this.className = 'day-chip shrink-0 px-4 py-2 rounded-full font-title-sm text-title-sm transition-all bg-primary text-on-primary shadow-sm';
+      showToast(`Cargada minuta para ${this.dataset.day}`, 'calendar_today');
+    });
+  });
+</script></main></body></html>

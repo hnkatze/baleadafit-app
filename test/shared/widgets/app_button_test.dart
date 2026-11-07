@@ -1,3 +1,4 @@
+import 'package:baleadafit/core/theme/app_colors.dart';
 import 'package:baleadafit/shared/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,5 +55,44 @@ void main() {
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
 
     expect(button.onPressed, isNull);
+  });
+
+  testWidgets('paints the tonal variant with the soft mint surface', (
+    tester,
+  ) async {
+    await pumpButton(
+      tester,
+      AppButton(
+        label: 'Ingreso rápido',
+        variant: AppButtonVariant.tonal,
+        onPressed: () {},
+      ),
+    );
+
+    final button = tester.widget<FilledButton>(find.byType(FilledButton));
+    const states = <WidgetState>{};
+
+    expect(
+      button.style?.backgroundColor?.resolve(states),
+      AppColors.secondaryContainer,
+    );
+    expect(
+      button.style?.foregroundColor?.resolve(states),
+      AppColors.onSecondaryContainer,
+    );
+  });
+
+  testWidgets('paints the secondary variant as an outline', (tester) async {
+    await pumpButton(
+      tester,
+      AppButton(
+        label: 'Continuar con Google',
+        variant: AppButtonVariant.secondary,
+        onPressed: () {},
+      ),
+    );
+
+    expect(find.byType(OutlinedButton), findsOneWidget);
+    expect(find.byType(FilledButton), findsNothing);
   });
 }

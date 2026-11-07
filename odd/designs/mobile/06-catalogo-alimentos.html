@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#e7eeff", "on-primary-container": "#00422b", "surface-bright": "#f9f9ff", "tertiary-fixed-dim": "#45dfa4", "primary-fixed": "#6ffbbe", "secondary-fixed-dim": "#8bd6b6", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-variant": "#d8e3fb", "primary-fixed-dim": "#4edea3", "primary-container": "#10b981", "on-primary-fixed-variant": "#005236", "outline": "#6c7a71", "inverse-on-surface": "#ecf1ff", "outline-variant": "#bbcabf", "surface-container-lowest": "#ffffff", "surface-tint": "#006c49", "on-error": "#ffffff", "on-tertiary-fixed": "#002114", "error-container": "#ffdad6", "on-tertiary": "#ffffff", "primary": "#006c49", "surface-container-highest": "#d8e3fb", "on-secondary-fixed": "#002116", "background": "#f9f9ff", "on-secondary": "#ffffff", "surface": "#f9f9ff", "on-tertiary-container": "#00422c", "on-primary-fixed": "#002113", "inverse-primary": "#4edea3", "on-surface": "#111c2d", "tertiary": "#006c4b", "surface-dim": "#cfdaf2", "secondary": "#1b6b51", "inverse-surface": "#263143", "error": "#ba1a1a", "secondary-container": "#a6f2d1", "on-secondary-fixed-variant": "#00513b", "surface-container-high": "#dee8ff", "tertiary-container": "#00b982", "on-background": "#111c2d", "secondary-fixed": "#a6f2d1", "on-tertiary-fixed-variant": "#005137", "on-surface-variant": "#3c4a42", "surface-container-low": "#f0f3ff", "on-secondary-container": "#237157", "tertiary-fixed": "#68fcbf" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1rem", "space-md": "1rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "space-sm": "0.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1rem", "margin-desktop": "2rem", "space-xl": "2rem" }, fontFamily: { "body-lg": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "title-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "code-data": ["JetBrains Mono"] }, fontSize: { "body-lg": ["16px", { lineHeight: "26px", letterSpacing: "0em", fontWeight: "400" }], "title-md": ["16px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "600" }], "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }], "title-sm": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "600" }], "label-lg": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }], "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }], "body-md": ["14px", { lineHeight: "22px", letterSpacing: "0em", fontWeight: "400" }], "body-sm": ["13px", { lineHeight: "18px", letterSpacing: "0.005em", fontWeight: "400" }], "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }], "display-lg-mobile": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "800" }], "code-data": ["13px", { lineHeight: "18px", letterSpacing: "-0.01em", fontWeight: "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f9f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}#clinical-drawer:checked ~ #drawer-backdrop{display:block;}#clinical-drawer:checked ~ #drawer-panel{transform:translateX(0);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen relative"><input class="hidden peer" id="clinical-drawer" type="checkbox"/><header class="fixed top-0 inset-x-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><label aria-label="Abrir menú clínico" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer select-none" for="clinical-drawer"><span class="material-symbols-outlined text-[24px]">menu</span></label><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Monogram" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><div class="flex flex-col"><span class="font-title-sm text-title-sm text-primary tracking-tight leading-none">BaleadaFit Pro</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">Catálogo De Alimentos Tca Hn</span></div></div></div><div class="flex items-center gap-space-xs"><div class="flex items-center gap-space-xs bg-secondary-container/40 px-space-xs py-0.5 rounded-full"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-secondary-container font-semibold hidden xs:inline">HN-DISPONIBLE</span></div><button class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity peer-checked:block" id="drawer-backdrop"><label class="w-full h-full block cursor-pointer" for="clinical-drawer"></label></div><aside class="fixed top-0 bottom-0 left-0 z-50 w-[290px] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(15,23,42,0.1)] -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe" id="drawer-panel"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-low/60"><div class="flex items-center gap-space-xs"><img alt="BaleadaFit Pro Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X5f05qzMKkmVG5ZNT6dXQ-_YDa_FBt_UQA8JzBfPm4QsAVN2aLflRGTyJnj1Nld07XbySK5QoF16tYxF9v_A9xKvMCN6Ot6CMcMkViEpDAFL1wcG8kaQYP3X_9yEI-i-yHUo2yoqabfB_ATIc0wazra5Ju7qaPfVzYGMD4lKvIMHfO36B3NZX-ZT9Mw6fCtEefnFtv7YgoB8r5C283pbKW3Yo5vBatmCGpVlJAVTUPTQ"/><span class="font-title-md text-title-md text-primary font-bold">BaleadaFit Pro</span></div><label class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-variant cursor-pointer" for="clinical-drawer"><span class="material-symbols-outlined text-[20px]">close</span></label></div><div class="p-space-md mx-space-sm my-space-xs rounded-xl bg-surface-container-low flex items-center gap-space-sm"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">stethoscope</span></div><div class="flex flex-col min-w-0"><span class="font-title-sm text-title-sm text-on-surface truncate">Dra. Karla Méndez</span><span class="font-label-sm text-label-sm text-primary font-semibold">Nutrición Clínica • TCA-HN</span></div></div><nav class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-0.5" data-active-classes="bg-secondary-container/50 text-primary font-bold"><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Navegación Clínica</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-title-sm text-title-sm">Inicio</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="pacientes" href="#"><span class="material-symbols-outlined text-[22px]">groups</span><span class="font-title-sm text-title-sm">Pacientes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="disenador-de-dietas" href="#"><span class="material-symbols-outlined text-[22px]">restaurant_menu</span><span class="font-title-sm text-title-sm">Diseñador de Dietas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="catalogo-de-alimentos-tca-hn" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-title-sm text-title-sm">Catálogo de Alimentos TCA-HN</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="agenda-de-citas" href="#"><span class="material-symbols-outlined text-[22px]">calendar_today</span><span class="font-title-sm text-title-sm">Agenda de Citas</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="auditoria-ia" href="#"><span class="material-symbols-outlined text-[22px] text-tertiary-container">auto_awesome</span><span class="font-title-sm text-title-sm">Auditoría IA</span><span class="ml-auto bg-primary-container/20 text-on-primary-fixed-variant text-label-sm font-label-sm px-1.5 py-0.5 rounded-full">PRO</span></a><div class="my-space-xs"></div><div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Administración HN</div><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="facturacion-sar" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-title-sm text-title-sm">Facturación SAR</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="configuracion" href="#"><span class="material-symbols-outlined text-[22px]">settings</span><span class="font-title-sm text-title-sm">Configuración</span></a></nav><div class="p-space-md bg-surface-container-low/40"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-error hover:bg-error-container/20 transition-colors" data-path="cerrar-sesion" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span class="font-title-sm text-title-sm font-semibold">Cerrar Sesión</span></a></div></aside><main class="flex flex-col relative w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full pb-safe">
+<!-- Certification Banner Header -->
+<section class="px-margin pt-space-sm pb-space-xs">
+<div class="bg-surface-container-high rounded-xl p-space-sm flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-on-primary text-[18px]">verified</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider truncate">INCAP &amp; TCA-HN v3.4</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">480+ perfiles bromatológicos analizados</span>
+</div>
+</div>
+<div class="bg-primary-container/20 text-on-primary-fixed-variant px-space-xs py-0.5 rounded-full flex items-center gap-1 shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm font-bold">Oficial HN</span>
+</div>
+</div>
+</section>
+<!-- Quick Search & Local Filters -->
+<section class="px-margin pt-space-xs pb-space-sm flex flex-col gap-space-sm">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full h-11 pl-10 pr-10 bg-surface-container-lowest rounded-lg shadow-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:bg-surface-container-low transition-colors" id="food-search-input" placeholder="Buscar alimento autóctono (ej. cuajada, frijol de seda)..." type="search"/>
+<button aria-label="Filtro bromatológico" class="absolute inset-y-0 right-0 pr-3 flex items-center text-primary hover:text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+<!-- Category Pills (Horizontal Scroll) -->
+<div class="flex items-center gap-space-xs overflow-x-auto py-1 scroll-smooth no-scrollbar">
+<button class="shrink-0 bg-primary text-on-primary px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-transform active:scale-95 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+<span>Todos</span>
+</button>
+<button class="shrink-0 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-colors active:scale-95">
+        Lácteos Artesanales
+      </button>
+<button class="shrink-0 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-colors active:scale-95">
+        Granos &amp; Leguminosas
+      </button>
+<button class="shrink-0 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-colors active:scale-95">
+        Carnes &amp; Pescados
+      </button>
+<button class="shrink-0 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-colors active:scale-95">
+        Harinas &amp; Masas
+      </button>
+<button class="shrink-0 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high px-3.5 py-1.5 rounded-full font-label-lg text-label-lg shadow-sm transition-colors active:scale-95">
+        Frutas Locales
+      </button>
+</div>
+</section>
+<!-- Interactive Visual AI Exchange Card -->
+<section class="px-margin py-space-xs">
+<div class="bg-gradient-to-br from-surface-container-high via-surface-container-low to-surface-container-lowest rounded-xl p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[17px]">auto_fix_high</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">Motor de Intercambio Clínico IA</span>
+</div>
+<span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-semibold">TCA-Optimizador</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Sustitución calórica recomendada para perfiles con requerimiento hipolipídico:
+      </p>
+<!-- Comparison Split Grid -->
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<!-- Item A (Tradicional) -->
+<div class="bg-surface-container-lowest/80 rounded-lg p-space-xs flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-error font-semibold">Habitual</span>
+<span class="font-code-data text-code-data text-on-surface-variant text-[11px]">30g</span>
+</div>
+<span class="font-title-sm text-title-sm text-on-surface font-semibold truncate">Mantequilla Crema</span>
+<div class="flex items-baseline justify-between text-on-surface-variant pt-1">
+<span class="font-code-data text-code-data font-bold text-on-surface">122 kcal</span>
+<span class="font-code-data text-code-data text-error text-[11px]">13g Grasas</span>
+</div>
+</div>
+<!-- Item B (Sustituto Clínico) -->
+<div class="bg-primary/5 rounded-lg p-space-xs flex flex-col gap-1 shadow-sm relative">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary font-bold">Sustituto Óptimo</span>
+<span class="font-code-data text-code-data text-on-surface-variant text-[11px]">45g</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-semibold truncate">Requesón Desgrasado</span>
+<div class="flex items-baseline justify-between text-on-surface pt-1">
+<span class="font-code-data text-code-data font-bold text-primary">48 kcal</span>
+<span class="font-code-data text-code-data text-primary text-[11px]">7.2g Prot</span>
+</div>
+</div>
+</div>
+<button class="w-full bg-surface-container-lowest hover:bg-surface-container text-primary font-title-sm text-title-sm py-2 px-space-sm rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-colors active:scale-[0.99]" onclick="triggerToast('Reemplazo aplicado al plan actual')">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+<span>Aplicar intercambio 1-Tap (-74 kcal lípidos)</span>
+</button>
+</div>
+</section>
+<!-- Clinical Food Item Roster -->
+<section class="px-margin pt-space-sm pb-space-lg flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">Alimentos Registrados (5 de 486)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tap tarjeta: Micronutrientes</span>
+</div>
+<!-- Food Item 1: Frijoles Rojos de Seda -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs active:bg-surface-container-low transition-colors cursor-pointer" onclick="openNutrientModal('Frijoles Rojos de Seda Cocidos', '1/2 taza (130g)', '110', '7g', '20g', '0.5g', '3.8mg', '180mg', '1.2mg', '8.4g')">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex gap-space-sm items-center min-w-0">
+<img alt="Frijoles de Seda" class="w-14 h-14 rounded-lg object-cover bg-surface-container shadow-inner shrink-0" data-alt="Close up warm appetizing presentation of authentic cooked Honduran red silk beans frijoles de seda in a rustic ceramic clay bowl, soft natural diffused daylight, clinical food macro photography, crisp depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe6E-pyVGw2xHY7HHmjGJIaOy1aX4plmKj6q2SANUllzFO1-lYfYGJ3-Rroii1YyWw9JUttbWlQdI-8H_gdEqvNc5G6QLHvyHfi9AVFnbQdDjqxm4x0eIZ2Qau7TM_hixl0X8b2nILv4gyLwrHJM0SMtoiHowo_ZZPzA5cXrBvxDvc5a0uEJDK2gI52GyGHAAfe9CGKt86Ij9kuRElXGfnRWZJL7eGfIf_y2-Z83XA"/>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold truncate">Frijoles Rojos de Seda Cocidos</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 1/2 taza (130g)</span>
+<div class="pt-1 flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full font-semibold">Almidón resistente</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">Leguminosa</span>
+</div>
+</div>
+</div>
+<div class="text-right shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold leading-tight block">110</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">kcal</span>
+</div>
+</div>
+<!-- Macro Split Bars & Action -->
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-code-data text-code-data text-[12px]">
+<span class="text-primary font-semibold">P: 7g</span>
+<span class="text-[#2563eb] font-semibold">C: 20g</span>
+<span class="text-[#d97706] font-semibold">G: 0.5g</span>
+<span class="text-on-surface font-semibold">Fibra: 8.4g</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full flex overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 25%"></div>
+<div class="bg-[#3B82F6] h-full" style="width: 70%"></div>
+<div class="bg-[#F59E0B] h-full" style="width: 5%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">eco</span>
+          TCA-HN Id: <b>LEG-014</b>
+</span>
+<button class="bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition-all" onclick="event.stopPropagation(); triggerToast('Añadido 130g Frijoles a Minuta');">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Añadir a Minuta</span>
+</button>
+</div>
+</article>
+<!-- Food Item 2: Cuajada Descremada Artesanal -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs active:bg-surface-container-low transition-colors cursor-pointer" onclick="openNutrientModal('Cuajada Descremada Artesanal (Olancho)', '30g', '65', '6g', '1g', '4g', '180mg', '190mg', '0.9mg', '0g')">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex gap-space-sm items-center min-w-0">
+<img alt="Cuajada Artesanal" class="w-14 h-14 rounded-lg object-cover bg-surface-container shadow-inner shrink-0" data-alt="Overhead photo of fresh Honduran artisanal curd cuajada blanca from Olancho sliced neatly on a clean ceramic clinical kitchen surface, neutral modern lighting, professional editorial gastronomy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZeeY0wmi_PMDprDM0-3d53kbFLZ5M00lzauhm6NpekMIPDcUtMMwsD8qUv3zzDdXXBIKRACgfFkKpLE2IoK0SS59X8wpPjXPQIccPf6iszmsAoi6AkqEULMSf8Q1qTjNbwpohDxA8wX4flc6n8MUF4ccw5OhQs0Tku3otx5z_4GmDWXI94H2xQY8H9KN-Xvy6Fs1fTHSO4A1mNbtP8v_hXSm42p0eRZfpcialHiQv"/>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold truncate">Cuajada Descremada (Olancho)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 30g (1 lasca delgada)</span>
+<div class="pt-1 flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full font-semibold">Calcio biodisponible</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">Lácteo Criollo</span>
+</div>
+</div>
+</div>
+<div class="text-right shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold leading-tight block">65</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">kcal</span>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-code-data text-code-data text-[12px]">
+<span class="text-primary font-semibold">P: 6g</span>
+<span class="text-[#2563eb] font-semibold">C: 1g</span>
+<span class="text-[#d97706] font-semibold">G: 4g</span>
+<span class="text-on-surface font-semibold">Ca: 180mg</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full flex overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 48%"></div>
+<div class="bg-[#3B82F6] h-full" style="width: 8%"></div>
+<div class="bg-[#F59E0B] h-full" style="width: 44%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">verified</span>
+          TCA-HN Id: <b>LAC-008</b>
+</span>
+<button class="bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition-all" onclick="event.stopPropagation(); triggerToast('Añadido 30g Cuajada a Minuta');">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Añadir a Minuta</span>
+</button>
+</div>
+</article>
+<!-- Food Item 3: Tortilla de Maíz Nixtamalizado -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs active:bg-surface-container-low transition-colors cursor-pointer" onclick="openNutrientModal('Tortilla de Maíz Nixtamalizado al Comal', '1 unidad (30g)', '60', '1.5g', '13g', '0.5g', '0.5mg', '45mg', '0.4mg', '1.8g')">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex gap-space-sm items-center min-w-0">
+<img alt="Tortilla de Maiz" class="w-14 h-14 rounded-lg object-cover bg-surface-container shadow-inner shrink-0" data-alt="Traditional fresh warm corn tortilla inflating on a hot Honduran clay comal griddle, golden yellow nixtamalized texture, warm ambient kitchen glow, cinematic food close-up." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy5c5UEg6u765Coxc2S4pfrvRDmhw9A6KoNrbcfdVVKU5W5M-Lah4qK-5Dd1fd-q-RvGbdrnNSx1MHxte921XzrqrAJmMXXAyFr9iXm58vbTBJj8fWuG8M_JgnV2VWCVafZHSyM3aJXIdbLL6AdyLfrESZ78a9wR36g3Zth3cst6asB1GBLbX0kD6G1RkjzAxxLm1ObtP4zwiN4XJDke63bI8uJnxqMiqw4UUDV4hV"/>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold truncate">Tortilla de Maíz al Comal</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 1 unidad (30g)</span>
+<div class="pt-1 flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full font-semibold">Índice glucémico controlado</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">Nixtamal</span>
+</div>
+</div>
+</div>
+<div class="text-right shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold leading-tight block">60</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">kcal</span>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-code-data text-code-data text-[12px]">
+<span class="text-primary font-semibold">P: 1.5g</span>
+<span class="text-[#2563eb] font-semibold">C: 13g</span>
+<span class="text-[#d97706] font-semibold">G: 0.5g</span>
+<span class="text-on-surface font-semibold">Fibra: 1.8g</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full flex overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 10%"></div>
+<div class="bg-[#3B82F6] h-full" style="width: 85%"></div>
+<div class="bg-[#F59E0B] h-full" style="width: 5%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">grain</span>
+          TCA-HN Id: <b>CER-002</b>
+</span>
+<button class="bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition-all" onclick="event.stopPropagation(); triggerToast('Añadida 1 Tortilla a Minuta');">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Añadir a Minuta</span>
+</button>
+</div>
+</article>
+<!-- Food Item 4: Plátano Maduro Horneado -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs active:bg-surface-container-low transition-colors cursor-pointer" onclick="openNutrientModal('Plátano Maduro Horneado', '1/2 unidad (75g)', '90', '1g', '23g', '0.2g', '0.3mg', '310mg', '0.2mg', '2.1g')">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex gap-space-sm items-center min-w-0">
+<img alt="Platano Maduro" class="w-14 h-14 rounded-lg object-cover bg-surface-container shadow-inner shrink-0" data-alt="Baked ripe Honduran sweet plantain slice caramelized without added oils, golden caramelized surface, warm restaurant plating, high contrast clinical diet photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdxPysc9bmt0BpT4ntKJIbIETv1Vb3aysCPzZHpGW3PwQD4Gj-aAG7OMha8zI5A1O-Gri2KFBhzP5gE7a0GZum2Po9-k-uyAQg2OX4Ho79KqLyb6uB8VUo1xbz0Dcxd4dat8D-LpNIFGy0PJKA3c7T9jBOIJ1-xgsYldeEdLSJZvNATNQCtrsYy1pGgOC-Hyl9j4c6J1YbO4pGkR7GYKOuYTs5AdcCmNUA1FJL6Qg-"/>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold truncate">Plátano Maduro Horneado</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción: 1/2 unidad (75g)</span>
+<div class="pt-1 flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full font-semibold">Potasio nativo</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">Sin fritura</span>
+</div>
+</div>
+</div>
+<div class="text-right shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold leading-tight block">90</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">kcal</span>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-code-data text-code-data text-[12px]">
+<span class="text-primary font-semibold">P: 1g</span>
+<span class="text-[#2563eb] font-semibold">C: 23g</span>
+<span class="text-[#d97706] font-semibold">G: 0.2g</span>
+<span class="text-on-surface font-semibold">K: 310mg</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full flex overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 5%"></div>
+<div class="bg-[#3B82F6] h-full" style="width: 93%"></div>
+<div class="bg-[#F59E0B] h-full" style="width: 2%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">nutrition</span>
+          TCA-HN Id: <b>FRU-027</b>
+</span>
+<button class="bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition-all" onclick="event.stopPropagation(); triggerToast('Añadido 75g Plátano a Minuta');">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Añadir a Minuta</span>
+</button>
+</div>
+</article>
+<!-- Food Item 5: Chicharrón Criollo de Cerdo (High Lipid Warning) -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs active:bg-surface-container-low transition-colors cursor-pointer" onclick="openNutrientModal('Chicharrón Criollo de Cerdo', '25g (controlada)', '140', '8g', '0g', '11g (Sat: 4.2g)', '0.8mg', '195mg', '1.1mg', '0g')">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex gap-space-sm items-center min-w-0">
+<img alt="Chicharron Criollo" class="w-14 h-14 rounded-lg object-cover bg-surface-container shadow-inner shrink-0" data-alt="Crispy Honduran pork crackling chicharron criollo piece in a white clinical diagnostic testing bowl, neutral background, bright culinary studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT695l5lqNdafyCn9SbHHXDUCblZx5LjvKCPcroC5fupPVU3akBAzbRWWGykMahK3tIyAgEdcCEHDZgHnPULbtbreX9zfvxYX4VwVpFVhYw556cMwe_ntlieqho-2BW2QvD4e12z_VjT3xwas8Bd3Ta5EpxgZAPLpkrrpzufX84Pv2pczwCCOwqQtPQT_JsRhjdW1qiQCl4Ftbq042aJqXjHaImGKatVlIkB_p7qPc"/>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold truncate">Chicharrón Criollo de Cerdo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Porción controlada: 25g</span>
+<div class="pt-1 flex items-center gap-1.5 flex-wrap">
+<span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+                Lípido denso - Sustituible
+              </span>
+</div>
+</div>
+</div>
+<div class="text-right shrink-0">
+<span class="font-headline-sm text-headline-sm text-error font-bold leading-tight block">140</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">kcal</span>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-code-data text-code-data text-[12px]">
+<span class="text-primary font-semibold">P: 8g</span>
+<span class="text-[#2563eb] font-semibold">C: 0g</span>
+<span class="text-error font-bold">Grasa Sat: 11g</span>
+<span class="text-on-surface font-semibold">Na: 195mg</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full flex overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 25%"></div>
+<div class="bg-[#3B82F6] h-full" style="width: 0%"></div>
+<div class="bg-error h-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-error">assignment_late</span>
+          TCA-HN Id: <b>CAR-089</b>
+</span>
+<button class="bg-surface-variant text-on-surface hover:bg-surface-container-high font-title-sm text-title-sm px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1 active:scale-95 transition-all" onclick="event.stopPropagation(); triggerToast('Añadido con alerta lipídica');">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Añadir Controlado</span>
+</button>
+</div>
+</article>
+</section>
+<!-- Technical Flow Notes Panel -->
+<section class="px-margin pb-space-xl">
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center gap-space-xs text-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">architecture</span>
+<span class="font-title-sm text-title-sm uppercase tracking-wide">Notas de Flujo &amp; Modales</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        Tap en cualquier alimento despliega un modal bottom-sheet con micronutrientes completos (sodio, hierro, zinc, fibra soluble); botón de adición rápida con selector háptico de porciones en gramos o medidas caseras hondureñas (cucharadas, tazas, unidades).
+      </p>
+<div class="pt-2 flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary-container"></span>Medidas HN validadas</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span>Sincronización SAR</span>
+</div>
+</div>
+</section>
+<!-- Bottom Sheet Modal (Interactive Micronutrient Deep-Dive) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity items-end justify-center" id="nutrient-sheet">
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-md flex flex-col gap-space-sm shadow-xl max-h-[751px] overflow-y-auto" onclick="event.stopPropagation()">
+<!-- Sheet Handle -->
+<div class="w-12 h-1.5 bg-surface-variant rounded-full mx-auto mb-1"></div>
+<div class="flex items-start justify-between">
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate" id="sheet-title">Frijoles Rojos</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="sheet-portion">Porción: 1/2 taza (130g)</span>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-variant" onclick="closeNutrientModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Quick Macro Strip -->
+<div class="grid grid-cols-4 gap-space-xs py-space-xs">
+<div class="bg-surface-container-low p-space-xs rounded-lg text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Energía</span>
+<span class="font-title-md text-title-md font-bold text-primary" id="sheet-kcal">110</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">kcal</span>
+</div>
+<div class="bg-surface-container-low p-space-xs rounded-lg text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Proteína</span>
+<span class="font-title-md text-title-md font-bold text-on-surface" id="sheet-prot">7g</span>
+<span class="font-label-sm text-label-sm text-primary">4 kcal/g</span>
+</div>
+<div class="bg-surface-container-low p-space-xs rounded-lg text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Carbos</span>
+<span class="font-title-md text-title-md font-bold text-[#2563eb]" id="sheet-carb">20g</span>
+<span class="font-label-sm text-label-sm text-[#2563eb]">4 kcal/g</span>
+</div>
+<div class="bg-surface-container-low p-space-xs rounded-lg text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Lípidos</span>
+<span class="font-title-md text-title-md font-bold text-[#d97706]" id="sheet-fat">0.5g</span>
+<span class="font-label-sm text-label-sm text-[#d97706]">9 kcal/g</span>
+</div>
+</div>
+<!-- Detailed Micronutrient Breakdown Grid -->
+<div class="flex flex-col gap-1.5 pt-1">
+<span class="font-label-sm text-label-sm text-on-surface font-bold uppercase tracking-wider">Perfil Bromatológico Completo</span>
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Hierro no hemínico (Fe)</span>
+<span class="font-code-data text-code-data font-bold text-on-surface" id="sheet-fe">3.8 mg</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 45%"></div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-on-surface-variant">Sodio intrínseco (Na)</span>
+<span class="font-code-data text-code-data font-bold text-on-surface" id="sheet-na">180 mg</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full" style="width: 15%"></div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-on-surface-variant">Zinc elemental (Zn)</span>
+<span class="font-code-data text-code-data font-bold text-on-surface" id="sheet-zn">1.2 mg</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-tertiary h-full" style="width: 30%"></div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-on-surface-variant">Fibra dietética / soluble</span>
+<span class="font-code-data text-code-data font-bold text-primary" id="sheet-fiber">8.4 g</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Honduran Serving Unit Selector -->
+<div class="flex flex-col gap-1.5 pt-1">
+<span class="font-label-sm text-label-sm text-on-surface font-bold uppercase tracking-wider">Ajuste de Porción Hondureña</span>
+<div class="grid grid-cols-3 gap-space-xs">
+<button class="bg-primary-container/20 text-on-primary-fixed-variant p-2 rounded-lg font-title-sm text-title-sm font-bold text-center active:scale-95 transition-transform">
+            1/2 Taza
+          </button>
+<button class="bg-surface-container-low text-on-surface-variant p-2 rounded-lg font-title-sm text-title-sm text-center active:scale-95 transition-transform hover:bg-surface-container">
+            1 Cucharada
+          </button>
+<button class="bg-surface-container-low text-on-surface-variant p-2 rounded-lg font-title-sm text-title-sm text-center active:scale-95 transition-transform hover:bg-surface-container">
+            100 Gramos
+          </button>
+</div>
+</div>
+<!-- Modal Bottom Actions -->
+<div class="pt-space-sm flex gap-space-xs">
+<button class="flex-1 bg-surface-container hover:bg-surface-variant text-on-surface font-title-sm text-title-sm py-3 rounded-lg text-center" onclick="closeNutrientModal()">
+          Cerrar
+        </button>
+<button class="flex-[2] bg-primary hover:bg-secondary text-on-primary font-title-sm text-title-sm py-3 rounded-lg flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-transform" onclick="triggerToast('Alimento añadido con micronutrientes calculados'); closeNutrientModal();">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>Añadir a Minuta Activa</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Notification Toast Element -->
+<div class="fixed bottom-6 inset-x-6 z-50 bg-inverse-surface text-inverse-on-surface py-3 px-4 rounded-xl shadow-xl flex items-center justify-between opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4" id="toast-notification">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">check_circle</span>
+<span class="font-body-sm text-body-sm font-semibold" id="toast-text">Alimento añadido</span>
+</div>
+<span class="font-label-sm text-label-sm text-inverse-on-surface/70">BaleadaFit</span>
+</div>
+</div>
+<script>
+  function openNutrientModal(title, portion, kcal, prot, carb, fat, fe, na, zn, fiber) {
+    document.getElementById('sheet-title').textContent = title;
+    document.getElementById('sheet-portion').textContent = 'Porción estándar: ' + portion;
+    document.getElementById('sheet-kcal').textContent = kcal;
+    document.getElementById('sheet-prot').textContent = prot;
+    document.getElementById('sheet-carb').textContent = carb;
+    document.getElementById('sheet-fat').textContent = fat;
+    document.getElementById('sheet-fe').textContent = fe;
+    document.getElementById('sheet-na').textContent = na;
+    document.getElementById('sheet-zn').textContent = zn;
+    document.getElementById('sheet-fiber').textContent = fiber;
+
+    const sheet = document.getElementById('nutrient-sheet');
+    sheet.classList.remove('hidden');
+    sheet.classList.add('flex');
+  }
+
+  function closeNutrientModal() {
+    const sheet = document.getElementById('nutrient-sheet');
+    sheet.classList.add('hidden');
+    sheet.classList.remove('flex');
+  }
+
+  // Close sheet on backdrop tap
+  document.getElementById('nutrient-sheet').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeNutrientModal();
+    }
+  });
+
+  // Simple feedback toast
+  let toastTimer = null;
+  function triggerToast(message) {
+    const toast = document.getElementById('toast-notification');
+    const toastLabel = document.getElementById('toast-text');
+    toastLabel.textContent = message;
+    
+    toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 2400);
+  }
+</script></main></body></html>

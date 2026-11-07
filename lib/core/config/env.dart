@@ -13,6 +13,9 @@ abstract final class Env {
   static const String apiBaseUrlKey = 'API_BASE_URL';
   static const String environmentKey = 'APP_ENV';
 
+  /// Web client id of the Firebase project, needed by Google Sign-In on Android.
+  static const String googleServerClientIdKey = 'GOOGLE_SERVER_CLIENT_ID';
+
   static const String exampleFile = 'config/env.example.json';
   static const String devFile = 'config/env.dev.json';
 
@@ -20,9 +23,13 @@ abstract final class Env {
   static const String _definedEnvironment = String.fromEnvironment(
     environmentKey,
   );
+  static const String _definedGoogleServerClientId = String.fromEnvironment(
+    googleServerClientIdKey,
+  );
 
   static String? _apiBaseUrlOverride;
   static String? _environmentOverride;
+  static String? _googleServerClientIdOverride;
 
   /// Current environment name, `dev` when [environmentKey] is not defined.
   static String get environment {
@@ -47,12 +54,24 @@ abstract final class Env {
 
   static String get _apiBaseUrl => _apiBaseUrlOverride ?? _definedApiBaseUrl;
 
+  /// Google OAuth client id, or null when the platform reads it from its own
+  /// configuration file.
+  static String? get googleServerClientId {
+    final value = _googleServerClientIdOverride ?? _definedGoogleServerClientId;
+    return value.isEmpty ? null : value;
+  }
+
   /// Replaces the build-time values. Exposed so tests can cover both the
   /// configured and the missing case without rebuilding the binary.
   @visibleForTesting
-  static void override({String? apiBaseUrl, String? environment}) {
+  static void override({
+    String? apiBaseUrl,
+    String? environment,
+    String? googleServerClientId,
+  }) {
     _apiBaseUrlOverride = apiBaseUrl;
     _environmentOverride = environment;
+    _googleServerClientIdOverride = googleServerClientId;
   }
 
   /// Drops every [override] and goes back to the values baked at build time.
@@ -60,6 +79,7 @@ abstract final class Env {
   static void resetOverride() {
     _apiBaseUrlOverride = null;
     _environmentOverride = null;
+    _googleServerClientIdOverride = null;
   }
 }
 
