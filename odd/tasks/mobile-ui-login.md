@@ -23,13 +23,13 @@ Route: inline (parent). High risk: item 2 (security — auth, tokens, session).
 
 | ID | Spec | Qué | Route | Commit |
 |----|------|-----|-------|--------|
-| T1 | S1 | Descargar las 6 pantallas MOBILE de Stitch a `odd/designs/mobile/` + índice que mapea id de Stitch → archivo → qué dibuja | inline | `chore(design): import the stitch mobile screens as reference` |
-| T2 | S2 | Tokens: contrastar con el design system de Stitch ("Clinical Mint Precision") y completar lo que falte en `lib/core/theme/` | inline | `feat(theme): align tokens with the clinical mint design` |
-| T3 | S2 | Componentes compartidos que exige el login + tests de widget | inline | `feat(shared): add the components the mobile login needs` |
-| T4 | S3, S6 | Capa de datos: `AuthRepository` (Firebase Auth email/password + ID token), `Dio` con interceptor Bearer, modelo de `GET /auth/me`, errores tipados + tests | inline | `feat(auth): authenticate with firebase and read the role from the api` |
-| T5 | S3, S6 | Pantalla de login según el diseño: estados loading/error, validación, sin navegación en fallo | inline | `feat(auth): build the login screen from the mobile design` |
-| T6 | S3 | Sesión en Riverpod + redirect por `rol` en el router y logout | inline | `feat(auth): route by role after login and allow signing out` |
-| T7 | S7 | `flutter analyze`, `flutter test`, prueba real con credenciales, verificación independiente | inline | `test: verify the login flow end to end` |
+| T1 | S1 | Descargar las 6 pantallas MOBILE de Stitch a `odd/designs/mobile/` + índice que mapea id de Stitch → archivo → qué dibuja | inline | `8dcba98` chore(design): import the stitch mobile screens as reference |
+| T2 | S2 | Tokens: adoptar el design system de Stitch ("Clinical Mint Precision"), Plus Jakarta Sans y las alturas del mockup | inline | `2922fd3` feat(theme): adopt the clinical mint tokens and the brand fonts |
+| T3 | S2 | Componentes compartidos que exige el login (text field con label arriba, botón tonal, emblema, pill, divisor) + tests | worker (`gentle-ai-worker`) | pendiente |
+| T4 | S3, S6 | Capa de datos: `AuthRepository` (Firebase Auth email/password + Google), `Dio` con interceptor Bearer, modelo de `GET /auth/me`, errores tipados + tests | worker (`gentle-ai-worker`) | pendiente |
+| T5 | S3, S6 | Pantalla de login según el diseño: estados loading/error, validación, sin navegación en fallo | inline | pendiente |
+| T6 | S3 | Sesión en Riverpod + redirect por `rol` en el router y logout | inline | pendiente |
+| T7 | S7 | `flutter analyze`, `flutter test`, prueba real con credenciales, verificación independiente | inline | pendiente |
 
 ## Log
 
@@ -38,3 +38,13 @@ Route: inline (parent). High risk: item 2 (security — auth, tokens, session).
 **L2 (evidencia):** Proyecto Stitch `projects/15920435902002365733` ("BaleadaFit Nutrition Portal"), design system "Clinical Mint Precision". Pantallas MOBILE: Acceso Clínico - Login Mobile (`4c993085…`), Inicio Clínico - Mobile (`56ff95ba…`), Directorio de Pacientes - Mobile (`5eaed93b…`), Agenda de Citas - Mobile (`28bcf179…`), Diseñador de Dietas HN - Mobile (`c0985fe9…`), Catálogo Alimentos TCA-HN - Mobile (`c217a171…`).
 
 **L3 (evidencia):** API viva `https://api-pro.baleadafit.com` sin `AUTH_DEV_BYPASS` (`Bearer dev:…` responde 401), así que la prueba real necesita un usuario Firebase. `GET /auth/me` responde 401 `NO_AUTENTICADO` sin token.
+
+**L4 (decisión del usuario):** el diseño manda sobre la paleta existente — se adopta "Clinical Mint Precision" y Plus Jakarta Sans.
+
+**L5 (decisión del usuario):** Google Sign-In entra en esta entrega, no queda como pendiente.
+
+**L6 (decisión del usuario):** la prueba con credenciales reales la hace el usuario en el simulador; los tests automáticos usan un auth falso.
+
+**L7 (evidencia — desvío técnico de L4):** `google_fonts` con descarga en runtime revienta la suite (con `allowRuntimeFetching = false` lanza si la fuente no está en assets) y deja la app sin tipografía en el primer arranque sin red. Se mantiene `google_fonts` pero con las fuentes **empaquetadas** en `assets/fonts/`: mismo paquete, sin red, tests herméticos.
+
+**L8 (evidencia — copy del mockup):** el login de Stitch incluye "Cifrado HIPAA & Conexión Segura HL7/FHIR" y "Sistema Homologado". No hay certificación que sostenga esas afirmaciones, así que no se copian literalmente: el pie queda en copyright y verificación de conexión, y la afirmación regulatoria se deja fuera hasta que exista.
