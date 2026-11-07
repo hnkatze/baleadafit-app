@@ -140,6 +140,8 @@ void main() {
 
     expect(find.byType(AppShell), findsOneWidget);
     expect(find.text('Pacientes'), findsWidgets);
+    // The shell owns the bar: the screen must not stack a second one.
+    expect(find.byType(AppBar), findsOneWidget);
     expect(find.textContaining('expediente y mediciones'), findsOneWidget);
   });
 

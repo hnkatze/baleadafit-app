@@ -66,9 +66,14 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 
-  /// First letters of the first and last word: "Camilo Henriquez" -> "CH".
+  /// First letters of the first and last name, skipping honorifics such as
+  /// "Lic." or "Dra.": "Lic. Camilo Henriquez" -> "CH".
   static String initialsOf(String name) {
-    final words = name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty && !w.endsWith('.'))
+        .toList();
     if (words.isEmpty) return '?';
     if (words.length == 1) return words.first.characters.first.toUpperCase();
     return (words.first.characters.first + words.last.characters.first).toUpperCase();
