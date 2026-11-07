@@ -25,11 +25,11 @@ Route: inline (parent). High risk: item 2 (security — auth, tokens, session).
 |----|------|-----|-------|--------|
 | T1 | S1 | Descargar las 6 pantallas MOBILE de Stitch a `odd/designs/mobile/` + índice que mapea id de Stitch → archivo → qué dibuja | inline | `8dcba98` chore(design): import the stitch mobile screens as reference |
 | T2 | S2 | Tokens: adoptar el design system de Stitch ("Clinical Mint Precision"), Plus Jakarta Sans y las alturas del mockup | inline | `2922fd3` feat(theme): adopt the clinical mint tokens and the brand fonts |
-| T3 | S2 | Componentes compartidos que exige el login (text field con label arriba, botón tonal, emblema, pill, divisor) + tests | worker (`gentle-ai-worker`) | pendiente |
-| T4 | S3, S6 | Capa de datos: `AuthRepository` (Firebase Auth email/password + Google), `Dio` con interceptor Bearer, modelo de `GET /auth/me`, errores tipados + tests | worker (`gentle-ai-worker`) | pendiente |
-| T5 | S3, S6 | Pantalla de login según el diseño: estados loading/error, validación, sin navegación en fallo | inline | pendiente |
-| T6 | S3 | Sesión en Riverpod + redirect por `rol` en el router y logout | inline | pendiente |
-| T7 | S7 | `flutter analyze`, `flutter test`, prueba real con credenciales, verificación independiente | inline | pendiente |
+| T3 | S2 | Componentes compartidos que exige el login (text field con label arriba, botón tonal, emblema, pill, divisor) + tests | inline (el worker falló por auth) | `749f369` feat(shared): add the components the mobile login needs |
+| T4 | S3, S6 | Capa de datos: `AuthRepository` (Firebase Auth email/password + Google), `Dio` con interceptor Bearer, modelo de `GET /auth/me`, errores tipados + tests | inline (el worker falló por auth) | `599a3ef` feat(auth): read the session from the api with a firebase id token |
+| T5 | S3, S6 | Pantalla de login según el diseño: estados loading/error, validación, sin navegación en fallo | inline | `38633fe` feat(auth): sign in from the mobile design and route by role |
+| T6 | S3 | Sesión en Riverpod + redirect por `rol` en el router y logout | inline | `38633fe` feat(auth): sign in from the mobile design and route by role |
+| T7 | S7 | `flutter analyze`, `flutter test`, build de Android, prueba real con credenciales, verificación independiente | inline | en curso |
 
 ## Log
 
@@ -48,3 +48,7 @@ Route: inline (parent). High risk: item 2 (security — auth, tokens, session).
 **L7 (evidencia — desvío técnico de L4):** `google_fonts` con descarga en runtime revienta la suite (con `allowRuntimeFetching = false` lanza si la fuente no está en assets) y deja la app sin tipografía en el primer arranque sin red. Se mantiene `google_fonts` pero con las fuentes **empaquetadas** en `assets/fonts/`: mismo paquete, sin red, tests herméticos.
 
 **L8 (evidencia — copy del mockup):** el login de Stitch incluye "Cifrado HIPAA & Conexión Segura HL7/FHIR" y "Sistema Homologado". No hay certificación que sostenga esas afirmaciones, así que no se copian literalmente: el pie queda en copyright y verificación de conexión, y la afirmación regulatoria se deja fuera hasta que exista.
+
+**L9 (evidencia — delegación caída):** los dos `gentle-ai-worker` fallaron con `assistant reported an error (auth)` sin escribir nada, así que T3 y T4 se hicieron inline. Los tests de esos dos units se escribieron después del código (no hubo RED observado) por esa razón; el resto de units sí se probaron contra tests que fallaban antes.
+
+**L10 (evidencia — verificación):** `flutter analyze` sin issues y `flutter test` 74 pass + 1 skip (el skip es el test de `--dart-define`, se corre con `make test-defines`). Pendiente: build de Android y la prueba con credenciales reales en el simulador, que hace el usuario.
