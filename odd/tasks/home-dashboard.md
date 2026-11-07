@@ -27,11 +27,11 @@ Branch `feat/home-dashboard`. Route: inline.
 
 | ID | Spec | Qué | Estado |
 |----|------|-----|--------|
-| T1 | S2, S3 | `ApiClient.get<T>` genérico con `fromJson`; `AuthRepository` pasa a usarlo | pendiente |
-| T2 | S1, S4 | Modelos de `/dashboard` con `json_serializable` + `DashboardRepository` | pendiente |
-| T3 | S5 | Providers del repositorio y del resumen (`AsyncValue` para loading/error/data) | pendiente |
-| T4 | S1, S6, S9 | Home con saludo de la sesión, KPIs y citas de hoy; estados de carga, error con reintento y vacío | pendiente |
-| T5 | S7 | Tests de las tres capas antes de implementarlas | pendiente |
+| T1 | S2, S3 | `ApiClient.get<T>` genérico con `fromJson`; `AuthRepository` pasa a usarlo | hecho (6561757) |
+| T2 | S1, S4 | Modelos de `/dashboard` con `json_serializable` + `DashboardRepository` | hecho (6561757) |
+| T3 | S5 | Providers del repositorio y del resumen (`AsyncValue` para loading/error/data) | hecho (6561757) |
+| T4 | S1, S6, S9 | Home con saludo de la sesión, KPIs y citas de hoy; estados de carga, error con reintento y vacío | hecho (6561757 + fix de alturas) |
+| T5 | S7 | Tests de las tres capas antes de implementarlas | hecho: 96 pasan, 1 skip |
 
 ## Log
 
@@ -40,3 +40,9 @@ Branch `feat/home-dashboard`. Route: inline.
 **L2 (evidencia):** `GET /dashboard` devuelve `{pacientesActivos: number, planesEnBorrador: number, citasHoy: CitaEntity[]}`; cada cita trae `id`, `fechaHora`, `duracionMin`, `motivo`, `estado` y `paciente {id, nombre, apellido, telefono}`. El endpoint ya excluye las canceladas.
 
 **L3 (decisión de arquitectura):** `ApiClient` es la capa única (S3). Se le agrega decodificación genérica en vez de crear un servicio nuevo.
+
+**L4 (evidencia, dispositivo):** en el iPhone la home muestra "Hola, Lic. Camilo Henriquez", `pacientesActivos: 2`, `planesEnBorrador: 0` y cero citas hoy, leídos de `GET /dashboard` con el token real. La primera captura mostró las tarjetas KPI con alturas distintas (la etiqueta "Planes en borrador" ocupa dos líneas); se corrigió con `IntrinsicHeight` + `stretch` y se volvió a verificar en el dispositivo.
+
+**L5 (decisión, Riverpod 3):** los providers reintentan solos un future fallido. Se desactivó para el home (`retry: (_, _) => null`) porque la pantalla muestra el error con un botón "Reintentar" y un reintento silencioso escondería el fallo.
+
+**L6 (tamaño):** el commit del home son 653 líneas con tests y documento; el código de producción son ~350.

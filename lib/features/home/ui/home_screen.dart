@@ -63,32 +63,35 @@ class _Summary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _Kpi(
-                icon: Icons.groups_2_outlined,
-                value: '${data.pacientesActivos}',
-                label: 'Pacientes activos',
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _Kpi(
+                  icon: Icons.groups_2_outlined,
+                  value: '${data.pacientesActivos}',
+                  label: 'Pacientes activos',
+                ),
               ),
-            ),
-            const SizedBox(width: AppDimensions.spaceSm),
-            Expanded(
-              child: _Kpi(
-                icon: Icons.description_outlined,
-                value: '${data.planesEnBorrador}',
-                label: 'Planes en borrador',
+              const SizedBox(width: AppDimensions.spaceSm),
+              Expanded(
+                child: _Kpi(
+                  icon: Icons.description_outlined,
+                  value: '${data.planesEnBorrador}',
+                  label: 'Planes en borrador',
+                ),
               ),
-            ),
-            const SizedBox(width: AppDimensions.spaceSm),
-            Expanded(
-              child: _Kpi(
-                icon: Icons.event_available_outlined,
-                value: '${data.citasHoy.length}',
-                label: 'Citas hoy',
+              const SizedBox(width: AppDimensions.spaceSm),
+              Expanded(
+                child: _Kpi(
+                  icon: Icons.event_available_outlined,
+                  value: '${data.citasHoy.length}',
+                  label: 'Citas hoy',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: AppDimensions.spaceLg),
         Text('Citas de hoy', style: textTheme.titleMedium),
@@ -125,11 +128,16 @@ class _Kpi extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(icon, size: AppDimensions.iconSm, color: colors.primary),
-          const SizedBox(height: AppDimensions.spaceXs),
-          Text(value, style: textTheme.headlineSmall),
-          Text(label, style: textTheme.bodySmall),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(value, style: textTheme.headlineSmall),
+              Text(label, style: textTheme.bodySmall),
+            ],
+          ),
         ],
       ),
     );
