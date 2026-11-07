@@ -19,6 +19,16 @@ class DashboardResumen {
 
   /// Today appointments, cancelled ones already excluded by the API.
   final List<CitaResumen> citasHoy;
+
+  /// First appointment that has not started yet, or null when the day is over.
+  CitaResumen? proxima(DateTime now) {
+    final pending =
+        citasHoy
+            .where((cita) => !cita.fechaHora.toLocal().isBefore(now))
+            .toList()
+          ..sort((a, b) => a.fechaHora.compareTo(b.fechaHora));
+    return pending.isEmpty ? null : pending.first;
+  }
 }
 
 /// One appointment of the day, with only the fields the home screen shows.
