@@ -31,7 +31,14 @@ Branch `feat/home-dashboard`. Route: inline.
 | T2 | S1, S4 | Modelos de `/dashboard` con `json_serializable` + `DashboardRepository` | hecho (6561757) |
 | T3 | S5 | Providers del repositorio y del resumen (`AsyncValue` para loading/error/data) | hecho (6561757) |
 | T4 | S1, S6, S9 | Home con saludo de la sesión, KPIs y citas de hoy; estados de carga, error con reintento y vacío | hecho (6561757 + fix de alturas) |
-| T5 | S7 | Tests de las tres capas antes de implementarlas | hecho: 96 pasan, 1 skip |
+| T5 | S7 | Tests de las tres capas antes de implementarlas | hecho |
+| T6 | S1, S6 | KPIs como franja con divisores (una superficie, sin cajas con hueco) | hecho, sin commit |
+| T7 | S1 | Tarjeta de "Próxima cita" derivada de `citasHoy` | hecho, sin commit |
+| T8 | S2 | `ApiClient.getPaged` + `PageMeta`: los endpoints de lista traen `data` como array y `meta` | hecho, sin commit |
+| T9 | S1, S4 | Sección "Tus pacientes" con `GET /pacientes?limit=4` (peso y plan de cada uno) | hecho, sin commit |
+| T10 | S6 | Fuentes empaquetadas de verdad: declaradas en `pubspec.yaml` como `fonts`, tema sin `google_fonts` | hecho, sin commit |
+| T11 | — | Citas ficticias creadas en la API para ver la pantalla con datos | hecho (4 citas) |
+| T12 | — | `odd/designs/home-context.md` y `odd/designs/design-system.md` | hecho |
 
 ## Log
 
@@ -46,3 +53,19 @@ Branch `feat/home-dashboard`. Route: inline.
 **L5 (decisión, Riverpod 3):** los providers reintentan solos un future fallido. Se desactivó para el home (`retry: (_, _) => null`) porque la pantalla muestra el error con un botón "Reintentar" y un reintento silencioso escondería el fallo.
 
 **L6 (tamaño):** el commit del home son 653 líneas con tests y documento; el código de producción son ~350.
+
+**L7 (evidencia con la cuenta real, `playercamiloh504@gmail.com`):** `GET /dashboard` devuelve `{pacientesActivos: 2, planesEnBorrador: 0, citasHoy: []}` y nada más; `GET /citas` está vacío. `GET /pacientes` trae por paciente `ultimaMedicion` (peso, %grasa, talla, fecha) y `planActivo`. La data rica existe, pero **fuera** de `/dashboard`.
+
+**L8 (defecto encontrado):** los endpoints de lista responden `{ok, data: [...], meta: {limit, offset, total, hasMore, nextCursor}}`. `ApiClient` solo aceptaba `data` como objeto y descartaba `meta`, así que ninguna lista podía leerse. Se agregó `getPaged` + `PageMeta`/`Paged`.
+
+**L9 (criterio de diseño del usuario):** "creo que tenemos que tener cierto criterio al momento de disenar aunque tenemos un diseno, mira las cards, tiene un enorme espacio a la derecha... tenemos el icono, el valor y pacientes activos, uno debajo del otro... es un poco grosero". Se reemplazaron las tres cajas por una franja única con divisores y valores que se ajustan (`FittedBox`), sin íconos decorativos.
+
+**L10 (decisión):** la home hace **dos** llamadas (`/dashboard` y `/pacientes?limit=4`), no N. La adherencia global y el "seguimiento prioritario" del mockup no existen como consulta: si se quieren, se piden como endpoint nuevo en el repo del API.
+
+**L11 (regla del usuario):** "los commits y los push cuando yo pruebe y yo determine que está listo el cambio". Nada de commit ni push hasta su validación; los cambios quedan en el working tree.
+
+**L12 (defecto de fuentes):** los `.ttf` estaban en `assets/fonts/` pero declarados como `assets`, no como `fonts`, y el tema seguía usando `GoogleFonts`, que descarga en runtime. En tests y sin red se caía a la fuente del sistema. Se declararon las familias (`PlusJakartaSans` 400/600/700/800 y `JetBrainsMono` 500) y el tema ya no depende de `google_fonts`. Efecto colateral: con la fuente real el login creció y un test tocaba un botón fuera del viewport; se corrigió con `ensureVisible` (era un defecto latente del test, no del layout).
+
+**L13 (datos de prueba):** `POST /citas` responde 201 con `estado: "PROGRAMADA"`. Se crearon cuatro citas (dos con fecha del 7/11 y dos del 6/11). Solo las del 7 aparecen en `citasHoy`, porque el servidor corta "hoy" en UTC: una cita local del 6 a las 20:00 cae en el 7 UTC. Anotado como pregunta abierta en `home-context.md`.
+
+**L14 (documentos de diseño):** `odd/designs/home-context.md` describe datos reales, estados, restricciones y dónde el mock tiene margen; `odd/designs/design-system.md` documenta tokens, componentes, anti-patrones y gaps. El usuario pasa el mockup después.
