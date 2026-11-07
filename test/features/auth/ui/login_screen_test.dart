@@ -192,7 +192,10 @@ void main() {
     );
     gateway.token = 'token-1';
 
-    await tester.tap(find.widgetWithText(AppButton, 'Continuar con Google'));
+    final googleButton = find.widgetWithText(AppButton, 'Continuar con Google');
+    await tester.ensureVisible(googleButton);
+    await pumpStable(tester);
+    await tester.tap(googleButton);
     await pumpStable(tester);
 
     expect(gateway.googleCalls, 1);
