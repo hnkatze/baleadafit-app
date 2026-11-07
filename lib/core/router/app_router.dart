@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,14 +7,13 @@ import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/ui/login_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/not_found/ui/not_found_screen.dart';
+import '../../features/shell/ui/app_shell.dart';
+import '../../features/shell/ui/feature_placeholder.dart';
 import '../../features/showcase/ui/theme_gallery_screen.dart';
 import 'app_routes.dart';
 
-/// Builds the app router.
-///
-/// [initialLocation] exists so tests can start on any route; the app always
-/// starts at the login form. [redirect] is nullable on purpose: it lets tests
-/// exercise the route table without a session.
+/// Builds the app router. [redirect] and [refreshListenable] are optional so
+/// tests can exercise the route table without a session.
 GoRouter createAppRouter({
   String initialLocation = AppRoutes.login,
   GoRouterRedirect? redirect,
@@ -29,9 +28,57 @@ GoRouter createAppRouter({
         path: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+      ShellRoute(
+        builder: (context, state, child) =>
+            AppShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.pacientes,
+            builder: (context, state) => const FeaturePlaceholder(
+              title: 'Pacientes',
+              description:
+                  'Directorio, expediente y mediciones de cada paciente.',
+              icon: Icons.groups_outlined,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.dietas,
+            builder: (context, state) => const FeaturePlaceholder(
+              title: 'Diseñador de dietas',
+              description:
+                  'Recomendador, plan alimenticio y aprobación del plan.',
+              icon: Icons.restaurant_menu,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.catalogo,
+            builder: (context, state) => const FeaturePlaceholder(
+              title: 'Catálogo de alimentos',
+              description: 'Alimentos, porciones y restricciones del TCA-HN.',
+              icon: Icons.menu_book_outlined,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.agenda,
+            builder: (context, state) => const FeaturePlaceholder(
+              title: 'Agenda de citas',
+              description: 'Citas de la nutricionista y su seguimiento.',
+              icon: Icons.calendar_today_outlined,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.configuracion,
+            builder: (context, state) => const FeaturePlaceholder(
+              title: 'Configuración',
+              description: 'Preferencias de la cuenta y del consultorio.',
+              icon: Icons.settings_outlined,
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.showcase,

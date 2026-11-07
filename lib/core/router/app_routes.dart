@@ -1,15 +1,22 @@
-/// Every location the router knows about.
-///
-/// Screens and tests use these constants instead of string literals, so a
-/// renamed path breaks the build instead of failing at navigation time.
+/// Locations of the app. Every route name lives here so no screen writes a
+/// string literal.
 abstract final class AppRoutes {
-  /// Entry point of the app: the app is auth-gated, so the first screen is the
-  /// login form until the session redirect lands (issue #4).
-  static const String login = '/login';
+  static const login = '/login';
+  static const home = '/home';
+  static const pacientes = '/pacientes';
+  static const dietas = '/dietas';
+  static const catalogo = '/catalogo';
+  static const agenda = '/agenda';
+  static const configuracion = '/configuracion';
+  static const showcase = '/showcase';
 
-  /// Patient or nutritionist dashboard once the session is resolved.
-  static const String home = '/home';
-
-  /// Design-system gallery. Development aid, not part of the product flow.
-  static const String showcase = '/showcase';
+  /// Routes of the authenticated shell, in drawer order.
+  static const shellRoutes = <String>[
+    home,
+    pacientes,
+    dietas,
+    catalogo,
+    agenda,
+    configuracion,
+  ];
 }

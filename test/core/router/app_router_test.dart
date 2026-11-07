@@ -5,6 +5,8 @@ import 'package:baleadafit/features/auth/application/session_controller.dart';
 import 'package:baleadafit/features/auth/data/auth_session.dart';
 import 'package:baleadafit/features/auth/data/user_role.dart';
 import 'package:baleadafit/features/auth/ui/login_screen.dart';
+import 'package:baleadafit/features/shell/ui/app_shell.dart';
+import 'package:baleadafit/shared/widgets/app_drawer.dart';
 import 'package:baleadafit/features/home/ui/home_screen.dart';
 import 'package:baleadafit/features/not_found/ui/not_found_screen.dart';
 import 'package:baleadafit/features/showcase/ui/theme_gallery_screen.dart';
@@ -126,5 +128,58 @@ void main() {
       container.read(routerProvider),
       same(container.read(routerProvider)),
     );
+  });
+
+  testWidgets('renders the shell with the section of the current route', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, session: _session);
+
+    router.go(AppRoutes.pacientes);
+    await pumpStable(tester);
+
+    expect(find.byType(AppShell), findsOneWidget);
+    expect(find.text('Pacientes'), findsWidgets);
+    expect(find.textContaining('expediente y mediciones'), findsOneWidget);
+  });
+
+  testWidgets('opens the drawer and navigates to another section', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, session: _session);
+    router.go(AppRoutes.home);
+    await pumpStable(tester);
+
+    await tester.tap(find.byTooltip('Abrir menú'));
+    await pumpStable(tester);
+
+    expect(find.byType(AppDrawer), findsOneWidget);
+    expect(find.text('Cerrar sesión'), findsOneWidget);
+    expect(find.text('NUTRICIONISTA'), findsNothing);
+
+    await tester.tap(find.text('Agenda de citas'));
+    await pumpStable(tester);
+
+    expect(
+      router.routerDelegate.currentConfiguration.uri.toString(),
+      AppRoutes.agenda,
+    );
+    expect(find.textContaining('Citas de la nutricionista'), findsOneWidget);
+  });
+
+  testWidgets('shows the signed-in name in the drawer profile card', (
+    tester,
+  ) async {
+    await _pumpApp(tester, session: _session);
+
+    await tester.tap(find.byTooltip('Abrir menú'));
+    await pumpStable(tester);
+
+    final inDrawer = find.descendant(
+      of: find.byType(AppDrawer),
+      matching: find.text('Nutricionista'),
+    );
+    expect(find.text('Sofía'), findsOneWidget);
+    expect(inDrawer, findsOneWidget);
   });
 }
