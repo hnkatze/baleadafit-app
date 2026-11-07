@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../../core/network/auth_interceptor.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /// The identity operations the app needs, behind an interface.
@@ -6,7 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// The Firebase/Google plugins are plugin calls that cannot run in a widget
 /// test, so [AuthRepository] depends on this interface and the production
 /// implementation stays a thin, untested adapter.
-abstract interface class AuthGateway {
+abstract interface class AuthGateway implements TokenSource {
   Future<void> signInWithEmail({
     required String email,
     required String password,
@@ -20,6 +22,7 @@ abstract interface class AuthGateway {
 
   Future<void> signOut();
 
+  @override
   Future<String?> idToken({bool forceRefresh = false});
 }
 

@@ -13,9 +13,9 @@ final firebaseAuthProvider = Provider<FirebaseAuth>(
   (ref) => FirebaseAuth.instance,
 );
 
-/// Bearer token source for API calls.
+/// Bearer token source for API calls: the auth gateway also issues tokens.
 final tokenSourceProvider = Provider<TokenSource>(
-  (ref) => FirebaseTokenSource(ref.watch(firebaseAuthProvider)),
+  (ref) => ref.watch(authGatewayProvider),
 );
 
 /// HTTP client for the BaleadaFit API.

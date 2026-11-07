@@ -40,7 +40,7 @@ const List<AppSection> appSections = [
     label: 'Configuración',
     route: AppRoutes.configuracion,
     icon: Icons.settings_outlined,
-    group: 'Administración',
+    group: 'Administración HN',
   ),
 ];
 

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 /// Where the app gets the bearer token for API calls.
 ///
@@ -10,20 +9,6 @@ abstract interface class TokenSource {
   /// [forceRefresh] asks the identity provider for a new token; use it right
   /// after sign-in so the API never receives a token issued before the session.
   Future<String?> idToken({bool forceRefresh = false});
-}
-
-/// [TokenSource] backed by the signed-in Firebase user.
-class FirebaseTokenSource implements TokenSource {
-  const FirebaseTokenSource(this._auth);
-
-  final FirebaseAuth _auth;
-
-  @override
-  Future<String?> idToken({bool forceRefresh = false}) async {
-    final user = _auth.currentUser;
-    if (user == null) return null;
-    return user.getIdToken(forceRefresh);
-  }
 }
 
 /// Adds `Authorization: Bearer <token>` to requests aimed at [baseUrl].

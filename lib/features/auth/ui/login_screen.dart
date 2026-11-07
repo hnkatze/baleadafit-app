@@ -96,10 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       await ref.read(sessionControllerProvider.notifier).signInWithGoogle();
     } on AuthFailure catch (failure) {
-      // Cancelling the sheet is a normal outcome and shows no error.
-      if (mounted && failure is! SignInCancelledFailure) {
-        setState(() => _error = failure.mensaje);
-      }
+      if (mounted) setState(() => _error = failure.mensaje);
     } on Object {
       if (mounted) {
         setState(() => _error = 'Algo salió mal. Intentá de nuevo.');
