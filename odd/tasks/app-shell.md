@@ -21,10 +21,10 @@ Branch `feat/mobile-login`. Route: inline. Límites del usuario: ≤400 líneas 
 
 | ID | Spec | Qué | Commit |
 |----|------|-----|--------|
-| T1 | S1, S5 | `AppDrawer`: header, tarjeta de perfil desde la sesión, secciones, ítem activo, cerrar sesión | pendiente |
-| T2 | S1, S5 | `AppTopBar`: hamburguesa, emblema, nombre + sección actual, avatar con iniciales | pendiente |
-| T3 | S1 | `AppShell` + `ShellRoute` para que drawer y barra persistan entre pantallas | pendiente |
-| T4 | S2, S6 | Rutas nuevas con placeholder y tests de navegación/ítem activo | pendiente |
+| T1 | S1, S5 | `AppDrawer`: header, tarjeta de perfil desde la sesión, secciones, ítem activo, cerrar sesión | `e7c3ff1` |
+| T2 | S1, S5 | `AppTopBar`: hamburguesa, emblema, nombre + sección actual, avatar con iniciales | `e7c3ff1` |
+| T3 | S1 | `AppShell` + `ShellRoute` para que drawer y barra persistan entre pantallas | `e7c3ff1` |
+| T4 | S2, S6 | Rutas nuevas con placeholder y tests de navegación/ítem activo | `e7c3ff1` |
 
 ## Log
 
@@ -33,3 +33,7 @@ Branch `feat/mobile-login`. Route: inline. Límites del usuario: ≤400 líneas 
 **L2 (evidencia):** los tres mockups mobile usan drawer lateral (11 referencias en `02-inicio-clinico.html`), no bottom navigation. La barra superior del mockup mide 64pt y lleva hamburguesa + monograma + nombre/sección a la izquierda.
 
 **L3 (evidencia):** sesión verificada en el iPhone físico (login por correo y por Google, y restauración al relanzar el proceso).
+
+**L4 (evidencia — presupuesto):** el commit del shell quedó en **577 líneas** de código + tests (607 con este documento), por encima del cap de 400 de S3. El drawer solo son 201 líneas por los cinco bloques del mockup (header, perfil, secciones, ítem activo, cerrar sesión).
+
+**L5 (evidencia):** `flutter analyze` sin issues y `flutter test` 82 pass + 1 skip después del shell.
