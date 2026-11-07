@@ -60,8 +60,11 @@ class _EmblemPainter extends CustomPainter {
   final Color accent;
 
   /// Stroke weight of the reference mark inside its 400x400 viewBox.
+  ///
+  /// The reference draws at 12/400, which reads as a hairline at the 56pt the
+  /// screens use, so the app draws it heavier to keep the mark legible.
   static const double _viewBox = 400;
-  static const double _strokeWidth = 12;
+  static const double _strokeWidth = 17;
 
   @override
   void paint(Canvas canvas, Size size) {
