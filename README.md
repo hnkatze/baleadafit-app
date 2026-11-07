@@ -152,9 +152,15 @@ existir en el proyecto de Firebase:
 3. Copiar el **Web client ID** (el OAuth client de tipo web del proyecto) en
    `config/env.dev.json` como `GOOGLE_SERVER_CLIENT_ID`. Android lo necesita para
    devolver un `idToken`; ese archivo no se versiona.
-4. iOS: agregar el `REVERSED_CLIENT_ID` de `GoogleService-Info.plist` como URL
-   scheme en `ios/Runner/Info.plist`. Ese valor tampoco se versiona: se agrega
-   localmente.
+4. iOS: el `REVERSED_CLIENT_ID` ya está registrado como URL scheme en
+   `ios/Runner/Info.plist` (`CFBundleURLTypes`). Sin ese registro, Google
+   Sign-In **mata la app** al inicializar con un `NSInvalidArgumentException`
+   ("missing support for the following URL schemes"). Es un identificador
+   público —viaja dentro de cualquier IPA y no da acceso a nada— así que se
+   versiona para que un clon nuevo no crashee; los archivos que sí llevan
+   llaves (`GoogleService-Info.plist`, `google-services.json`,
+   `firebase_options.dart`) siguen fuera del repo. Si alguna vez cambia el
+   cliente OAuth de iOS, hay que actualizar el scheme en ese mismo archivo.
 
 ## Diseños
 
