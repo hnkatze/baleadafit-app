@@ -11,6 +11,11 @@ PacienteResumen _$PacienteResumenFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       nombre: json['nombre'] as String,
       apellido: json['apellido'] as String,
+      fechaNacimiento: json['fechaNacimiento'] == null
+          ? null
+          : DateTime.parse(json['fechaNacimiento'] as String),
+      meta: json['meta'] as String?,
+      activo: json['activo'] as bool? ?? true,
       ultimaMedicion: json['ultimaMedicion'] == null
           ? null
           : UltimaMedicion.fromJson(
