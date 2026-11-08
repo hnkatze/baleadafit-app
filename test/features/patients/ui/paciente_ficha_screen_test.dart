@@ -276,7 +276,8 @@ void main() {
     tester,
   ) async {
     final json = _conMediciones();
-    json['adherencia30d'] = {'porcentaje': 75, 'cumplidos': 15, 'total': 20};
+    // A fraction, as the API sends it: 0.75 is 75%.
+    json['adherencia30d'] = {'porcentaje': 0.75, 'cumplidos': 15, 'total': 20};
     await _pump(tester, ficha: _de(json));
 
     expect(find.text('Adherencia · sin registros'), findsNothing);
@@ -433,5 +434,16 @@ void main() {
 
     expect(calls, 2);
     expect(find.text('Paciente De Prueba'), findsOneWidget);
+  });
+
+  testWidgets('reads the adherence fraction as a percentage', (tester) async {
+    // The API sends adherencia30d.porcentaje as a fraction 0..1, not 0..100.
+    final json = _conMediciones();
+    json['adherencia30d'] = {'porcentaje': 0.75, 'cumplidos': 3, 'total': 4};
+
+    await _pump(tester, ficha: _de(json));
+
+    expect(find.text('75%'), findsOneWidget);
+    expect(find.text('0.75%'), findsNothing);
   });
 }

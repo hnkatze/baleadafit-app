@@ -1118,9 +1118,12 @@ class _Adherencia extends StatelessWidget {
                     'con el correo de su ficha, va a poder marcar sus comidas '
                     'y acá vas a ver su avance de 30 días.')
         : '${adherencia.cumplidos ?? 0} de ${adherencia.total} comidas';
-    final porcentaje =
-        adherencia.porcentaje ??
-        ((adherencia.cumplidos ?? 0) * 100 / (adherencia.total ?? 1));
+    // The API sends `porcentaje` as a fraction (0..1), not as 0..100, so it is
+    // scaled before it reaches the label; the fallback below already computes a
+    // percentage and must not be scaled twice.
+    final porcentaje = adherencia.porcentaje == null
+        ? ((adherencia.cumplidos ?? 0) * 100 / (adherencia.total ?? 1))
+        : adherencia.porcentaje! * 100;
 
     return _Tarjeta(
       color: colors.surfaceContainerLow,

@@ -79,6 +79,18 @@ deletion (`activo: false`): no copy may say "borrar".
 `DELETE /pacientes/{id}`. Where the API returns no schema the client tolerates the gap
 instead of guessing.
 
+**S12 — Edit a patient (issue #8).** The same four-step form the wizard uses, prefilled from
+`GET /pacientes/{id}/ficha`, saving with `PATCH /pacientes/{id}`. The `Editar datos` entry of the
+file's menu opens it. `PATCH` replaces `condiciones` and `restricciones` wholesale when they are
+sent, so the form must always send the complete selection. The issue's own criteria are already
+met by the create path; the edit closes it.
+
+**S13 — Weight and body-fat chart (issue #9).** The evolution block draws the series in
+`evolucion` — weight and body fat — oldest to newest. The x axis is the **measurement order**,
+not elapsed time: every entry may share the same date. Fewer than two measurements draws no
+chart, which is the state the artboard already covers with its "second measurement" line. No new
+dependency: the segment is drawn with `CustomPainter`, as the home already does for its pulse.
+
 **S11 — House rules.** Feature-first layout under `lib/features/patients/`, `ApiClient` for
 transport, Riverpod for state, tokens from `lib/core/theme/` (no `GoogleFonts`), Material
 Symbols equivalents from `Icons`. Each task lands with its tests and its docs.
@@ -93,6 +105,8 @@ Symbols equivalents from `Icons`. Each task lands with its tests and its docs.
 | T4 | S6 | Nueva medición form, posting `POST /pacientes/{id}/mediciones` | `lib/features/patients/ui/nueva_medicion_screen.dart` | done — 165 green at the time, uncommitted |
 | T5 | S9 | Ficha overflow menu and the deactivate confirmation over `DELETE /pacientes/{id}` | `lib/features/patients/ui/paciente_menu.dart` | done — 172 green, uncommitted |
 | T6 | S7, S8 | New-patient wizard, all four steps (3 and 4 designed without an artboard, by human decision) | `lib/features/patients/ui/alta_paciente/` | in progress |
+| T8 | S12 | Edit an existing patient from the file's menu over `PATCH /pacientes/{id}` | `lib/features/patients/ui/alta_paciente/` | pending |
+| T9 | S13 | Weight and body-fat chart in the file's evolution block | `lib/features/patients/ui/` | pending |
 | T7 | S11 | Close the two consistency debts: the measurement form becomes a `go_router` route, and `ApiClient` owns the writes instead of each repository reaching into `dio` | `lib/core/network/`, `lib/core/router/` | pending |
 
 ## Delivery
@@ -175,6 +189,11 @@ the error colour. `Editar datos` and `Medicamentos` render inert until they have
 buried real changes in formatting noise; the parent restored those files to `HEAD` and
 re-applied only the semantic edits. Every later task states explicitly that only the files
 it touches may be formatted.
+
+**L17 — Adherence percentage was shown raw.** `adherencia30d.porcentaje` arrives as a fraction
+(0..1) and the file multiplied only in the fallback branch, so a real value painted `0.75%`
+instead of `75%`. Fixed with its test, and the older test that had encoded the bug in its fixture
+was corrected.
 
 **L14 — Wizard goes to four steps (human decision).** The artboard only draws Identidad and
 Objetivo; the human chose to complete the wizard, so Clínica and Hábitos are designed in the
