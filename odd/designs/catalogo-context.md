@@ -105,6 +105,9 @@ restricciones sin ir quitando alimentos a mano.
 
 ## 7. Gaps del contrato
 
+El gap 1 y el 3 ya están pedidos al BE en el board: card `alimento-no-devuelve-micronutrientes`
+en `baleadafit-api/catalogo`.
+
 1. El alimento no devuelve los micronutrientes que sí acepta al escribir: asimetría real entre
    `POST`/`PATCH` y `GET`.
 2. No hay filtro por nutriente (kcal máximo, proteína mínima), que es justo lo que una

@@ -103,6 +103,9 @@ Los conocemos por contrato y por el estado real de la base:
 
 ## 8. Gaps del contrato (a resolver en el repo del API, no en el diseño)
 
+Los gaps 1, 2 y 3 ya están pedidos al BE en el board: card
+`agenda-sin-disponibilidad-y-sin-no-asistio` en `baleadafit-api/citas`.
+
 1. No hay endpoint de **disponibilidad** ni de horario de consultorio: la agenda no puede
    saber qué horas son válidas sin inventarlas o intentar y esperar 409.
 2. `estado` no distingue **no asistió** (incomparecencia) de cancelada. Clínicamente son cosas
