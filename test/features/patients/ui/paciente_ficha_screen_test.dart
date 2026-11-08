@@ -2,6 +2,7 @@ import 'package:baleadafit/core/network/api_failure.dart';
 import 'package:baleadafit/core/theme/app_theme.dart';
 import 'package:baleadafit/features/patients/data/paciente_ficha.dart';
 import 'package:baleadafit/features/patients/data/patients_providers.dart';
+import 'package:baleadafit/features/patients/ui/evolucion_chart.dart';
 import 'package:baleadafit/features/patients/ui/paciente_ficha_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -445,5 +446,83 @@ void main() {
 
     expect(find.text('75%'), findsOneWidget);
     expect(find.text('0.75%'), findsNothing);
+  });
+
+  group('the weight and body-fat chart', () {
+    Map<String, Object?> conEvolucion(List<Map<String, Object?>> evolucion) => {
+      ..._conMediciones(),
+      'evolucion': evolucion,
+    };
+
+    List<PuntoEvolucion> puntos(WidgetTester tester, String clave) {
+      final pintura = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byKey(Key(clave)),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      return (pintura.painter! as EvolucionPainter).puntos;
+    }
+
+    testWidgets('draws both series from two measurements in order', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        ficha: _de(
+          conEvolucion([
+            {'fecha': '2025-11-07T08:00:00', 'pesoKg': 72.4, 'pctGrasa': 19.5},
+            // Same date on purpose: the axis is the order, not the time.
+            {'fecha': '2025-11-07T09:00:00', 'pesoKg': 71.8, 'pctGrasa': 19.1},
+          ]),
+        ),
+      );
+
+      expect(find.byKey(const Key('evolucion-grafico')), findsOneWidget);
+      expect(puntos(tester, 'evolucion-peso').map((p) => p.valor), [
+        72.4,
+        71.8,
+      ]);
+      expect(puntos(tester, 'evolucion-grasa').map((p) => p.valor), [
+        19.5,
+        19.1,
+      ]);
+      expect(puntos(tester, 'evolucion-peso').map((p) => p.orden), [0, 1]);
+    });
+
+    testWidgets('draws no chart with one measurement and keeps the line', (
+      tester,
+    ) async {
+      await _pump(tester, ficha: _de(_conMediciones()));
+
+      expect(find.byKey(const Key('evolucion-grafico')), findsNothing);
+      expect(
+        find.text(
+          'La tendencia y la proyección aparecen con la segunda medición.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('skips a null weight instead of drawing it as zero', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        ficha: _de(
+          conEvolucion([
+            {'fecha': '2025-11-07T08:00:00', 'pesoKg': 72.4, 'pctGrasa': 19.5},
+            {'fecha': '2025-11-08T08:00:00', 'pesoKg': null, 'pctGrasa': 19.0},
+            {'fecha': '2025-11-09T08:00:00', 'pesoKg': 71.0, 'pctGrasa': 18.6},
+          ]),
+        ),
+      );
+
+      final peso = puntos(tester, 'evolucion-peso');
+      expect(peso.map((p) => p.valor), [72.4, 71.0]);
+      // The gap keeps its slot, so the third measurement stays third.
+      expect(peso.map((p) => p.orden), [0, 2]);
+      expect(puntos(tester, 'evolucion-grasa'), hasLength(3));
+    });
   });
 }

@@ -8,6 +8,7 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_pill.dart';
 import '../data/paciente_ficha.dart';
 import '../data/patients_providers.dart';
+import 'evolucion_chart.dart';
 import 'paciente_menu.dart';
 
 /// The file of one patient, from `GET /pacientes/{id}/ficha`: who they are,
@@ -1279,23 +1280,33 @@ class _Mediciones extends StatelessWidget {
           ),
         ),
         _Tarjeta(
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final (etiqueta, valor) in celdas)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        etiqueta,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+              Row(
+                children: [
+                  for (final (etiqueta, valor) in celdas)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            etiqueta,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: colors.onSurfaceVariant,
+                            ),
+                          ),
+                          Text(valor, style: AppTypography.data(context)),
+                        ],
                       ),
-                      Text(valor, style: AppTypography.data(context)),
-                    ],
-                  ),
-                ),
+                    ),
+                ],
+              ),
+              // The chart draws itself only from the second measurement.
+              if (ficha.evolucion.length >= 2) ...[
+                const SizedBox(height: AppDimensions.spaceMd),
+                EvolucionChart(mediciones: ficha.evolucion),
+              ],
             ],
           ),
         ),
