@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<title>Mis pacientes · Nueva medición</title>
+<script src="e9e2bbbd-98a8-4dc7-aa27-aa32133acf9f"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&amp;display=block">
+<style>
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Regular.ttf");font-weight:400}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-SemiBold.ttf");font-weight:600}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Bold.ttf");font-weight:700}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-ExtraBold.ttf");font-weight:800}
+@font-face{font-family:"JetBrains Mono";src:url("ds/baleadafit/fonts/JetBrainsMono-Medium.ttf");font-weight:500}
+body{margin:0}
+.ms{font-family:"Material Symbols Outlined";font-weight:400;font-style:normal;line-height:1;letter-spacing:normal;white-space:nowrap;-webkit-font-smoothing:antialiased}
+a{color:#006c49;text-decoration:none}a:hover{color:#005236}
+input:focus,textarea:focus{outline:none;border-color:#006c49}
+summary{list-style:none;cursor:pointer}summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(180deg)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1100px; box-sizing: border-box; background: #f9f9ff; color: #111c2d; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+<header style="height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding: 0 4px; border-bottom: 1px solid #bbcabf;">
+<a href="MpFicha.dc.html" aria-label="Cerrar sin guardar" style="width: 48px; height: 48px; display: grid; place-items: center; color: #111c2d;"><span class="ms" style="font-size: 24px;">close</span></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column;">
+<span style="font-size: 16px; line-height: 1.5; font-weight: 600;">Nueva medición</span>
+<span style="font-size: 11px; line-height: 1.27; font-weight: 700; letter-spacing: 0.44px; color: #3c4a42;">Paciente De Prueba</span>
+</div>
+</header>
+
+<form style="flex-grow: 1; padding: 24px 16px 104px; display: flex; flex-direction: column; gap: 16px;">
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="fecha" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Fecha</label>
+<input id="fecha" value="Hoy, 6 nov" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111c2d;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span id="fuente-l" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Fuente</span>
+<button aria-labelledby="fuente-l" style="height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 8px 0 12px; display: flex; align-items: center; justify-content: space-between; font-family: inherit; font-size: 14px; color: #111c2d;">Manual<span class="ms" style="font-size: 20px; color: #3c4a42;">expand_more</span></button>
+</div>
+</div>
+
+<section style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px;">
+<h2 style="margin: 0; font-size: 14px; line-height: 1.43; font-weight: 600;">Básicos</h2>
+<div style="margin-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+<label for="peso" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Peso · kg</label>
+<input id="peso" inputmode="decimal" value="71.8" style="box-sizing: border-box; width: 100%; height: 44px; border-radius: 8px; border: 1.6px solid #006c49; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 500; color: #111c2d;">
+<span style="font-size: 11px; line-height: 1.27; color: #3c4a42;">antes 72.4</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+<label for="talla" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Talla · cm</label>
+<input id="talla" inputmode="decimal" value="174" style="box-sizing: border-box; width: 100%; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 500; color: #111c2d;">
+<span style="font-size: 11px; line-height: 1.27; color: #3c4a42;">antes 174</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+<label for="grasa" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">% grasa</label>
+<input id="grasa" inputmode="decimal" placeholder="—" style="box-sizing: border-box; width: 100%; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 500; color: #111c2d;">
+<span style="font-size: 11px; line-height: 1.27; color: #3c4a42;">antes 19.5</span>
+</div>
+</div>
+</section>
+
+<details open="" style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px;">
+<summary style="min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;"><span><span style="font-size: 14px; line-height: 1.43; font-weight: 600;">Composición corporal</span> <span style="font-size: 13px; color: #3c4a42;">· opcional</span></span><span class="ms chev" style="font-size: 22px; color: #3c4a42;">expand_more</span></summary>
+<div style="padding: 0 16px 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 8px;">
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="cintura" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Cintura · cm</label><input id="cintura" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="musculo" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Masa muscular · kg</label><input id="musculo" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="mgrasa" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Masa grasa · kg</label><input id="mgrasa" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="visceral" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Grasa visceral · 1–20</label><input id="visceral" inputmode="numeric" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="aguai" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Agua intracel. · L</label><input id="aguai" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="aguae" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Agua extracel. · L</label><input id="aguae" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="angulo" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Ángulo de fase · °</label><input id="angulo" inputmode="decimal" placeholder="—" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px;"></div>
+</div>
+</details>
+
+<details style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px;">
+<summary style="min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;"><span><span style="font-size: 14px; line-height: 1.43; font-weight: 600;">Pliegues</span> <span style="font-size: 13px; color: #3c4a42;">· 4 campos · mm</span></span><span class="ms chev" style="font-size: 22px; color: #3c4a42;">expand_more</span></summary>
+<div style="padding: 0 16px 16px; font-size: 13px; color: #3c4a42;">Tricipital, subescapular, suprailiaco, bicipital.</div>
+</details>
+<details style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px;">
+<summary style="min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;"><span><span style="font-size: 14px; line-height: 1.43; font-weight: 600;">Perímetros</span> <span style="font-size: 13px; color: #3c4a42;">· 3 campos · cm</span></span><span class="ms chev" style="font-size: 22px; color: #3c4a42;">expand_more</span></summary>
+<div style="padding: 0 16px 16px; font-size: 13px; color: #3c4a42;">Brazo, cadera, muslo.</div>
+</details>
+<details style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px;">
+<summary style="min-height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;"><span><span style="font-size: 14px; line-height: 1.43; font-weight: 600;">Tensión arterial</span> <span style="font-size: 13px; color: #3c4a42;">· 2 campos · mmHg</span></span><span class="ms chev" style="font-size: 22px; color: #3c4a42;">expand_more</span></summary>
+<div style="padding: 0 16px 16px; font-size: 13px; color: #3c4a42;">Sistólica, diastólica.</div>
+</details>
+
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="notas" style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Notas</label>
+<textarea id="notas" rows="3" placeholder="Condiciones de la medición, observaciones" style="box-sizing: border-box; width: 100%; resize: none; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 12px; font-family: inherit; font-size: 14px; line-height: 1.57; color: #111c2d;"></textarea>
+</div>
+</form>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 16px; background: #f9f9ff; border-top: 1px solid #bbcabf;">
+<a href="MpFicha.dc.html" style="height: 48px; border-radius: 8px; background: #006c49; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 16px; line-height: 1.5; font-weight: 600; letter-spacing: -0.08px;">Guardar medición</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:1100}}">
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+
+
+</body></html>

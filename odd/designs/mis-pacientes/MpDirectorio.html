@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<title>Mis pacientes · Directorio</title>
+<script src="276db1d4-78bf-4b5d-b32a-07e677d5dcbb"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&amp;display=block">
+<style>
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Regular.ttf");font-weight:400}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-SemiBold.ttf");font-weight:600}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Bold.ttf");font-weight:700}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-ExtraBold.ttf");font-weight:800}
+@font-face{font-family:"JetBrains Mono";src:url("ds/baleadafit/fonts/JetBrainsMono-Medium.ttf");font-weight:500}
+body{margin:0}
+.ms{font-family:"Material Symbols Outlined";font-weight:400;font-style:normal;line-height:1;letter-spacing:normal;white-space:nowrap;-webkit-font-smoothing:antialiased}
+a{color:#006c49;text-decoration:none}a:hover{color:#005236}
+input:focus{outline:none;border-color:#006c49}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 900px; box-sizing: border-box; background: #f9f9ff; color: #111c2d; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+<header style="height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 16px 0 4px; border-bottom: 1px solid #bbcabf;">
+<button aria-label="Abrir menú" style="width: 48px; height: 48px; border: 0; background: none; color: #111c2d; display: grid; place-items: center; padding: 0;"><span class="ms" style="font-size: 24px;">menu</span></button>
+<span style="width: 30px; height: 30px; border-radius: 8px; background: #006c49; color: #ffffff; display: grid; place-items: center;"><span class="ms" style="font-size: 18px;">monitor_heart</span></span>
+<div style="flex-grow: 1; display: flex; flex-direction: column;">
+<span style="font-size: 12px; line-height: 1.33; font-weight: 600; letter-spacing: -0.2px; color: #006c49;">BaleadaFit Pro</span>
+<span style="font-size: 11px; line-height: 1.27; font-weight: 700; letter-spacing: 0.44px; color: #3c4a42;">Pacientes</span>
+</div>
+<span style="width: 32px; height: 32px; border-radius: 50%; background: #006c49; color: #ffffff; display: grid; place-items: center; font-size: 11px; font-weight: 700; letter-spacing: 0.44px;">CH</span>
+</header>
+
+<main style="flex-grow: 1; padding: 24px 16px; display: flex; flex-direction: column;">
+<div style="display: flex; align-items: baseline; justify-content: space-between;">
+<h1 style="margin: 0; font-size: 30px; line-height: 1.27; font-weight: 700; letter-spacing: -0.6px;">Mis pacientes</h1>
+<span style="font-size: 13px; line-height: 1.38; color: #3c4a42;">2 activos</span>
+</div>
+
+<label for="buscar" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar paciente</label>
+<div style="margin-top: 16px; position: relative;">
+<span class="ms" style="position: absolute; left: 12px; top: 13px; font-size: 18px; color: #6c7a71;">search</span>
+<input id="buscar" type="search" placeholder="Nombre, apellido o correo" style="box-sizing: border-box; width: 100%; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px 0 38px; font-family: inherit; font-size: 14px; color: #111c2d;">
+</div>
+
+<div role="group" aria-label="Filtrar" style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+<button aria-pressed="true" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #006c49; color: #ffffff; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.24px;">Todos · 2</button>
+<button aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #bbcabf; background: #ffffff; color: #3c4a42; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.24px;">Sin plan · 0</button>
+<button aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #bbcabf; background: #ffffff; color: #3c4a42; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.24px;">Con plan · 2</button>
+<button aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #bbcabf; background: #ffffff; color: #3c4a42; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.24px;">Dados de baja</button>
+</div>
+
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+<a href="MpFicha.dc.html" style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; gap: 12px; align-items: center; color: #111c2d;">
+<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #d8e3fb; color: #3c4a42; display: grid; place-items: center; font-size: 13px; font-weight: 700; letter-spacing: 0.24px;">PD</span>
+<div style="flex-grow: 1; min-width: 0;">
+<div style="font-size: 14px; line-height: 1.43; font-weight: 600;">Paciente De Prueba</div>
+<div style="font-size: 13px; line-height: 1.38; color: #3c4a42;">31 años · Bajar</div>
+<div style="margin-top: 2px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #3c4a42;">72.4 kg · 19.5% grasa</div>
+</div>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #e7eeff; color: #006c49; font-size: 11px; line-height: 1.27; font-weight: 700; letter-spacing: 0.44px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #006c49;"></span>Con plan</span>
+</a>
+<a href="MpFicha.dc.html" style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; gap: 12px; align-items: center; color: #111c2d;">
+<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #d8e3fb; color: #3c4a42; display: grid; place-items: center; font-size: 13px; font-weight: 700; letter-spacing: 0.24px;">MH</span>
+<div style="flex-grow: 1; min-width: 0;">
+<div style="font-size: 14px; line-height: 1.43; font-weight: 600;">María Isabel Hernández Paz</div>
+<div style="margin-top: 2px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #3c4a42;">78.5 kg · 32.4% grasa</div>
+</div>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #e7eeff; color: #006c49; font-size: 11px; line-height: 1.27; font-weight: 700; letter-spacing: 0.44px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #006c49;"></span>Con plan</span>
+</a>
+</div>
+</main>
+
+<a href="MpAltaIdentidad.dc.html" style="position: absolute; right: 16px; bottom: 24px; height: 56px; padding: 0 20px; border-radius: 16px; background: #006c49; color: #ffffff; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 1.5; font-weight: 600; letter-spacing: -0.08px;"><span class="ms" style="font-size: 22px;">person_add</span>Nuevo paciente</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+
+
+</body></html>

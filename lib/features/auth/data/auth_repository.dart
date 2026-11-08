@@ -43,8 +43,11 @@ class AuthRepository {
     if (token == null) throw const UnauthenticatedFailure();
 
     try {
-      final data = await _api.get('/auth/me', bearerToken: token);
-      return AuthSession.fromMeData(data);
+      return await _api.get(
+        '/auth/me',
+        fromJson: AuthSession.fromMeData,
+        bearerToken: token,
+      );
     } on ApiFailure catch (failure) {
       throw _mapApiFailure(failure);
     } on ArgumentError {
