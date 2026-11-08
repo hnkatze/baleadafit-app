@@ -190,6 +190,12 @@ buried real changes in formatting noise; the parent restored those files to `HEA
 re-applied only the semantic edits. Every later task states explicitly that only the files
 it touches may be formatted.
 
+**L18 — Clearing a text field is an open question for BE.** The edit form omits empty text
+fields, so a value already stored cannot be cleared from the UI: omitting on a `PATCH` keeps
+the old value, and the contract does not say whether `""` or an explicit `null` is the way to
+empty a field. The app keeps omitting until the API documents it; the question is on the board
+as `no-esta-definido-como-limpiar-un-campo-de-texto` in `baleadafit-api/pacientes`.
+
 **L17 — Adherence percentage was shown raw.** `adherencia30d.porcentaje` arrives as a fraction
 (0..1) and the file multiplied only in the fallback branch, so a real value painted `0.75%`
 instead of `75%`. Fixed with its test, and the older test that had encoded the bug in its fixture
