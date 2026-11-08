@@ -7,9 +7,9 @@
 /// it. No field here is invented — the shapes come from payloads captured
 /// against the real API.
 ///
-/// Only the blocks the ficha draws are modelled. `situacion` and `habitos`
-/// arrive in the payload but no artboard shows them yet, so they are ignored
-/// until a screen needs them.
+/// Only the blocks a screen reads are modelled. `situacion` and `habitos` are
+/// not drawn by the ficha; they exist so the edit form can prefill itself from
+/// the ficha it already holds instead of a second call.
 class PacienteFicha {
   const PacienteFicha({
     required this.paciente,
@@ -21,6 +21,8 @@ class PacienteFicha {
     required this.evolucion,
     required this.consultas,
     required this.planes,
+    this.situacion = const SituacionFicha(),
+    this.habitos = const HabitosFicha(),
   });
 
   factory PacienteFicha.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,8 @@ class PacienteFicha {
       evolucion: _list(json['evolucion'], MedicionFicha.fromJson),
       consultas: ConsultasFicha.fromJson(_map(json['consultas'])),
       planes: _list(json['planes'], PlanFicha.fromJson),
+      situacion: SituacionFicha.fromJson(_map(json['situacion'])),
+      habitos: HabitosFicha.fromJson(_map(json['habitos'])),
     );
   }
 
@@ -56,6 +60,8 @@ class PacienteFicha {
 
   final ConsultasFicha consultas;
   final List<PlanFicha> planes;
+  final SituacionFicha situacion;
+  final HabitosFicha habitos;
 
   bool get tieneMediciones => evolucion.isNotEmpty;
 
@@ -84,6 +90,7 @@ class PacienteDetalle {
     this.pesoObjetivoKg,
     this.fechaObjetivo,
     this.motivoConsulta,
+    this.notas,
     this.activo,
     this.firebaseUid,
   });
@@ -104,6 +111,7 @@ class PacienteDetalle {
       pesoObjetivoKg: _number(json['pesoObjetivoKg']),
       fechaObjetivo: _date(json['fechaObjetivo']),
       motivoConsulta: _string(json['motivoConsulta']),
+      notas: _string(json['notas']),
       activo: _boolean(json['activo']),
       firebaseUid: _string(json['firebaseUid']),
     );
@@ -128,6 +136,7 @@ class PacienteDetalle {
   final num? pesoObjetivoKg;
   final DateTime? fechaObjetivo;
   final String? motivoConsulta;
+  final String? notas;
   final bool? activo;
 
   /// Null until the patient signs in with the mail of this file: the API links
@@ -237,6 +246,77 @@ class FichaProgreso {
   final num? proyeccionKg;
 
   bool get hayTendencia => ritmoKgSemana != null || proyeccionKg != null;
+}
+
+/// The clinical picture of the patient.
+///
+/// The API stores each condition and restriction as a relation object
+/// (`{condicion: {codigo, …}}`) but types the block as `object`, so a code is
+/// read from the nested object and a bare string is accepted too: a shape
+/// change must not blank the edit form, which would then wipe the lists.
+class SituacionFicha {
+  const SituacionFicha({
+    this.condiciones = const [],
+    this.restricciones = const [],
+    this.alergias,
+    this.cirugias,
+    this.suplementos,
+    this.motivoConsulta,
+  });
+
+  factory SituacionFicha.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const SituacionFicha();
+    return SituacionFicha(
+      condiciones: _codigos(json['condiciones'], 'condicion'),
+      restricciones: _codigos(json['restricciones'], 'restriccion'),
+      alergias: _string(json['alergias']),
+      cirugias: _string(json['cirugias']),
+      suplementos: _string(json['suplementos']),
+      motivoConsulta: _string(json['motivoConsulta']),
+    );
+  }
+
+  /// Catalogue codes, which is what `PATCH /pacientes/{id}` takes back.
+  final List<String> condiciones;
+  final List<String> restricciones;
+  final String? alergias;
+  final String? cirugias;
+  final String? suplementos;
+  final String? motivoConsulta;
+}
+
+/// Daily habits of the patient.
+class HabitosFicha {
+  const HabitosFicha({
+    this.comidasAlDia,
+    this.aguaLitros,
+    this.horasSueno,
+    this.alcohol,
+    this.tabaco,
+    this.quienCocina,
+    this.presupuesto,
+  });
+
+  factory HabitosFicha.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return const HabitosFicha();
+    return HabitosFicha(
+      comidasAlDia: _integer(json['comidasAlDia']),
+      aguaLitros: _number(json['aguaLitros']),
+      horasSueno: _number(json['horasSueno']),
+      alcohol: _string(json['alcohol']),
+      tabaco: _string(json['tabaco']),
+      quienCocina: _string(json['quienCocina']),
+      presupuesto: _string(json['presupuesto']),
+    );
+  }
+
+  final int? comidasAlDia;
+  final num? aguaLitros;
+  final num? horasSueno;
+  final String? alcohol;
+  final String? tabaco;
+  final String? quienCocina;
+  final String? presupuesto;
 }
 
 /// The calorie requirement the API already calculated.
@@ -475,4 +555,20 @@ List<T> _list<T>(Object? value, T Function(Map<String, dynamic>) fromJson) {
     if (map != null) items.add(fromJson(map));
   }
   return items;
+}
+
+/// Reads catalogue codes out of a relation list. Each entry is either the
+/// relation object (code under [relacion]), an object with the code itself, or
+/// a bare string; anything else is skipped.
+List<String> _codigos(Object? value, String relacion) {
+  if (value is! List) return <String>[];
+  final codigos = <String>[];
+  for (final item in value) {
+    final entrada = _map(item);
+    final codigo = entrada == null
+        ? _string(item)
+        : _string(_map(entrada[relacion])?['codigo'] ?? entrada['codigo']);
+    if (codigo != null) codigos.add(codigo);
+  }
+  return codigos;
 }

@@ -29,6 +29,12 @@ abstract final class AppRoutes {
   /// Location of the measurement form of one patient.
   static String nuevaMedicion(String id) => '${paciente(id)}/$medicionSegment';
 
+  /// Path segment under a patient file that opens the edit form.
+  static const editarSegment = 'editar';
+
+  /// Location of the edit form of one patient.
+  static String editarPaciente(String id) => '${paciente(id)}/$editarSegment';
+
   /// Routes of the authenticated shell, in drawer order.
   static const shellRoutes = <String>[
     home,

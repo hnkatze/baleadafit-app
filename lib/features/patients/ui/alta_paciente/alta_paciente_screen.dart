@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../shared/widgets/app_button.dart';
+import '../../data/paciente_ficha.dart';
 import '../../data/patients_providers.dart';
 import 'alta_paciente_borrador.dart';
 import 'paso_clinica.dart';
@@ -18,18 +19,39 @@ import 'paso_objetivo.dart';
 /// steps 3 and 4 have no artboard and extend their language. Each step checks
 /// its own required fields before the next one opens, so nothing reaches the
 /// API half-filled.
+///
+/// [AltaPacienteScreen.editar] reuses the same four steps to edit an existing
+/// patient: the draft is prefilled from their ficha and the last step saves
+/// with `PATCH /pacientes/{id}`.
 class AltaPacienteScreen extends ConsumerStatefulWidget {
   const AltaPacienteScreen({
     required this.onCerrar,
     required this.onCreado,
     super.key,
-  });
+  }) : pacienteId = null,
+       ficha = null;
+
+  /// The edit form of the patient [pacienteId], prefilled from [ficha].
+  /// [onGuardado] runs once the API accepted the changes and the ficha and
+  /// the directory were marked for a new read.
+  AltaPacienteScreen.editar({
+    required String this.pacienteId,
+    required PacienteFicha this.ficha,
+    required this.onCerrar,
+    required VoidCallback onGuardado,
+    super.key,
+  }) : onCreado = ((_) => onGuardado());
+
+  /// Set only when editing.
+  final String? pacienteId;
+  final PacienteFicha? ficha;
 
   /// Leaves the wizard without saving.
   final VoidCallback onCerrar;
 
-  /// Called with the id of the patient the API created, after the directory
-  /// was refreshed. The router decides where that leads.
+  /// Called with the id of the patient the API created (or saved, when
+  /// editing), after the directory was refreshed. The router decides where
+  /// that leads.
   final ValueChanged<String> onCreado;
 
   @override
@@ -37,11 +59,15 @@ class AltaPacienteScreen extends ConsumerStatefulWidget {
 }
 
 class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
-  final _borrador = AltaPacienteBorrador();
+  late final _borrador = widget.ficha == null
+      ? AltaPacienteBorrador()
+      : AltaPacienteBorrador.desdeFicha(widget.ficha!);
   int _paso = 0;
   Map<String, String> _errores = {};
   String? _falla;
   bool _enviando = false;
+
+  bool get _editando => widget.ficha != null;
 
   bool get _esUltimo => _paso == pasosAlta.length - 1;
 
@@ -101,9 +127,13 @@ class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
     });
     final String id;
     try {
-      id = await ref
-          .read(patientsRepositoryProvider)
-          .crearPaciente(_borrador.cuerpo());
+      final repositorio = ref.read(patientsRepositoryProvider);
+      if (_editando) {
+        id = widget.pacienteId!;
+        await repositorio.actualizarPaciente(id, body: _borrador.cuerpo());
+      } else {
+        id = await repositorio.crearPaciente(_borrador.cuerpo());
+      }
     } on ApiFailure catch (failure) {
       if (!mounted) return;
       setState(() {
@@ -121,7 +151,9 @@ class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
     }
 
     if (!mounted) return;
-    // The directory and the home list were read before this patient existed.
+    // The directory and the home list were read before this patient existed
+    // (or changed); the ficha too, since it shows the edited data.
+    if (_editando) ref.invalidate(pacienteFichaProvider(id));
     ref.invalidate(pacientesDirectorioProvider);
     ref.invalidate(pacientesRecientesProvider);
     widget.onCreado(id);
@@ -149,7 +181,11 @@ class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
           bottom: false,
           child: Column(
             children: [
-              _Cabecera(primerPaso: _paso == 0, onPressed: _atras),
+              _Cabecera(
+                titulo: _editando ? 'Editar paciente' : 'Nuevo paciente',
+                primerPaso: _paso == 0,
+                onPressed: _atras,
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   // Keyed by step so each one opens at the top.
@@ -212,6 +248,7 @@ class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
                 falla: _falla,
                 enviando: _enviando,
                 ultimo: _esUltimo,
+                etiquetaFinal: _editando ? 'Guardar cambios' : 'Crear paciente',
                 onPressed: _adelante,
               ),
             ],
@@ -222,11 +259,16 @@ class _AltaPacienteScreenState extends ConsumerState<AltaPacienteScreen> {
   }
 }
 
-/// `Nuevo paciente` with `x` on the first step (nothing to go back to) and an
-/// arrow on the others.
+/// `Nuevo paciente` (or `Editar paciente`) with `x` on the first step (nothing
+/// to go back to) and an arrow on the others.
 class _Cabecera extends StatelessWidget {
-  const _Cabecera({required this.primerPaso, required this.onPressed});
+  const _Cabecera({
+    required this.titulo,
+    required this.primerPaso,
+    required this.onPressed,
+  });
 
+  final String titulo;
   final bool primerPaso;
   final VoidCallback onPressed;
 
@@ -253,10 +295,7 @@ class _Cabecera extends StatelessWidget {
             onPressed: onPressed,
           ),
           Expanded(
-            child: Text(
-              'Nuevo paciente',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            child: Text(titulo, style: Theme.of(context).textTheme.titleLarge),
           ),
         ],
       ),
@@ -333,12 +372,14 @@ class _Accion extends StatelessWidget {
     required this.falla,
     required this.enviando,
     required this.ultimo,
+    required this.etiquetaFinal,
     required this.onPressed,
   });
 
   final String? falla;
   final bool enviando;
   final bool ultimo;
+  final String etiquetaFinal;
   final VoidCallback onPressed;
 
   @override
@@ -393,7 +434,7 @@ class _Accion extends StatelessWidget {
               const SizedBox(height: AppDimensions.spaceSm + 4),
             ],
             AppButton(
-              label: ultimo ? 'Crear paciente' : 'Siguiente',
+              label: ultimo ? etiquetaFinal : 'Siguiente',
               icon: ultimo ? Icons.check : Icons.arrow_forward,
               isLoading: enviando,
               onPressed: onPressed,

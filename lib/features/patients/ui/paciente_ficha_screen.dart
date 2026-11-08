@@ -38,7 +38,7 @@ class PacienteFichaScreen extends ConsumerWidget {
   /// navigation of the module; without it the CTAs are disabled.
   final VoidCallback? onNuevaMedicion;
 
-  /// Opens the edit form. Null until that form exists: the menu entry is
+  /// Opens the edit form. The router owns it; without it the menu entry is
   /// drawn but does nothing.
   final VoidCallback? onEditarDatos;
 

@@ -399,4 +399,53 @@ void main() {
 
     expect(find.byType(PacientesScreen), findsOneWidget);
   });
+
+  testWidgets('Editar datos opens the prefilled form over the ficha', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final router = await _pumpApp(tester, session: _session);
+    router.go(AppRoutes.paciente('pac-1'));
+    await pumpStable(tester);
+
+    await tester.tap(find.byTooltip('Más opciones'));
+    await pumpStable(tester);
+    await tester.tap(find.text('Editar datos'));
+    await pumpStable(tester, frames: 15);
+
+    expect(
+      router.routerDelegate.currentConfiguration.uri.toString(),
+      AppRoutes.editarPaciente('pac-1'),
+    );
+    expect(find.byType(AltaPacienteScreen), findsOneWidget);
+    expect(find.text('Editar paciente'), findsOneWidget);
+    expect(find.text('Ana'), findsOneWidget);
+    expect(find.text('Martínez'), findsOneWidget);
+    // Full-screen like the wizard: no shell around it, the file stays below.
+    expect(
+      find.ancestor(
+        of: find.byType(AltaPacienteScreen),
+        matching: find.byType(AppShell),
+      ),
+      findsNothing,
+    );
+
+    await tester.tap(find.byTooltip('Cerrar sin guardar'));
+    await pumpStable(tester, frames: 15);
+
+    expect(find.byType(AltaPacienteScreen), findsNothing);
+    expect(find.byType(PacienteFichaScreen), findsOneWidget);
+  });
+
+  testWidgets('reaches the edit form through a deep link', (tester) async {
+    final router = await _pumpApp(tester, session: _session);
+
+    router.go(AppRoutes.editarPaciente('pac-1'));
+    await pumpStable(tester);
+
+    expect(find.byType(AltaPacienteScreen), findsOneWidget);
+    expect(find.text('Editar paciente'), findsOneWidget);
+  });
 }

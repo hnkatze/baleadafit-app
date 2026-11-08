@@ -291,9 +291,8 @@ void main() {
         }),
       );
 
-      final items = await ApiClient(
-        dioWith(adapter),
-      ).getList('/condiciones', itemFromJson: (json) => json['codigo']);
+      final items = await ApiClient(dioWith(adapter))
+          .getList('/condiciones', itemFromJson: (json) => json['codigo']);
 
       expect(items, ['DM2']);
       expect(adapter.requests.single.path, '/condiciones');
@@ -308,10 +307,46 @@ void main() {
       );
 
       expect(
-        ApiClient(
-          dioWith(adapter),
-        ).getList('/condiciones', itemFromJson: (json) => json),
+        ApiClient(dioWith(adapter))
+            .getList('/condiciones', itemFromJson: (json) => json),
         throwsA(isA<ApiFailure>()),
+      );
+    });
+  });
+
+  group('ApiClient.patchAck', () {
+    test('sends a PATCH with the body and accepts an ok:true answer', () async {
+      final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
+
+      await ApiClient(dioWith(adapter)).patchAck('/x', body: {'a': 1});
+
+      expect(adapter.requests.single.method, 'PATCH');
+      expect(adapter.requests.single.path, '/x');
+      expect(adapter.requests.single.data, {'a': 1});
+    });
+
+    test('maps a 409 to the ApiFailure carrying the API message', () async {
+      final adapter = FakeHttpAdapter(
+        (_) async => jsonBody({
+          'ok': false,
+          'error': {
+            'codigo': 'CONFLICTO',
+            'mensaje': 'Ese correo ya es de otro paciente.',
+          },
+        }, status: 409),
+      );
+
+      await expectLater(
+        ApiClient(dioWith(adapter)).patchAck('/x', body: {}),
+        throwsA(
+          isA<ApiFailure>()
+              .having((f) => f.statusCode, 'statusCode', 409)
+              .having(
+                (f) => f.mensaje,
+                'mensaje',
+                'Ese correo ya es de otro paciente.',
+              ),
+        ),
       );
     });
   });

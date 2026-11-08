@@ -51,6 +51,18 @@ class PatientsRepository {
     required Map<String, Object?> body,
   }) => _api.postAck('/pacientes/$pacienteId/mediciones', body: body);
 
+  /// Updates a patient through `PATCH /pacientes/{id}`.
+  ///
+  /// [body] carries documented fields only. `condiciones` and `restricciones`
+  /// are REPLACED wholesale when sent, so the caller sends the complete
+  /// selection, never a diff. A mail that belongs to another patient answers
+  /// 409 with a message the form shows as is. The ficha is refreshed instead
+  /// of reading the answer back.
+  Future<void> actualizarPaciente(
+    String pacienteId, {
+    required Map<String, Object?> body,
+  }) => _api.patchAck('/pacientes/$pacienteId', body: body);
+
   /// Deactivates a patient through `DELETE /pacientes/{id}`.
   ///
   /// The API does a logical deletion (`activo = false`; the file, measurements

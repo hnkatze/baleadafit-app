@@ -338,4 +338,56 @@ void main() {
     expect(condiciones.first.codigo, 'DM2');
     expect(condiciones.first.nombre, 'Diabetes tipo 2');
   });
+
+  test('updates a patient through PATCH /pacientes/{id}', () async {
+    final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
+
+    await PatientsRepository(ApiClient(dioWith(adapter))).actualizarPaciente(
+      'pac-1',
+      body: {
+        'nombre': 'Ana',
+        'condiciones': ['DIABETES_2'],
+        'restricciones': <String>[],
+      },
+    );
+
+    expect(adapter.requests.single.method, 'PATCH');
+    expect(adapter.requests.single.path, '/pacientes/pac-1');
+    expect(adapter.requests.single.data, {
+      'nombre': 'Ana',
+      'condiciones': ['DIABETES_2'],
+      'restricciones': <String>[],
+    });
+  });
+
+  test('surfaces the 409 of a mail that belongs to another patient', () {
+    final repository = PatientsRepository(
+      ApiClient(
+        dioWith(
+          FakeHttpAdapter(
+            (_) async => jsonBody({
+              'ok': false,
+              'error': {
+                'codigo': 'CONFLICTO',
+                'mensaje': 'Ese correo ya es de otro paciente.',
+              },
+            }, status: 409),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      repository.actualizarPaciente('pac-1', body: {'correo': 'a@b.co'}),
+      throwsA(
+        isA<ApiFailure>()
+            .having((f) => f.statusCode, 'statusCode', 409)
+            .having(
+              (f) => f.mensaje,
+              'mensaje',
+              'Ese correo ya es de otro paciente.',
+            ),
+      ),
+    );
+  });
 }

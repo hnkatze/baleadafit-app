@@ -65,6 +65,13 @@ class ApiClient {
     _envelope(response.data, response.statusCode);
   }
 
+  /// PATCH [path] with a JSON [body] when the caller only needs to know it
+  /// succeeded, like [postAck].
+  Future<void> patchAck(String path, {Object? body}) async {
+    final response = await _send('PATCH', path, body);
+    _envelope(response.data, response.statusCode);
+  }
+
   /// DELETE [path] when the caller only needs to know it succeeded.
   Future<void> deleteAck(String path) async {
     final response = await _send('DELETE', path, null);

@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+import '../../data/paciente_ficha.dart';
+
 /// Step names, in the order the stepper draws them.
 const pasosAlta = ['Identidad', 'Objetivo', 'Clínica', 'Hábitos'];
 
@@ -56,11 +58,79 @@ enum EstadoFisiologico {
 
 /// What the wizard has collected so far, across its four steps.
 ///
+/// The edit form is the same draft in [esEdicion] mode, prefilled by
+/// [AltaPacienteBorrador.desdeFicha]: validation and body building are shared,
+/// so the two flows cannot drift apart.
+///
 /// It lives above the steps (not in them) so going back, or a step being
 /// rebuilt, never loses what was typed. Text controllers are named after the
 /// `POST /pacientes` field they feed, so the body is built without a second
 /// mapping that could drift.
 class AltaPacienteBorrador {
+  AltaPacienteBorrador() : esEdicion = false, _fechaObjetivoOriginal = '';
+
+  /// Prefills every field from the ficha the screen already holds.
+  AltaPacienteBorrador.desdeFicha(PacienteFicha ficha)
+    : esEdicion = true,
+      _fechaObjetivoOriginal = _fecha(ficha.paciente.fechaObjetivo) {
+    final paciente = ficha.paciente;
+    nombre.text = paciente.nombre ?? '';
+    apellido.text = paciente.apellido ?? '';
+    correo.text = paciente.correo ?? '';
+    telefono.text = paciente.telefono ?? '';
+    fechaNacimiento.text = _fecha(paciente.fechaNacimiento);
+    sexo = SexoPaciente.values
+        .where((valor) => valor.codigo == paciente.sexo)
+        .firstOrNull;
+    // A value the app does not know keeps the wizard default instead of
+    // failing, so the form always opens.
+    meta =
+        MetaPaciente.values
+            .where((valor) => valor.codigo == paciente.meta)
+            .firstOrNull ??
+        meta;
+    nivelActividad =
+        NivelActividad.values
+            .where((valor) => valor.codigo == paciente.nivelActividad)
+            .firstOrNull ??
+        nivelActividad;
+    estadoFisiologico =
+        EstadoFisiologico.values
+            .where((valor) => valor.codigo == paciente.estadoFisiologico)
+            .firstOrNull ??
+        estadoFisiologico;
+    pesoObjetivoKg.text = _numero(paciente.pesoObjetivoKg);
+    fechaObjetivo.text = _fechaObjetivoOriginal;
+    notas.text = paciente.notas ?? '';
+
+    final situacion = ficha.situacion;
+    condiciones.addAll(situacion.condiciones);
+    restricciones.addAll(situacion.restricciones);
+    alergias.text = situacion.alergias ?? '';
+    cirugias.text = situacion.cirugias ?? '';
+    suplementos.text = situacion.suplementos ?? '';
+    // The ficha repeats it in both blocks; the record is the source.
+    motivoConsulta.text =
+        paciente.motivoConsulta ?? situacion.motivoConsulta ?? '';
+
+    final habitos = ficha.habitos;
+    comidasAlDia.text = _numero(habitos.comidasAlDia);
+    aguaLitros.text = _numero(habitos.aguaLitros);
+    horasSueno.text = _numero(habitos.horasSueno);
+    alcohol.text = habitos.alcohol ?? '';
+    tabaco.text = habitos.tabaco ?? '';
+    quienCocina.text = habitos.quienCocina ?? '';
+    presupuesto.text = habitos.presupuesto ?? '';
+  }
+
+  /// True when the draft edits an existing patient (`PATCH`) instead of
+  /// creating one (`POST`).
+  final bool esEdicion;
+
+  // Kept to let an unchanged goal date that already passed through: the
+  // nutritionist is fixing something else, not setting a new date.
+  final String _fechaObjetivoOriginal;
+
   final nombre = TextEditingController();
   final apellido = TextEditingController();
   final correo = TextEditingController();
@@ -159,7 +229,8 @@ class AltaPacienteBorrador {
           final fecha = leerFecha(objetivo);
           if (fecha == null) {
             errores['fechaObjetivo'] = 'Usá el formato dd/mm/aaaa';
-          } else if (fecha.isBefore(dia)) {
+          } else if (fecha.isBefore(dia) &&
+              objetivo != _fechaObjetivoOriginal) {
             errores['fechaObjetivo'] = 'Elegí una fecha futura';
           }
         }
@@ -171,11 +242,14 @@ class AltaPacienteBorrador {
     return errores;
   }
 
-  /// The body of `POST /pacientes`: only documented fields, only filled ones.
+  /// The body of `POST /pacientes` (or `PATCH /pacientes/{id}` in
+  /// [esEdicion]): only documented fields, only filled ones.
   ///
-  /// Empty text and empty selections are left out instead of sent as `""` or
-  /// `[]`, and the four numeric fields go as numbers because that is how the
-  /// API types them.
+  /// Empty text is left out instead of sent as `""`, and the numeric fields go
+  /// as numbers because that is how the API types them. Empty selections are
+  /// left out when creating, but an edit always sends both lists whole: the
+  /// API replaces them wholesale, so omitting one is not "unchanged" and a
+  /// diff would drop what the nutritionist never touched.
   Map<String, Object?> cuerpo() {
     final cuerpo = <String, Object?>{};
     void texto(String clave, TextEditingController controller) {
@@ -204,8 +278,10 @@ class AltaPacienteBorrador {
     final objetivo = leerFecha(fechaObjetivo.text);
     if (objetivo != null) cuerpo['fechaObjetivo'] = _fechaIso(objetivo);
     cuerpo['estadoFisiologico'] = estadoFisiologico.codigo;
-    if (condiciones.isNotEmpty) cuerpo['condiciones'] = condiciones.toList();
-    if (restricciones.isNotEmpty) {
+    if (esEdicion || condiciones.isNotEmpty) {
+      cuerpo['condiciones'] = condiciones.toList();
+    }
+    if (esEdicion || restricciones.isNotEmpty) {
       cuerpo['restricciones'] = restricciones.toList();
     }
     texto('alergias', alergias);
@@ -272,4 +348,15 @@ String formatearFecha(DateTime fecha) {
 String _fechaIso(DateTime fecha) {
   String dos(int n) => n.toString().padLeft(2, '0');
   return '${fecha.year}-${dos(fecha.month)}-${dos(fecha.day)}';
+}
+
+/// A stored date as the form types it. The API sends midnight UTC, so the
+/// date is read from its own fields: converting to local time would show the
+/// previous day west of Greenwich.
+String _fecha(DateTime? fecha) => fecha == null ? '' : formatearFecha(fecha);
+
+/// `62.0` reads as `62`, since that is how it was typed.
+String _numero(num? valor) {
+  if (valor == null) return '';
+  return valor == valor.truncate() ? valor.toInt().toString() : '$valor';
 }

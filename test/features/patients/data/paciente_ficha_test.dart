@@ -197,4 +197,83 @@ void main() {
       expect(ficha.consultas.proximas, isEmpty);
     });
   });
+
+  group('situacion and habitos', () {
+    test('reads the catalogue codes through the nested relation objects', () {
+      final ficha = PacienteFicha.fromJson({
+        'paciente': {'id': 'pac-1', 'notas': 'Cena temprano'},
+        'situacion': {
+          'condiciones': [
+            {
+              'pacienteId': 'pac-1',
+              'condicionId': 'c-1',
+              'condicion': {'id': 'c-1', 'codigo': 'DIABETES_2'},
+            },
+          ],
+          'restricciones': [
+            {
+              'restriccionId': 'r-1',
+              'restriccion': {'id': 'r-1', 'codigo': 'SIN_GLUTEN'},
+            },
+          ],
+          'alergias': 'Maní',
+          'cirugias': 'Cesárea',
+          'suplementos': 'Omega 3',
+          'motivoConsulta': 'Bajar de peso',
+        },
+        'habitos': {
+          'comidasAlDia': 4,
+          'aguaLitros': '2.5',
+          'horasSueno': 7,
+          'alcohol': 'Ocasional',
+          'tabaco': 'No',
+          'quienCocina': 'Ella',
+          'presupuesto': 'Medio',
+        },
+      });
+
+      expect(ficha.situacion.condiciones, ['DIABETES_2']);
+      expect(ficha.situacion.restricciones, ['SIN_GLUTEN']);
+      expect(ficha.situacion.alergias, 'Maní');
+      expect(ficha.situacion.cirugias, 'Cesárea');
+      expect(ficha.situacion.suplementos, 'Omega 3');
+      expect(ficha.situacion.motivoConsulta, 'Bajar de peso');
+      expect(ficha.habitos.comidasAlDia, 4);
+      expect(ficha.habitos.aguaLitros, 2.5);
+      expect(ficha.habitos.horasSueno, 7);
+      expect(ficha.habitos.alcohol, 'Ocasional');
+      expect(ficha.habitos.tabaco, 'No');
+      expect(ficha.habitos.quienCocina, 'Ella');
+      expect(ficha.habitos.presupuesto, 'Medio');
+      expect(ficha.paciente.notas, 'Cena temprano');
+    });
+
+    test('tolerates bare strings and skips what carries no code', () {
+      final ficha = PacienteFicha.fromJson({
+        'paciente': {'id': 'pac-1'},
+        'situacion': {
+          'condiciones': ['DIABETES_2', 7, <String, Object?>{}],
+          'restricciones': [
+            'VEGETARIANO',
+            {
+              'restriccion': {'codigo': 'SIN_GLUTEN'},
+            },
+          ],
+        },
+      });
+
+      expect(ficha.situacion.condiciones, ['DIABETES_2']);
+      expect(ficha.situacion.restricciones, ['VEGETARIANO', 'SIN_GLUTEN']);
+    });
+
+    test('missing blocks read as empty', () {
+      final ficha = PacienteFicha.fromJson({
+        'paciente': {'id': 'pac-1'},
+      });
+
+      expect(ficha.situacion.condiciones, isEmpty);
+      expect(ficha.situacion.restricciones, isEmpty);
+      expect(ficha.habitos.comidasAlDia, isNull);
+    });
+  });
 }

@@ -8,6 +8,7 @@ import '../../features/auth/ui/login_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/not_found/ui/not_found_screen.dart';
 import '../../features/patients/ui/alta_paciente/alta_paciente_screen.dart';
+import '../../features/patients/ui/alta_paciente/editar_paciente_screen.dart';
 import '../../features/patients/ui/nueva_medicion_screen.dart';
 import '../../features/patients/ui/paciente_ficha_screen.dart';
 import '../../features/patients/ui/pacientes_screen.dart';
@@ -93,8 +94,37 @@ GoRouter createAppRouter({
                       state.pathParameters[AppRoutes.pacienteIdParam]!,
                     ),
                   ),
+                  onEditarDatos: () => context.go(
+                    AppRoutes.editarPaciente(
+                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    ),
+                  ),
                 ),
                 routes: [
+                  // Like the wizard it reuses: its own header, closes with an
+                  // `x`, so it covers the shell. Nested under the patient so
+                  // the file stays underneath and closing lands back on it.
+                  GoRoute(
+                    path: AppRoutes.editarSegment,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    pageBuilder: (context, state) {
+                      final router = GoRouter.of(context);
+                      final id =
+                          state.pathParameters[AppRoutes.pacienteIdParam]!;
+                      void cerrar() => router.canPop()
+                          ? router.pop()
+                          : router.go(AppRoutes.paciente(id));
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        fullscreenDialog: true,
+                        child: EditarPacienteScreen(
+                          pacienteId: id,
+                          onCerrar: cerrar,
+                          onGuardado: cerrar,
+                        ),
+                      );
+                    },
+                  ),
                   // The artboard has no shell bar or drawer (it closes with an
                   // `x`), so it goes on the root navigator, as a full-screen
                   // dialog, instead of nesting inside the shell.
