@@ -95,6 +95,27 @@ Symbols equivalents from `Icons`. Each task lands with its tests and its docs.
 | T6 | S7, S8 | New-patient wizard, all four steps (3 and 4 designed without an artboard, by human decision) | `lib/features/patients/ui/alta_paciente/` | in progress |
 | T7 | S11 | Close the two consistency debts: the measurement form becomes a `go_router` route, and `ApiClient` owns the writes instead of each repository reaching into `dio` | `lib/core/network/`, `lib/core/router/` | pending |
 
+## Delivery
+
+The module is far past a single reviewable slice, so it lands as a chain of commits on
+`feat/mis-pacientes`, in dependency order, each one carrying its own tests:
+
+| # | Commit | Holds |
+|---|---|---|
+| 1 | `docs(design)` | the eight artboards, the module contract docs and this file |
+| 2 | `feat(network)` | `ApiClient` writes and the unpaged list read |
+| 3 | `fix(shell)` | section label and drawer highlight on child routes |
+| 4 | `fix(home)` | day card width and the metric icon on the value line |
+| 5 | `feat(patients)` data | ficha model, catalogue item, repository and providers |
+| 6 | `feat(patients)` directory | routes for the list, the directory screen and its navigation |
+| 7 | `feat(patients)` ficha | the patient file screen |
+| 8 | `feat(patients)` measurement | the form and its route |
+| 9 | `feat(patients)` deactivation | the menu and the confirmation |
+| 10 | `feat(patients)` wizard | the four-step alta, the catalogues read and the router wiring |
+
+Only the last commit is verified end to end: the split is retrospective, for review, so an
+intermediate commit may reference a route that the next one adds.
+
 ## Log
 
 **L1 — Request (verbatim).** `na deja la cards, asi, que podemos hacer ahora, ? avanzamos
