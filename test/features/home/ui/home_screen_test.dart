@@ -1,3 +1,4 @@
+import 'package:baleadafit/core/theme/app_dimensions.dart';
 import 'package:baleadafit/core/theme/app_theme.dart';
 import 'package:baleadafit/features/auth/application/session_controller.dart';
 import 'package:baleadafit/features/auth/data/auth_session.dart';
@@ -229,5 +230,36 @@ void main() {
       find.textContaining('No pudimos cargar tus pacientes'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('the day card reaches the right edge with no appointments', (
+    tester,
+  ) async {
+    await _pumpHome(tester, load: () async => _resumenCon([]));
+    await tester.pumpAndSettle();
+
+    final card = find
+        .ancestor(
+          of: find.text('Sin citas hoy'),
+          matching: find.byType(Container),
+        )
+        .first;
+    final anchoUtil =
+        tester.getSize(find.byType(ListView)).width -
+        AppDimensions.screenPadding.horizontal;
+
+    expect(tester.getSize(card).width, closeTo(anchoUtil, 0.5));
+  });
+
+  testWidgets('the metric icon sits on the value line instead of above it', (
+    tester,
+  ) async {
+    await _pumpHome(tester, load: () async => _resumenCon([]));
+    await tester.pumpAndSettle();
+
+    final icono = tester.getCenter(find.byIcon(Icons.groups_2_outlined)).dy;
+    final valor = tester.getCenter(find.text('12')).dy;
+
+    expect(icono, closeTo(valor, 1));
   });
 }

@@ -181,6 +181,10 @@ class _NextAppointmentCard extends StatelessWidget {
               .reduce((a, b) => a.isAfter(b) ? a : b);
 
     return Container(
+      // The parent Column aligns to the start, so without an explicit width the
+      // card shrinks to its text and leaves a gap on the right when the day is
+      // empty. Stretching keeps it flush with the metrics below.
+      width: double.infinity,
       padding: const EdgeInsets.all(AppDimensions.spaceMd),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
@@ -576,21 +580,27 @@ class _MetricCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHighest,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 16, color: colors.onSurfaceVariant),
-          ),
-          const SizedBox(height: AppDimensions.spaceSm),
-          Text(
-            '$value',
-            style: textTheme.headlineSmall?.copyWith(
-              color: value == 0 ? colors.onSurfaceVariant : null,
-            ),
+          // The icon shares the line with the figure: stacked it cost a third
+          // row and left the card taller than its content needs.
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: colors.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 16, color: colors.onSurfaceVariant),
+              ),
+              const SizedBox(width: AppDimensions.spaceSm),
+              Text(
+                '$value',
+                style: textTheme.headlineSmall?.copyWith(
+                  color: value == 0 ? colors.onSurfaceVariant : null,
+                ),
+              ),
+            ],
           ),
           Text(
             label,
