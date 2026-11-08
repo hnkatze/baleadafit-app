@@ -7,10 +7,17 @@ import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/ui/login_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/not_found/ui/not_found_screen.dart';
+import '../../features/patients/ui/alta_paciente/alta_paciente_screen.dart';
+import '../../features/patients/ui/nueva_medicion_screen.dart';
+import '../../features/patients/ui/paciente_ficha_screen.dart';
+import '../../features/patients/ui/pacientes_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../../features/shell/ui/feature_placeholder.dart';
 import '../../features/showcase/ui/theme_gallery_screen.dart';
 import 'app_routes.dart';
+
+/// Root navigator, so a route can opt out of the shell and cover the whole app.
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Builds the app router. [redirect] and [refreshListenable] are optional so
 /// tests can exercise the route table without a session.
@@ -20,6 +27,7 @@ GoRouter createAppRouter({
   Listenable? refreshListenable,
 }) {
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: initialLocation,
     redirect: redirect,
     refreshListenable: refreshListenable,
@@ -38,12 +46,73 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: AppRoutes.pacientes,
-            builder: (context, state) => const FeaturePlaceholder(
-              title: 'Pacientes',
-              description:
-                  'Directorio, expediente y mediciones de cada paciente.',
-              icon: Icons.groups_outlined,
+            builder: (context, state) => PacientesScreen(
+              onNuevoPaciente: () => context.go(AppRoutes.nuevoPaciente),
             ),
+            routes: [
+              // Before `:id`, or "nuevo" would be read as a patient id. Like
+              // the measurement form, the artboard draws its own header and
+              // closes with an `x`, so it covers the shell instead of nesting.
+              GoRoute(
+                path: AppRoutes.nuevoPacienteSegment,
+                parentNavigatorKey: _rootNavigatorKey,
+                pageBuilder: (context, state) {
+                  // Captured now: the wizard's own context is gone by the
+                  // time the second navigation below runs.
+                  final router = GoRouter.of(context);
+                  return MaterialPage<void>(
+                    key: state.pageKey,
+                    fullscreenDialog: true,
+                    child: AltaPacienteScreen(
+                      onCerrar: () => router.canPop()
+                          ? router.pop()
+                          : router.go(AppRoutes.pacientes),
+                      // Swaps the wizard for the ficha in one navigation; the
+                      // directory stays below, so back from the new ficha
+                      // lands on the list that now has the patient.
+                      onCreado: (id) =>
+                          router.pushReplacement(AppRoutes.paciente(id)),
+                    ),
+                  );
+                },
+              ),
+              // Nested so the file stacks over the directory inside the shell:
+              // the bar and the drawer stay, and back returns to the list.
+              GoRoute(
+                path: ':${AppRoutes.pacienteIdParam}',
+                builder: (context, state) => PacienteFichaScreen(
+                  pacienteId: state.pathParameters[AppRoutes.pacienteIdParam]!,
+                  // A deep link has nothing to pop to, so it lands on the list.
+                  onBack: () => context.canPop()
+                      ? context.pop()
+                      : context.go(AppRoutes.pacientes),
+                  // `go` rather than `push`: the location then names the form,
+                  // and a deep link to it closes onto the ficha like this does.
+                  onNuevaMedicion: () => context.go(
+                    AppRoutes.nuevaMedicion(
+                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    ),
+                  ),
+                ),
+                routes: [
+                  // The artboard has no shell bar or drawer (it closes with an
+                  // `x`), so it goes on the root navigator, as a full-screen
+                  // dialog, instead of nesting inside the shell.
+                  GoRoute(
+                    path: AppRoutes.medicionSegment,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    pageBuilder: (context, state) => MaterialPage<bool>(
+                      key: state.pageKey,
+                      fullscreenDialog: true,
+                      child: NuevaMedicionScreen(
+                        pacienteId:
+                            state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           GoRoute(
             path: AppRoutes.dietas,
