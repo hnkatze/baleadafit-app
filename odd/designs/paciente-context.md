@@ -20,6 +20,8 @@ Conclusión: **el gating por rol funciona** (el paciente no puede tocar endpoint
 1. Credenciales de un paciente con usuario de Firebase, o
 2. Activar `prueba.qa@baleadafit.hn` como usuario (hoy su `firebaseUid` es `null`, no puede entrar).
 
+Nota: el nutricionista ya tiene su propio camino para las comidas (`GET`/`PUT /pacientes/{id}/registros`, ver `pacientes-context.md` §10) y esos dos endpoints sí le responden. El 403 de `/me/*` sigue siendo el contrato correcto, no un bloqueo pendiente.
+
 Donde el spec no define el esquema, lo marco explícitamente: **no inventar campos**.
 
 ## 2. Los seis endpoints
