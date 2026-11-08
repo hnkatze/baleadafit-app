@@ -40,6 +40,55 @@ class ApiClient {
     return _decode(response, fromJson);
   }
 
+  /// POST [path] with a JSON [body] and decode its `data` with [fromJson].
+  ///
+  /// Writes answer the same `{ok, data|error}` envelope as [get], so failures
+  /// and malformed bodies are mapped identically.
+  Future<T> post<T>(
+    String path, {
+    Object? body,
+    required T Function(Map<String, dynamic> json) fromJson,
+  }) async => _decode(await _send('POST', path, body), fromJson);
+
+  /// DELETE [path] and decode its `data` with [fromJson].
+  Future<T> delete<T>(
+    String path, {
+    required T Function(Map<String, dynamic> json) fromJson,
+  }) async => _decode(await _send('DELETE', path, null), fromJson);
+
+  /// POST [path] when the caller only needs to know it succeeded.
+  ///
+  /// The envelope is still verified, but `data` is not inspected: the caller
+  /// refreshes its own state instead of reading the answer.
+  Future<void> postAck(String path, {Object? body}) async {
+    final response = await _send('POST', path, body);
+    _envelope(response.data, response.statusCode);
+  }
+
+  /// DELETE [path] when the caller only needs to know it succeeded.
+  Future<void> deleteAck(String path) async {
+    final response = await _send('DELETE', path, null);
+    _envelope(response.data, response.statusCode);
+  }
+
+  /// One place for the transport of writes, so every verb maps a [DioException]
+  /// the way [get] does.
+  Future<Response<Object?>> _send(
+    String method,
+    String path,
+    Object? body,
+  ) async {
+    try {
+      return await _dio.request<Object?>(
+        path,
+        data: body,
+        options: Options(method: method),
+      );
+    } on DioException catch (exception) {
+      throw ApiFailure.fromDio(exception);
+    }
+  }
+
   /// GET [path] for a list payload, keeping the pagination [PageMeta].
   ///
   /// List endpoints answer `{ok: true, data: [...], meta: {...}}`, so the
@@ -79,6 +128,45 @@ class ApiClient {
           (envelope['meta'] as Map?)?.cast<String, dynamic>() ?? const {},
         ),
       );
+    } on TypeError {
+      throw ApiFailure.unexpectedBody(statusCode: response.statusCode);
+    }
+  }
+
+  /// GET [path] for a list payload that carries no pagination `meta`.
+  ///
+  /// The small catalogues (`GET /condiciones`, `GET /restricciones`) answer
+  /// `{ok: true, data: [...]}` and nothing else, so [getPaged] would reject
+  /// them for a `meta` block the API never promised.
+  Future<List<T>> getList<T>(
+    String path, {
+    required T Function(Map<String, dynamic> json) itemFromJson,
+    Map<String, Object?>? query,
+    String? bearerToken,
+  }) async {
+    final Response<Object?> response;
+    try {
+      response = await _dio.get<Object?>(
+        path,
+        queryParameters: query,
+        options: bearerToken == null
+            ? null
+            : Options(headers: {'Authorization': 'Bearer $bearerToken'}),
+      );
+    } on DioException catch (exception) {
+      throw ApiFailure.fromDio(exception);
+    }
+
+    final data = _envelope(response.data, response.statusCode)['data'];
+    if (data is! List) {
+      throw ApiFailure.unexpectedBody(statusCode: response.statusCode);
+    }
+
+    try {
+      return data
+          .cast<Map<String, dynamic>>()
+          .map(itemFromJson)
+          .toList(growable: false);
     } on TypeError {
       throw ApiFailure.unexpectedBody(statusCode: response.statusCode);
     }
