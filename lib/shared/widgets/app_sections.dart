@@ -44,10 +44,23 @@ const List<AppSection> appSections = [
   ),
 ];
 
-/// Label of the section that owns [location], for the top bar.
-String sectionLabelFor(String location) {
+/// Whether [section] owns [location].
+///
+/// A section owns its own route and every child path below it, so a detail
+/// screen like `/pacientes/:id` keeps the label and the drawer highlight of the
+/// list it belongs to. The slash is required so a route that only shares a
+/// prefix (`/pacientes-archivados`) is not swallowed.
+bool sectionOwnsLocation(AppSection section, String location) =>
+    location == section.route || location.startsWith('${section.route}/');
+
+/// The section that owns [location], if any.
+AppSection? sectionForLocation(String location) {
   for (final section in appSections) {
-    if (section.route == location) return section.label;
+    if (sectionOwnsLocation(section, location)) return section;
   }
-  return 'BaleadaFit';
+  return null;
 }
+
+/// Label of the section that owns [location], for the top bar.
+String sectionLabelFor(String location) =>
+    sectionForLocation(location)?.label ?? 'BaleadaFit';

@@ -20,6 +20,8 @@ Complementa `odd/designs/design-system.md` y `odd/designs/home-context.md`.
 | Requerimiento calórico | `GET /pacientes/{id}/requerimiento` | ✅ |
 | Planes del paciente | `GET /pacientes/{id}/planes` | ✅ vacío |
 | Generar plan | `POST /pacientes/{id}/planes/generar` | contrato |
+| Diario de comidas | `GET /pacientes/{id}/registros?desde&hasta` | contrato (nuevo) |
+| Marcar comida | `PUT /pacientes/{id}/registros` | contrato (nuevo) |
 | Medicamentos | `POST /pacientes/{id}/medicamentos`, `PATCH`/`DELETE /medicamentos/{id}` | contrato |
 | Catálogos | `GET /condiciones` (20), `GET /restricciones` (6) | ✅ |
 
@@ -154,7 +156,7 @@ Se ejecutó el camino completo del módulo contra la API real:
 2. `POST /planes/{id}/activar` → `201`, `estado: "ACTIVO"` + `aprobadoEn`.
 3. Resultado en `GET /pacientes`: ambos con `planActivo`; en la app el pill pasó de "Sin plan" a "Con plan".
 4. En `GET /pacientes/{id}/ficha`: `alertas` pasó de `[{SIN_PLAN_ACTIVO, alta}]` a `[]`, y `planes: [Plan 2026-11-07 · ACTIVO]`.
-5. `adherencia30d` sigue en `{porcentaje: null, cumplidos: 0, total: 0}`: el plan no genera registros por sí solo.
+5. `adherencia30d` sigue en `{porcentaje: null, cumplidos: 0, total: 0}`: el plan no genera registros por sí solo. Desde §10 la nutricionista ya puede marcarlos, así que ese número pasará a moverse.
 
 Conclusión de diseño: **el plan nace completo pero comido**, es decir, tener plan no implica tener adherencia. `porcentaje: null` con plan activo es un estado real y frecuente, no un error.
 
@@ -162,11 +164,45 @@ Conclusión de diseño: **el plan nace completo pero comido**, es decir, tener p
 
 `origen: "REGLAS"` con esa justificación textual. Cualquier pantalla que prometa "plan generado por IA" hoy estaría mintiendo: el recomendador con Bedrock está deshabilitado en este entorno.
 
-## 10. Bloqueo conocido: las comidas
+## 10. Las comidas: el contrato que faltaba ya existe
 
-`PUT /me/registros` es el **único** endpoint que escribe registros de comida y es exclusivo del rol `paciente`. Los dos pacientes de prueba tienen `firebaseUid: null`, o sea que nunca iniciaron sesión: no hay forma de registrar comidas por ellos desde una cuenta de nutricionista (403 `SIN_PERMISO`).
+Hasta ayer `PUT /me/registros` era el **único** write de registros de comida y es exclusivo del rol `paciente`; con los dos pacientes de prueba en `firebaseUid: null` (nunca entraron), la nutricionista no podía registrar nada por ellos. El API agregó el camino del nutricionista, dos endpoints nuevos bajo el tag `pacientes`:
 
-Para desbloquearlo hace falta una de estas:
-1. Que el paciente inicie sesión con el correo cargado en su ficha (la API vincula `firebaseUid` en ese momento) y registre comidas desde la app del paciente.
-2. Credenciales de un paciente ya vinculado.
-3. Un endpoint de nutricionista para registrar comidas (cambio de API, no de app).
+### `GET /pacientes/{id}/registros` — diario de comidas del paciente
+
+Misma forma de lista que el resto: `{ok, data: [], meta: {limit, offset, total, hasMore, nextCursor}}`, así que es un `getPaged` en el cliente.
+
+| Query | Valor |
+|---|---|
+| `desde`, `hasta` | `YYYY-MM-DD`; por defecto, los últimos 7 días |
+| `limit` | 20 por defecto, máximo 100 |
+| `offset` o `cursor` | offset base 0, o el `nextCursor` de la página previa |
+
+Cada fila:
+
+```
+id · pacienteId · tiempoComidaId · fecha · cumplido (bool) · comentario
+creadoEn · autor (PACIENTE | NUTRICIONISTA)
+```
+
+Viene del más reciente al más antiguo. `autor` es **quién escribió la fila por última vez**, no una auditoría: no hay historial de cambios, y si el paciente vuelve a marcar la misma comida el autor pasa a `PACIENTE`.
+
+### `PUT /pacientes/{id}/registros` — marcar una comida
+
+Upsert sobre `(paciente, tiempo de comida, fecha)`, idéntico a `PUT /me/registros`, con `autor: "NUTRICIONISTA"` en la fila resultante.
+
+```
+tiempoComidaId (uuid, requerido)  // viene en GET /pacientes/{id}/planes
+cumplido     (bool, requerido)
+comentario   (string)
+fecha        (YYYY-MM-DD, por defecto hoy)
+```
+
+Responde `200` con la fila completa; `400` si los datos son inválidos, `404` si el paciente no es del nutricionista.
+
+### Qué cambia en el diseño
+
+- El 403 ya no es un bloqueo de producto: la nutricionista escribe sin suplantar al paciente. `PUT /me/registros` sigue devolviendo 403 a un token de nutricionista, y está bien.
+- La ficha puede mostrar el diario de los últimos 7 días con quién marcó cada comida, y el botón de marcar/corregir por tiempo de comida.
+- `adherencia30d` deja de ser estructuralmente cero: marcar comidas mueve `cumplidos` y `porcentaje`.
+- Lo que sigue faltando: no hay historial ni borrado de un registro; corregir es volver a hacer el `PUT`.

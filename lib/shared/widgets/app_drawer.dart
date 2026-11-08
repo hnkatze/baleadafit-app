@@ -151,7 +151,7 @@ class AppDrawer extends ConsumerWidget {
   }
 
   Widget _item(BuildContext context, AppSection section) {
-    final isActive = section.route == activeRoute;
+    final isActive = sectionOwnsLocation(section, activeRoute);
     final color = isActive ? AppColors.primary : AppColors.onSurfaceVariant;
     final radius = BorderRadius.circular(AppDimensions.radiusSm);
 
