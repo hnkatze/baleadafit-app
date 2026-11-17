@@ -1,3 +1,5 @@
+import '../format/fechas.dart';
+
 /// Locations of the app. Every route name lives here so no screen writes a
 /// string literal.
 abstract final class AppRoutes {
@@ -34,6 +36,15 @@ abstract final class AppRoutes {
 
   /// Location of the edit form of one patient.
   static String editarPaciente(String id) => '${paciente(id)}/$editarSegment';
+
+  /// Path segment under [agenda] that opens the new-appointment form.
+  static const nuevaCitaSegment = 'nueva';
+
+  /// Location of the new-appointment form, opened on [dia] when the agenda was
+  /// showing a day other than today.
+  static String nuevaCita({DateTime? dia}) => dia == null
+      ? '$agenda/$nuevaCitaSegment'
+      : '$agenda/$nuevaCitaSegment?dia=${fechaIso(dia)}';
 
   /// Routes of the authenticated shell, in drawer order.
   static const shellRoutes = <String>[
