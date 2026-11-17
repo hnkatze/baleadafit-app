@@ -50,6 +50,17 @@ class ApiClient {
     required T Function(Map<String, dynamic> json) fromJson,
   }) async => _decode(await _send('POST', path, body), fromJson);
 
+  /// PATCH [path] with a JSON [body] and decode its `data` with [fromJson].
+  ///
+  /// `PATCH /citas/{id}`, `PATCH /planes/{id}` and the like answer the updated
+  /// resource, and the caller refreshes its own state from that answer instead
+  /// of requesting it again.
+  Future<T> patch<T>(
+    String path, {
+    Object? body,
+    required T Function(Map<String, dynamic> json) fromJson,
+  }) async => _decode(await _send('PATCH', path, body), fromJson);
+
   /// DELETE [path] and decode its `data` with [fromJson].
   Future<T> delete<T>(
     String path, {

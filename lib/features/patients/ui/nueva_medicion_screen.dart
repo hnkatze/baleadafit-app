@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/format/fechas.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
@@ -203,7 +204,7 @@ class _NuevaMedicionScreenState extends ConsumerState<NuevaMedicionScreen> {
 
   /// Only the fields the API documents, and only the ones that were filled.
   Map<String, Object?> _cuerpo() {
-    final cuerpo = <String, Object?>{'fecha': _fechaIso(_fecha)};
+    final cuerpo = <String, Object?>{'fecha': fechaIso(_fecha)};
     for (final campo in [
       _peso,
       _talla,
@@ -775,9 +776,4 @@ String _fechaLegible(DateTime fecha) {
       fecha.month == hoy.month &&
       fecha.day == hoy.day;
   return esHoy ? 'Hoy, $corta' : '$corta ${fecha.year}';
-}
-
-String _fechaIso(DateTime fecha) {
-  String dos(int n) => n.toString().padLeft(2, '0');
-  return '${fecha.year}-${dos(fecha.month)}-${dos(fecha.day)}';
 }

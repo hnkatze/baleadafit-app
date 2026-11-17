@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../../core/format/fechas.dart';
 import '../../data/paciente_ficha.dart';
 
 /// Step names, in the order the stepper draws them.
@@ -271,12 +272,12 @@ class AltaPacienteBorrador {
     texto('correo', correo);
     texto('telefono', telefono);
     cuerpo['sexo'] = sexo?.codigo;
-    cuerpo['fechaNacimiento'] = _fechaIso(leerFecha(fechaNacimiento.text)!);
+    cuerpo['fechaNacimiento'] = fechaIso(leerFecha(fechaNacimiento.text)!);
     cuerpo['nivelActividad'] = nivelActividad.codigo;
     cuerpo['meta'] = meta.codigo;
     numero('pesoObjetivoKg', pesoObjetivoKg);
     final objetivo = leerFecha(fechaObjetivo.text);
-    if (objetivo != null) cuerpo['fechaObjetivo'] = _fechaIso(objetivo);
+    if (objetivo != null) cuerpo['fechaObjetivo'] = fechaIso(objetivo);
     cuerpo['estadoFisiologico'] = estadoFisiologico.codigo;
     if (esEdicion || condiciones.isNotEmpty) {
       cuerpo['condiciones'] = condiciones.toList();
@@ -325,29 +326,6 @@ num? _leerNumero(TextEditingController controller, {bool entero = false}) {
   if (texto.isEmpty) return null;
   if (entero) return int.tryParse(texto) ?? double.nan;
   return double.tryParse(texto) ?? double.nan;
-}
-
-/// `dd/mm/aaaa` to a date, or null when it is incomplete or not a real day
-/// (`31/02/2020` would otherwise silently roll over to March).
-DateTime? leerFecha(String texto) {
-  final partes = RegExp(r'^(\d{2})/(\d{2})/(\d{4})$').firstMatch(texto.trim());
-  if (partes == null) return null;
-  final dia = int.parse(partes[1]!);
-  final mes = int.parse(partes[2]!);
-  final anio = int.parse(partes[3]!);
-  final fecha = DateTime(anio, mes, dia);
-  if (fecha.year != anio || fecha.month != mes || fecha.day != dia) return null;
-  return fecha;
-}
-
-String formatearFecha(DateTime fecha) {
-  String dos(int n) => n.toString().padLeft(2, '0');
-  return '${dos(fecha.day)}/${dos(fecha.month)}/${fecha.year}';
-}
-
-String _fechaIso(DateTime fecha) {
-  String dos(int n) => n.toString().padLeft(2, '0');
-  return '${fecha.year}-${dos(fecha.month)}-${dos(fecha.day)}';
 }
 
 /// A stored date as the form types it. The API sends midnight UTC, so the

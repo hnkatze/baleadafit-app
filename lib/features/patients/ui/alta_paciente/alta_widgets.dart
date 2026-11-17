@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/format/fechas.dart';
 import '../../../../core/theme/app_dimensions.dart';
 import '../../../../core/theme/app_typography.dart';
-import 'alta_paciente_borrador.dart';
 
 /// Tells the wizard a field changed: with a [clave] the error of that field
 /// is cleared (the nutritionist is already fixing it); without one, only the

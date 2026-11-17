@@ -350,4 +350,56 @@ void main() {
       );
     });
   });
+
+  group('ApiClient.patch', () {
+    test('sends a PATCH with the body and decodes the answer', () async {
+      final adapter = FakeHttpAdapter(
+        (_) async => jsonBody({
+          'ok': true,
+          'data': {'id': 'c1', 'estado': 'COMPLETADA'},
+        }),
+      );
+
+      final cita = await ApiClient(dioWith(adapter))
+          .patch<Map<String, Object?>>(
+            '/citas/c1',
+            body: {'estado': 'COMPLETADA'},
+            fromJson: (json) => json,
+          );
+
+      expect(adapter.requests.single.method, 'PATCH');
+      expect(adapter.requests.single.path, '/citas/c1');
+      expect(adapter.requests.single.data, {'estado': 'COMPLETADA'});
+      expect(cita, {'id': 'c1', 'estado': 'COMPLETADA'});
+    });
+
+    test('maps a 409 to the ApiFailure carrying the API message', () async {
+      final adapter = FakeHttpAdapter(
+        (_) async => jsonBody({
+          'ok': false,
+          'error': {
+            'codigo': 'CONFLICTO',
+            'mensaje': 'Esa hora se traslapa con otra cita.',
+          },
+        }, status: 409),
+      );
+
+      await expectLater(
+        ApiClient(dioWith(adapter)).patch<Map<String, Object?>>(
+          '/citas',
+          body: {},
+          fromJson: (json) => json,
+        ),
+        throwsA(
+          isA<ApiFailure>()
+              .having((f) => f.statusCode, 'statusCode', 409)
+              .having(
+                (f) => f.mensaje,
+                'mensaje',
+                'Esa hora se traslapa con otra cita.',
+              ),
+        ),
+      );
+    });
+  });
 }
