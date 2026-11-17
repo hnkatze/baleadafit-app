@@ -26,6 +26,8 @@ class PacienteFichaScreen extends ConsumerWidget {
     this.onEditarDatos,
     this.onMedicamentos,
     this.onVerHistorial,
+    this.onVerPlanes,
+    this.onGenerarPlan,
     super.key,
   });
 
@@ -48,6 +50,14 @@ class PacienteFichaScreen extends ConsumerWidget {
 
   /// Opens the measurement history. Null until that list exists.
   final VoidCallback? onVerHistorial;
+
+  /// Opens the plans of this patient. It is offered whether or not the patient
+  /// has one: with no plan it is where the first one is generated.
+  final VoidCallback? onVerPlanes;
+
+  /// Opens the generator for this patient, from the card that invites to
+  /// create the first plan.
+  final VoidCallback? onGenerarPlan;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -98,6 +108,8 @@ class PacienteFichaScreen extends ConsumerWidget {
                   ficha: data,
                   onNuevaMedicion: onNuevaMedicion,
                   onVerHistorial: onVerHistorial,
+                  onVerPlanes: onVerPlanes,
+                  onGenerarPlan: onGenerarPlan,
                 ),
               ),
             ),
@@ -114,11 +126,15 @@ class _Contenido extends StatelessWidget {
     required this.ficha,
     required this.onNuevaMedicion,
     required this.onVerHistorial,
+    this.onVerPlanes,
+    this.onGenerarPlan,
   });
 
   final PacienteFicha ficha;
   final VoidCallback? onNuevaMedicion;
   final VoidCallback? onVerHistorial;
+  final VoidCallback? onVerPlanes;
+  final VoidCallback? onGenerarPlan;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +153,10 @@ class _Contenido extends StatelessWidget {
               _Hero(ficha: ficha),
               // Without a plan the system raises an alert; the board draws it
               // before any other block.
-              if (plan == null) _SinPlanAlerta(alertas: ficha.alertas),
+              if (plan == null) ...[
+                _SinPlanAlerta(alertas: ficha.alertas),
+                _PrimerPlan(onGenerarPlan: onGenerarPlan),
+              ],
               // With no measurement there is nothing to calculate from, so
               // the BMI, composition and requirement blocks are not drawn at
               // all rather than drawn as zeros.
@@ -159,6 +178,7 @@ class _Contenido extends StatelessWidget {
                   plan: plan,
                   adherencia: ficha.adherencia,
                   entroALaApp: ficha.paciente.entroALaApp,
+                  onVerPlanes: onVerPlanes,
                 ),
               _ProximaConsulta(consulta: proxima),
               if (conMediciones)
@@ -416,6 +436,51 @@ class _SinPlanAlerta extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The invitation under the alert: the banner only informs, this card is where
+/// the first plan is created. Without a plan, `Plan y adherencia` is not drawn,
+/// so this is the only way in.
+class _PrimerPlan extends StatelessWidget {
+  const _PrimerPlan({this.onGenerarPlan});
+
+  final VoidCallback? onGenerarPlan;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppDimensions.spaceMd),
+      child: _Tarjeta(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Agregá tu primer plan', style: textTheme.titleMedium),
+            const SizedBox(height: AppDimensions.spaceXs),
+            Text(
+              'Se genera con las metas y restricciones del paciente y queda en '
+              'borrador hasta que lo revises y lo actives.',
+              style: textTheme.bodySmall?.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            if (onGenerarPlan != null) ...[
+              const SizedBox(height: AppDimensions.spaceSm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: AppButton(
+                  label: 'Generar plan',
+                  onPressed: onGenerarPlan,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -1040,11 +1105,13 @@ class _PlanYAdherencia extends StatelessWidget {
     required this.plan,
     required this.adherencia,
     required this.entroALaApp,
+    this.onVerPlanes,
   });
 
   final PlanFicha plan;
   final AdherenciaFicha adherencia;
   final bool entroALaApp;
+  final VoidCallback? onVerPlanes;
 
   @override
   Widget build(BuildContext context) {
@@ -1094,13 +1161,22 @@ class _PlanYAdherencia extends StatelessWidget {
                   ],
                 ),
               ),
-              // No chevron: the plan screen does not exist yet, and an arrow
-              // that does nothing reads as a broken tap.
+              // The action sits under the block instead of in this row: the
+              // plan name and its state need the width.
             ],
           ),
         ),
         const SizedBox(height: AppDimensions.spaceSm),
         _Adherencia(adherencia: adherencia, entroALaApp: entroALaApp),
+        if (onVerPlanes != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppButton(
+              label: 'Ver planes',
+              variant: AppButtonVariant.text,
+              onPressed: onVerPlanes,
+            ),
+          ),
       ],
     );
   }

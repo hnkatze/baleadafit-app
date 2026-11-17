@@ -9,6 +9,10 @@ import 'package:baleadafit/core/network/paged.dart';
 import 'package:baleadafit/features/agenda/data/citas_providers.dart';
 import 'package:baleadafit/features/agenda/ui/agenda_screen.dart';
 import 'package:baleadafit/features/patients/data/catalogo_item.dart';
+import 'package:baleadafit/features/planes/data/plan.dart';
+import 'package:baleadafit/features/planes/data/planes_providers.dart';
+import 'package:baleadafit/features/planes/ui/plan_detalle_screen.dart';
+import 'package:baleadafit/features/planes/ui/plan_lista_screen.dart';
 import 'package:baleadafit/features/patients/data/paciente_ficha.dart';
 import 'package:baleadafit/features/patients/data/patients_providers.dart';
 import 'package:baleadafit/features/patients/data/patients_repository.dart';
@@ -103,6 +107,17 @@ Future<GoRouter> _pumpApp(
               items: [],
               meta: PageMeta(limit: 100, offset: 0, total: 0, hasMore: false),
             ),
+          ),
+        ),
+        // The plan detail would otherwise reach for the network.
+        planDetalleProvider.overrideWith(
+          (ref, id) => Future.value(
+            PlanDetalle.fromJson({
+              'id': id,
+              'nombre': 'Plan $id',
+              'estado': 'BORRADOR',
+              'origen': 'REGLAS',
+            }),
           ),
         ),
         // The agenda would otherwise reach for the network too.
@@ -459,5 +474,61 @@ void main() {
 
     expect(find.byType(AltaPacienteScreen), findsOneWidget);
     expect(find.text('Editar paciente'), findsOneWidget);
+  });
+
+  testWidgets('reaches the plans of a patient through a deep link', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, session: _session);
+
+    router.go(AppRoutes.planesDe('pac-1'));
+    await pumpStable(tester);
+
+    expect(AppRoutes.planesDe('pac-1'), '/pacientes/pac-1/planes');
+    expect(find.byType(PlanListaScreen), findsOneWidget);
+    expect(find.byType(AppShell), findsOneWidget);
+    expect(find.text('Planes'), findsOneWidget);
+    // The patient section owns the plan list, so the bar and the drawer keep it.
+    expect(find.text('Pacientes'), findsWidgets);
+  });
+
+  testWidgets('opens the plan detail inside the shell and backs out', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, session: _session);
+    router.go(AppRoutes.pacientes);
+    await pumpStable(tester);
+
+    router.push(AppRoutes.plan('pac-1', 'plan-1'));
+    await pumpStable(tester);
+
+    expect(AppRoutes.plan('pac-1', 'plan-1'), '/pacientes/pac-1/planes/plan-1');
+    // The plan lives under the patient section, so the bar names it and the
+    // drawer highlights it instead of falling back to the app name.
+    expect(find.text('Pacientes'), findsWidgets);
+    expect(find.byType(AppShell), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byType(PlanDetalleScreen), findsOneWidget);
+    expect(find.text('Plan plan-1'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Volver a planes'));
+    await pumpStable(tester);
+
+    expect(find.byType(PlanDetalleScreen), findsNothing);
+    expect(find.byType(PacientesScreen), findsOneWidget);
+  });
+
+  testWidgets('reaches the plan detail through a deep link', (tester) async {
+    final router = await _pumpApp(tester, session: _session);
+
+    router.go(AppRoutes.plan('pac-1', 'plan-1'));
+    await pumpStable(tester);
+
+    expect(find.byType(PlanDetalleScreen), findsOneWidget);
+    // The detail is a child of the list, so the deep link builds the list
+    // underneath and back returns to it rather than to the patient file.
+    await tester.tap(find.byTooltip('Volver a planes'));
+    await pumpStable(tester);
+    expect(find.byType(PlanListaScreen), findsOneWidget);
   });
 }

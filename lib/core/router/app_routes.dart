@@ -37,6 +37,29 @@ abstract final class AppRoutes {
   /// Location of the edit form of one patient.
   static String editarPaciente(String id) => '${paciente(id)}/$editarSegment';
 
+  /// Path segment under a patient file that holds the plans of that patient.
+  /// A plan belongs to a patient, so it has no top-level destination.
+  static const planesSegment = 'planes';
+
+  /// Location of the plans of one patient (the list lands in a later task).
+  static String planesDe(String pacienteId) =>
+      '${paciente(pacienteId)}/$planesSegment';
+
+  /// Path segment under the plans of a patient that opens the generator. It is
+  /// declared before the `:planId` route so it is not read as a plan id.
+  static const generarPlanSegment = 'generar';
+
+  /// Location of the plan generator of one patient.
+  static String generarPlan(String pacienteId) =>
+      '${planesDe(pacienteId)}/$generarPlanSegment';
+
+  /// Path parameter that names one plan under the plans of a patient.
+  static const planIdParam = 'planId';
+
+  /// Location of the weekly detail of one plan of one patient.
+  static String plan(String pacienteId, String planId) =>
+      '${planesDe(pacienteId)}/${Uri.encodeComponent(planId)}';
+
   /// Path segment under [agenda] that opens the new-appointment form.
   static const nuevaCitaSegment = 'nueva';
 

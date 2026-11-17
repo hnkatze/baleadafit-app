@@ -108,6 +108,8 @@ Future<void> _pump(
   required Future<PacienteFicha> Function() ficha,
   VoidCallback? onNuevaMedicion,
   VoidCallback? onBack,
+  VoidCallback? onVerPlanes,
+  VoidCallback? onGenerarPlan,
 }) async {
   tester.view.physicalSize = const Size(390, 2200);
   tester.view.devicePixelRatio = 1;
@@ -123,6 +125,8 @@ Future<void> _pump(
             pacienteId: 'pac-1',
             onBack: onBack ?? () {},
             onNuevaMedicion: onNuevaMedicion,
+            onVerPlanes: onVerPlanes,
+            onGenerarPlan: onGenerarPlan,
           ),
         ),
       ),
@@ -274,10 +278,11 @@ void main() {
   testWidgets('the plan card and the empty adherence follow the artboard', (
     tester,
   ) async {
-    await _pump(tester, ficha: _de(_conMediciones()));
+    await _pump(tester, ficha: _de(_conMediciones()), onVerPlanes: () {});
 
     expect(find.text('Plan y adherencia'), findsOneWidget);
     expect(find.text('Plan 2026-11-07'), findsOneWidget);
+    expect(find.text('Ver planes'), findsOneWidget);
     expect(
       find.text('Activo · generado por reglas · aprobado el 7 nov'),
       findsOneWidget,
@@ -396,6 +401,27 @@ void main() {
       expect(find.text('Plan y adherencia'), findsNothing);
       expect(find.text('Con plan'), findsNothing);
       expect(find.text('Sin entrar a la app'), findsNothing);
+    });
+
+    testWidgets('invites to create the first plan below the alert', (
+      tester,
+    ) async {
+      var generados = 0;
+      await _pump(
+        tester,
+        ficha: _de(_sinMediciones()),
+        onGenerarPlan: () => generados++,
+      );
+
+      // Without a plan `Plan y adherencia` is not drawn, so this card is the
+      // only way in. The alert above it only informs: it carries no button.
+      expect(find.text('Agregá tu primer plan'), findsOneWidget);
+      expect(find.text('Generar plan'), findsOneWidget);
+
+      await tester.tap(find.text('Generar plan'));
+      await tester.pump();
+
+      expect(generados, 1);
     });
 
     testWidgets('says there are no appointments', (tester) async {

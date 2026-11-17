@@ -14,6 +14,9 @@ import '../../features/patients/ui/alta_paciente/editar_paciente_screen.dart';
 import '../../features/patients/ui/nueva_medicion_screen.dart';
 import '../../features/patients/ui/paciente_ficha_screen.dart';
 import '../../features/patients/ui/pacientes_screen.dart';
+import '../../features/planes/ui/generar_plan_screen.dart';
+import '../../features/planes/ui/plan_detalle_screen.dart';
+import '../../features/planes/ui/plan_lista_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../../features/shell/ui/feature_placeholder.dart';
 import '../../features/showcase/ui/theme_gallery_screen.dart';
@@ -101,6 +104,20 @@ GoRouter createAppRouter({
                       state.pathParameters[AppRoutes.pacienteIdParam]!,
                     ),
                   ),
+                  // Offered with and without a plan: with none, the list is
+                  // where the first one is generated.
+                  onVerPlanes: () => context.go(
+                    AppRoutes.planesDe(
+                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    ),
+                  ),
+                  // Straight to the generator: the card that invites to create
+                  // the first plan should not make the list a detour.
+                  onGenerarPlan: () => context.go(
+                    AppRoutes.generarPlan(
+                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    ),
+                  ),
                 ),
                 routes: [
                   // Like the wizard it reuses: its own header, closes with an
@@ -130,6 +147,73 @@ GoRouter createAppRouter({
                   // The artboard has no shell bar or drawer (it closes with an
                   // `x`), so it goes on the root navigator, as a full-screen
                   // dialog, instead of nesting inside the shell.
+                  // Like the measurement form: its own header and an `x`, so
+                  // it covers the shell. Declared before `:planId` so
+                  // `generar` is not read as a plan id.
+                  GoRoute(
+                    path:
+                        '${AppRoutes.planesSegment}/${AppRoutes.generarPlanSegment}',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    pageBuilder: (context, state) {
+                      final router = GoRouter.of(context);
+                      final id =
+                          state.pathParameters[AppRoutes.pacienteIdParam]!;
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        fullscreenDialog: true,
+                        child: GenerarPlanScreen(
+                          pacienteId: id,
+                          // Changes to the plan list when it lands.
+                          onCerrar: () => router.canPop()
+                              ? router.pop()
+                              : router.go(AppRoutes.paciente(id)),
+                          // `go` swaps the form for the detail it created, so
+                          // back from the detail never reopens the form.
+                          onGenerado: (planId) =>
+                              router.go(AppRoutes.plan(id, planId)),
+                        ),
+                      );
+                    },
+                  ),
+                  // Inside the shell, under the patient: the bar reads
+                  // `Pacientes` and the drawer keeps that section lit. The
+                  // list and the detail draw their own back row under the bar.
+                  GoRoute(
+                    path: AppRoutes.planesSegment,
+                    builder: (context, state) {
+                      final id =
+                          state.pathParameters[AppRoutes.pacienteIdParam]!;
+                      return PlanListaScreen(
+                        pacienteId: id,
+                        onAbrir: (planId) =>
+                            context.go(AppRoutes.plan(id, planId)),
+                        onGenerar: () => context.go(AppRoutes.generarPlan(id)),
+                        onBack: () => context.canPop()
+                            ? context.pop()
+                            : context.go(AppRoutes.paciente(id)),
+                      );
+                    },
+                    // The detail is a **child** of the list, not a sibling: a
+                    // plan belongs under the plans of its patient, so going in
+                    // from the list leaves the list underneath and back returns
+                    // to it instead of landing on the patient file.
+                    routes: [
+                      GoRoute(
+                        path: ':${AppRoutes.planIdParam}',
+                        builder: (context, state) {
+                          final id =
+                              state.pathParameters[AppRoutes.pacienteIdParam]!;
+                          return PlanDetalleScreen(
+                            planId:
+                                state.pathParameters[AppRoutes.planIdParam]!,
+                            onBack: () => context.canPop()
+                                ? context.pop()
+                                : context.go(AppRoutes.planesDe(id)),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                   GoRoute(
                     path: AppRoutes.medicionSegment,
                     parentNavigatorKey: _rootNavigatorKey,
