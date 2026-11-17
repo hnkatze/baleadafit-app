@@ -61,6 +61,36 @@ Future<void> _pump(
 }
 
 void main() {
+  testWidgets('pulling down reloads the directory', (tester) async {
+    final consultas = <String?>[];
+    await _pump(
+      tester,
+      consultas: consultas,
+      page: _pagina([
+        _paciente(id: 'pac-1', nombre: 'Paciente', apellido: 'De Prueba'),
+      ]),
+    );
+    expect(consultas, ['']);
+
+    await tester.fling(find.byType(ListView), const Offset(0, 300), 1000);
+    await tester.pumpAndSettle();
+
+    expect(consultas, ['', '']);
+    expect(find.text('Paciente De Prueba'), findsOneWidget);
+  });
+
+  testWidgets('pulling down reloads even with no patients yet', (tester) async {
+    final consultas = <String?>[];
+    await _pump(tester, consultas: consultas, page: _pagina(const []));
+    expect(consultas, ['']);
+
+    await tester.fling(find.byType(ListView), const Offset(0, 300), 1000);
+    await tester.pumpAndSettle();
+
+    expect(consultas, ['', '']);
+    expect(find.text('Todavía no tenés pacientes'), findsOneWidget);
+  });
+
   testWidgets('opens with the title, the active count and the four filters', (
     tester,
   ) async {
@@ -294,7 +324,12 @@ void main() {
       tester,
       page: Paged<PacienteResumen>(
         items: [
-          _paciente(id: 'pac-1', nombre: 'Con', apellido: 'Plan', conPlan: true),
+          _paciente(
+            id: 'pac-1',
+            nombre: 'Con',
+            apellido: 'Plan',
+            conPlan: true,
+          ),
         ],
         meta: const PageMeta(limit: 100, offset: 0, total: 140, hasMore: true),
       ),

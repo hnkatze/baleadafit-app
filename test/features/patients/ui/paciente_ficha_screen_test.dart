@@ -135,6 +135,26 @@ Future<PacienteFicha> Function() _de(Map<String, Object?> json) =>
     () async => PacienteFicha.fromJson(json);
 
 void main() {
+  testWidgets('pulling down reloads the ficha', (tester) async {
+    var cargas = 0;
+    await _pump(
+      tester,
+      ficha: () async {
+        cargas++;
+        return PacienteFicha.fromJson(_conMediciones());
+      },
+    );
+    expect(cargas, 1);
+
+    // The indicator arms after a quarter of the viewport; this test view is
+    // 2200pt tall, so the usual 300pt pull falls short.
+    await tester.fling(find.byType(Scrollable), const Offset(0, 1000), 1000);
+    await tester.pumpAndSettle();
+
+    expect(cargas, 2);
+    expect(find.text('Paciente De Prueba'), findsOneWidget);
+  });
+
   testWidgets('the hero reads name, profile, plan, goal and the app link', (
     tester,
   ) async {

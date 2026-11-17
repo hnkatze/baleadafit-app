@@ -251,6 +251,36 @@ void main() {
     expect(tester.getSize(card).width, closeTo(anchoUtil, 0.5));
   });
 
+  testWidgets('pulling down reloads the summary and the patients', (
+    tester,
+  ) async {
+    var cargas = 0;
+    var cargasPacientes = 0;
+    await _pumpHome(
+      tester,
+      load: () async {
+        cargas++;
+        return _resumen;
+      },
+      patients: () async {
+        cargasPacientes++;
+        return Paged<PacienteResumen>(items: const [], meta: _sinPacientes);
+      },
+    );
+    await tester.pumpAndSettle();
+    expect(cargas, 1);
+    expect(cargasPacientes, 1);
+
+    await tester.fling(find.byType(ListView), const Offset(0, 300), 1000);
+    await tester.pumpAndSettle();
+
+    expect(cargas, 2);
+    // The patients block is drawn by this same screen, so a refresh that only
+    // reloaded the summary would leave it stale.
+    expect(cargasPacientes, 2);
+    expect(find.text('12'), findsOneWidget);
+  });
+
   testWidgets('the metric icon sits on the value line instead of above it', (
     tester,
   ) async {

@@ -10,6 +10,7 @@ import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_pill.dart';
+import '../../../shared/widgets/app_refresh.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../data/paciente_resumen.dart';
 import '../data/patients_providers.dart';
@@ -72,58 +73,74 @@ class _PacientesScreenState extends ConsumerState<PacientesScreen> {
     // the screen is not hosted by a Scaffold.
     return Material(
       type: MaterialType.transparency,
-      child: ListView(
-        padding: AppDimensions.screenPadding,
-        children: [
-          _Encabezado(
-            // The empty state owns the action when there is nobody yet, so the
-            // header does not offer a second, disabled one.
-            mostrarAccion: !sinPacientes,
-            onNuevoPaciente: widget.onNuevoPaciente,
-          ),
-          if (!sinPacientes) ...[
-            const SizedBox(height: AppDimensions.spaceMd),
-            _Buscador(controller: _controller, onChanged: _onChanged),
-            const SizedBox(height: AppDimensions.spaceSm + 4),
-            _Filtros(
-              actual: _filtro,
-              todos: activos?.length,
-              sinPlan: activos?.where((p) => !p.tienePlanActivo).length,
-              conPlan: activos?.where((p) => p.tienePlanActivo).length,
-              onSelected: (filtro) => setState(() => _filtro = filtro),
+      child: AppRefresh(
+        onRefresh: _refrescar,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppDimensions.screenPadding,
+          children: [
+            _Encabezado(
+              // The empty state owns the action when there is nobody yet, so the
+              // header does not offer a second, disabled one.
+              mostrarAccion: !sinPacientes,
+              onNuevoPaciente: widget.onNuevoPaciente,
             ),
-            const SizedBox(height: AppDimensions.spaceMd),
+            if (!sinPacientes) ...[
+              const SizedBox(height: AppDimensions.spaceMd),
+              _Buscador(controller: _controller, onChanged: _onChanged),
+              const SizedBox(height: AppDimensions.spaceSm + 4),
+              _Filtros(
+                actual: _filtro,
+                todos: activos?.length,
+                sinPlan: activos?.where((p) => !p.tienePlanActivo).length,
+                conPlan: activos?.where((p) => p.tienePlanActivo).length,
+                onSelected: (filtro) => setState(() => _filtro = filtro),
+              ),
+              const SizedBox(height: AppDimensions.spaceMd),
+            ],
+            ...page.when(
+              loading: () => const [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: AppDimensions.spaceXl,
+                  ),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+              error: (error, _) => [
+                _LoadFailure(
+                  error: error,
+                  onRetry: () =>
+                      ref.invalidate(pacientesDirectorioProvider(_query)),
+                ),
+              ],
+              data: (data) => sinPacientes
+                  ? [_SinPacientes(onNuevoPaciente: widget.onNuevoPaciente)]
+                  : [
+                      ..._filas(data.items),
+                      // The chip counts are computed over one page, so a
+                      // truncated page is stated instead of silently lying.
+                      if (data.meta.hasMore)
+                        _AvisoTope(
+                          mostrados: data.items.length,
+                          total: data.meta.total,
+                        ),
+                    ],
+            ),
           ],
-          ...page.when(
-            loading: () => const [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXl),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ],
-            error: (error, _) => [
-              _LoadFailure(
-                error: error,
-                onRetry: () =>
-                    ref.invalidate(pacientesDirectorioProvider(_query)),
-              ),
-            ],
-            data: (data) => sinPacientes
-                ? [_SinPacientes(onNuevoPaciente: widget.onNuevoPaciente)]
-                : [
-                    ..._filas(data.items),
-                    // The chip counts are computed over one page, so a
-                    // truncated page is stated instead of silently lying.
-                    if (data.meta.hasMore)
-                      _AvisoTope(
-                        mostrados: data.items.length,
-                        total: data.meta.total,
-                      ),
-                  ],
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  /// Completes when the directory for the current query is fresh.
+  Future<void> _refrescar() async {
+    try {
+      // ignore: unused_result -- awaited: the spinner must last until the data is fresh.
+      await ref.refresh(pacientesDirectorioProvider(_query).future);
+    } catch (_) {
+      // The failure is drawn by the provider's error state.
+    }
   }
 
   List<Widget> _filas(List<PacienteResumen> items) {
@@ -174,9 +191,8 @@ class _AvisoTope extends StatelessWidget {
       child: Text(
         'Mostrando $mostrados de $total pacientes.',
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: Theme.of(context).textTheme.bodySmall
+            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }

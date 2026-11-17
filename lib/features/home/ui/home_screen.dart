@@ -6,6 +6,7 @@ import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_pill.dart';
+import '../../../shared/widgets/app_refresh.dart';
 import '../../auth/application/session_controller.dart';
 import '../../patients/data/paciente_resumen.dart';
 import '../../patients/data/patients_providers.dart';
@@ -24,29 +25,49 @@ class HomeScreen extends ConsumerWidget {
     final resumen = ref.watch(dashboardProvider);
     final name = ref.watch(sessionControllerProvider).session?.displayName;
 
-    return ListView(
-      padding: AppDimensions.screenPadding,
-      children: [
-        _DayHeader(name: name),
-        const SizedBox(height: AppDimensions.spaceMd),
-        ...resumen.when(
-          loading: () => const [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXl),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ],
-          error: (error, _) => [
-            _LoadFailure(
-              error: error,
-              onRetry: () => ref.invalidate(dashboardProvider),
-            ),
-          ],
-          data: (data) => [_DaySection(data: data)],
-        ),
-        const SizedBox(height: AppDimensions.spaceLg),
-        const _TusPacientes(),
-      ],
+    return AppRefresh(
+      onRefresh: () async {
+        // The home draws two independent blocks: the dashboard summary and the
+        // recent patients. Refreshing only one left the other stale, and a
+        // failure in one must not stop the other.
+        Future<void> recargar(Future<Object?> Function() leer) async {
+          try {
+            await leer();
+          } catch (_) {
+            // The failure is drawn by that provider's error state.
+          }
+        }
+
+        await Future.wait([
+          recargar(() => ref.refresh(dashboardProvider.future)),
+          recargar(() => ref.refresh(pacientesRecientesProvider.future)),
+        ]);
+      },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: AppDimensions.screenPadding,
+        children: [
+          _DayHeader(name: name),
+          const SizedBox(height: AppDimensions.spaceMd),
+          ...resumen.when(
+            loading: () => const [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXl),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+            error: (error, _) => [
+              _LoadFailure(
+                error: error,
+                onRetry: () => ref.invalidate(dashboardProvider),
+              ),
+            ],
+            data: (data) => [_DaySection(data: data)],
+          ),
+          const SizedBox(height: AppDimensions.spaceLg),
+          const _TusPacientes(),
+        ],
+      ),
     );
   }
 }

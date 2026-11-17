@@ -6,6 +6,7 @@ import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_pill.dart';
+import '../../../shared/widgets/app_refresh.dart';
 import '../data/paciente_ficha.dart';
 import '../data/patients_providers.dart';
 import 'evolucion_chart.dart';
@@ -71,22 +72,33 @@ class PacienteFichaScreen extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: ficha.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => ListView(
-                padding: AppDimensions.screenPadding,
-                children: [
-                  _LoadFailure(
-                    error: error,
-                    onRetry: () =>
-                        ref.invalidate(pacienteFichaProvider(pacienteId)),
-                  ),
-                ],
-              ),
-              data: (data) => _Contenido(
-                ficha: data,
-                onNuevaMedicion: onNuevaMedicion,
-                onVerHistorial: onVerHistorial,
+            child: AppRefresh(
+              onRefresh: () async {
+                try {
+                  // ignore: unused_result -- awaited: the spinner must last until the data is fresh.
+                  await ref.refresh(pacienteFichaProvider(pacienteId).future);
+                } catch (_) {
+                  // The failure is drawn by the provider's error state.
+                }
+              },
+              child: ficha.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: AppDimensions.screenPadding,
+                  children: [
+                    _LoadFailure(
+                      error: error,
+                      onRetry: () =>
+                          ref.invalidate(pacienteFichaProvider(pacienteId)),
+                    ),
+                  ],
+                ),
+                data: (data) => _Contenido(
+                  ficha: data,
+                  onNuevaMedicion: onNuevaMedicion,
+                  onVerHistorial: onVerHistorial,
+                ),
               ),
             ),
           ),
@@ -119,6 +131,7 @@ class _Contenido extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: AppDimensions.screenPadding,
             children: [
               _Hero(ficha: ficha),
