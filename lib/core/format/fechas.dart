@@ -70,3 +70,26 @@ String mesLargo(DateTime fecha) {
 
 /// The month with its year, as the month strip labels it: `Noviembre 2026`.
 String mesYAnio(DateTime fecha) => '${mesLargo(fecha)} ${fecha.year}';
+
+/// The months as the plan screens abbreviate them: `ene`, `feb`, …
+const mesesCortos = <String>[
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
+];
+
+/// A day with its abbreviated month, from an instant converted to the device's
+/// time zone: `7 nov`.
+String diaYMes(DateTime instante) {
+  final local = instante.toLocal();
+  return '${local.day} ${mesesCortos[local.month - 1]}';
+}

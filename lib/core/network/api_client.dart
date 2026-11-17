@@ -48,7 +48,11 @@ class ApiClient {
     String path, {
     Object? body,
     required T Function(Map<String, dynamic> json) fromJson,
-  }) async => _decode(await _send('POST', path, body), fromJson);
+    Duration? receiveTimeout,
+  }) async => _decode(
+    await _send('POST', path, body, receiveTimeout: receiveTimeout),
+    fromJson,
+  );
 
   /// PATCH [path] with a JSON [body] and decode its `data` with [fromJson].
   ///
@@ -60,6 +64,17 @@ class ApiClient {
     Object? body,
     required T Function(Map<String, dynamic> json) fromJson,
   }) async => _decode(await _send('PATCH', path, body), fromJson);
+
+  /// PUT [path] with a JSON [body] and decode its `data` with [fromJson].
+  ///
+  /// `PUT /planes/{id}/tiempos/{dia}/{tipo}/items` replaces a whole list and
+  /// answers the updated resource, so the caller takes its new state from that
+  /// answer instead of requesting it again.
+  Future<T> put<T>(
+    String path, {
+    Object? body,
+    required T Function(Map<String, dynamic> json) fromJson,
+  }) async => _decode(await _send('PUT', path, body), fromJson);
 
   /// DELETE [path] and decode its `data` with [fromJson].
   Future<T> delete<T>(
@@ -91,16 +106,21 @@ class ApiClient {
 
   /// One place for the transport of writes, so every verb maps a [DioException]
   /// the way [get] does.
+  ///
+  /// [receiveTimeout] bounds the wait for the response of this one call, for the
+  /// endpoints that do slow work before answering (a generation can take
+  /// minutes). Without it the client keeps whatever the base options say.
   Future<Response<Object?>> _send(
     String method,
     String path,
-    Object? body,
-  ) async {
+    Object? body, {
+    Duration? receiveTimeout,
+  }) async {
     try {
       return await _dio.request<Object?>(
         path,
         data: body,
-        options: Options(method: method),
+        options: Options(method: method, receiveTimeout: receiveTimeout),
       );
     } on DioException catch (exception) {
       throw ApiFailure.fromDio(exception);

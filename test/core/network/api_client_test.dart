@@ -402,4 +402,56 @@ void main() {
       );
     });
   });
+
+  group('ApiClient.put', () {
+    test('sends a PUT with the body and decodes the answer', () async {
+      final adapter = FakeHttpAdapter(
+        (_) async => jsonBody({
+          'ok': true,
+          'data': {'id': 'p1', 'estado': 'BORRADOR'},
+        }),
+      );
+
+      final plan = await ApiClient(dioWith(adapter)).put<Map<String, Object?>>(
+        '/planes/p1/tiempos/LUNES/ALMUERZO/items',
+        body: {'items': []},
+        fromJson: (json) => json,
+      );
+
+      expect(adapter.requests.single.method, 'PUT');
+      expect(
+        adapter.requests.single.path,
+        '/planes/p1/tiempos/LUNES/ALMUERZO/items',
+      );
+      expect(adapter.requests.single.data, {'items': []});
+      expect(plan, {'id': 'p1', 'estado': 'BORRADOR'});
+    });
+
+    test('maps a 400 to the ApiFailure carrying the API message', () async {
+      final adapter = FakeHttpAdapter(
+        (_) async => jsonBody({
+          'ok': false,
+          'error': {
+            'codigo': 'VALIDACION',
+            'mensaje': 'Un tiempo admite hasta 12 alimentos.',
+          },
+        }, status: 400),
+      );
+
+      await expectLater(
+        ApiClient(
+          dioWith(adapter),
+        ).put<Map<String, Object?>>('/x', body: {}, fromJson: (json) => json),
+        throwsA(
+          isA<ApiFailure>()
+              .having((f) => f.statusCode, 'statusCode', 400)
+              .having(
+                (f) => f.mensaje,
+                'mensaje',
+                'Un tiempo admite hasta 12 alimentos.',
+              ),
+        ),
+      );
+    });
+  });
 }
