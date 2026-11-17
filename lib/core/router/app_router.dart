@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/agenda/ui/agenda_screen.dart';
+import '../../features/agenda/ui/nueva_cita_screen.dart';
 import '../../features/auth/application/auth_redirect.dart';
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/ui/login_screen.dart';
@@ -163,11 +165,24 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: AppRoutes.agenda,
-            builder: (context, state) => const FeaturePlaceholder(
-              title: 'Agenda de citas',
-              description: 'Citas de la nutricionista y su seguimiento.',
-              icon: Icons.calendar_today_outlined,
-            ),
+            builder: (context, state) => const AgendaScreen(),
+            routes: [
+              // Full screen like the other forms: its own header and an `x`,
+              // nested under the agenda so closing lands back on the day.
+              GoRoute(
+                path: AppRoutes.nuevaCitaSegment,
+                parentNavigatorKey: _rootNavigatorKey,
+                pageBuilder: (context, state) {
+                  final dia = DateTime.tryParse(
+                    state.uri.queryParameters['dia'] ?? '',
+                  );
+                  return MaterialPage(
+                    fullscreenDialog: true,
+                    child: NuevaCitaScreen(dia: dia),
+                  );
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: AppRoutes.configuracion,

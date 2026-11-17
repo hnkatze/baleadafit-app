@@ -6,6 +6,8 @@ import 'package:baleadafit/features/auth/data/auth_session.dart';
 import 'package:baleadafit/features/auth/data/user_role.dart';
 import 'package:baleadafit/features/auth/ui/login_screen.dart';
 import 'package:baleadafit/core/network/paged.dart';
+import 'package:baleadafit/features/agenda/data/citas_providers.dart';
+import 'package:baleadafit/features/agenda/ui/agenda_screen.dart';
 import 'package:baleadafit/features/patients/data/catalogo_item.dart';
 import 'package:baleadafit/features/patients/data/paciente_ficha.dart';
 import 'package:baleadafit/features/patients/data/patients_providers.dart';
@@ -97,6 +99,15 @@ Future<GoRouter> _pumpApp(
         // The directory would otherwise reach for the network.
         pacientesDirectorioProvider.overrideWith(
           (ref, query) => Future.value(
+            const Paged(
+              items: [],
+              meta: PageMeta(limit: 100, offset: 0, total: 0, hasMore: false),
+            ),
+          ),
+        ),
+        // The agenda would otherwise reach for the network too.
+        agendaDelDiaProvider.overrideWith(
+          (ref, dia) => Future.value(
             const Paged(
               items: [],
               meta: PageMeta(limit: 100, offset: 0, total: 0, hasMore: false),
@@ -220,7 +231,8 @@ void main() {
       router.routerDelegate.currentConfiguration.uri.toString(),
       AppRoutes.agenda,
     );
-    expect(find.textContaining('Citas de la nutricionista'), findsOneWidget);
+    expect(find.byType(AgendaScreen), findsOneWidget);
+    expect(find.text('Sin citas este día'), findsOneWidget);
   });
 
   testWidgets('shows the signed-in name in the drawer profile card', (
