@@ -148,19 +148,39 @@ class _DetalleCitaScreenState extends ConsumerState<DetalleCitaScreen> {
   Future<void> _cancelar() async {
     final confirmada = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('¿Cancelar esta cita?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
+      builder: (context) {
+        final colors = Theme.of(context).colorScheme;
+        return AlertDialog(
+          // Same way out as the plan confirmations: a red cross in the corner
+          // and a real button, because a bare text action does not read as one.
+          title: Row(
+            children: [
+              const Expanded(child: Text('¿Cancelar esta cita?')),
+              IconButton(
+                key: const Key('cerrar-dialogo'),
+                tooltip: 'No',
+                onPressed: () => Navigator.of(context).pop(false),
+                icon: Icon(Icons.close, size: 28, color: colors.error),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sí, cancelar'),
-          ),
-        ],
-      ),
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            // Cancelling an appointment is destructive: the action says so.
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: colors.error,
+                foregroundColor: colors.onError,
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Sí, cancelar'),
+            ),
+          ],
+        );
+      },
     );
     if (confirmada != true || !mounted) return;
 
