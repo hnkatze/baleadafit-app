@@ -79,6 +79,30 @@ abstract final class AppRoutes {
       '${plan(pacienteId, planId)}/$tiemposSegment/'
       '${Uri.encodeComponent(dia)}/${Uri.encodeComponent(tipo)}';
 
+  /// Path segment under a patient file that holds the medication of that
+  /// patient. Like a plan, a medication belongs to a patient.
+  static const medicacionSegment = 'medicacion';
+
+  /// Location of the medication list of one patient.
+  static String medicacion(String pacienteId) =>
+      '${paciente(pacienteId)}/$medicacionSegment';
+
+  /// Path segment under the medication list that opens the registration form.
+  /// It is declared before the `:medicamentoId` route so it is not read as an
+  /// id.
+  static const nuevaMedicacionSegment = 'nueva';
+
+  /// Location of the registration form of one patient's medication.
+  static String nuevaMedicacion(String pacienteId) =>
+      '${medicacion(pacienteId)}/$nuevaMedicacionSegment';
+
+  /// Path parameter that names one medication under the medication list.
+  static const medicamentoIdParam = 'medicamentoId';
+
+  /// Location of the editor of one medication of one patient.
+  static String medicamento(String pacienteId, String medicamentoId) =>
+      '${medicacion(pacienteId)}/${Uri.encodeComponent(medicamentoId)}';
+
   /// Path segment under [agenda] that opens the new-appointment form.
   static const nuevaCitaSegment = 'nueva';
 
@@ -87,6 +111,31 @@ abstract final class AppRoutes {
   static String nuevaCita({DateTime? dia}) => dia == null
       ? '$agenda/$nuevaCitaSegment'
       : '$agenda/$nuevaCitaSegment?dia=${fechaIso(dia)}';
+
+  /// Path segment under [catalogo] that opens the new-food form. It is
+  /// declared before the `:alimentoId` route so it is not read as a food id.
+  static const nuevoAlimentoSegment = 'nueva';
+
+  /// Location of the new-food form.
+  static const nuevoAlimento = '$catalogo/$nuevoAlimentoSegment';
+
+  /// Path parameter that names one food under [catalogo].
+  static const alimentoIdParam = 'alimentoId';
+
+  /// Location of the detail of one food.
+  static String alimento(String id) => '$catalogo/${Uri.encodeComponent(id)}';
+
+  /// Location of the edit form of one food.
+  static const editarAlimentoSegment = editarSegment;
+  static String editarAlimento(String id) =>
+      '${alimento(id)}/$editarAlimentoSegment';
+
+  /// Path segment under one food that opens its version history.
+  static const historialAlimentoSegment = 'historial';
+
+  /// Location of the version history of one food.
+  static String historialAlimento(String id) =>
+      '${alimento(id)}/$historialAlimentoSegment';
 
   /// Routes of the authenticated shell, in drawer order.
   static const shellRoutes = <String>[

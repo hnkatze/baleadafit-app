@@ -7,10 +7,12 @@ import '../../features/agenda/ui/nueva_cita_screen.dart';
 import '../../features/auth/application/auth_redirect.dart';
 import '../../features/auth/application/session_controller.dart';
 import '../../features/auth/ui/login_screen.dart';
+import '../../features/catalogo/ui/catalogo_routes.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/not_found/ui/not_found_screen.dart';
 import '../../features/patients/ui/alta_paciente/alta_paciente_screen.dart';
 import '../../features/patients/ui/alta_paciente/editar_paciente_screen.dart';
+import '../../features/patients/ui/medicacion/medicacion_routes.dart';
 import '../../features/patients/ui/nueva_medicion_screen.dart';
 import '../../features/patients/ui/paciente_ficha_screen.dart';
 import '../../features/patients/ui/pacientes_screen.dart';
@@ -126,6 +128,12 @@ GoRouter createAppRouter({
                     // where the first one is generated.
                     onVerPlanes: () => context.go(
                       AppRoutes.planesDe(
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
+                    ),
+                    // The card and the menu entry share this destination.
+                    onMedicamentos: () => context.go(
+                      AppRoutes.medicacion(
                         state.pathParameters[AppRoutes.pacienteIdParam]!,
                       ),
                     ),
@@ -295,6 +303,77 @@ GoRouter createAppRouter({
                       ),
                     ],
                   ),
+                  // Inside the shell, like the plans: the list draws its own
+                  // back row. The forms are its children, so closing one
+                  // lands back on the list.
+                  GoRoute(
+                    path: AppRoutes.medicacionSegment,
+                    pageBuilder: (context, state) {
+                      final id =
+                          state.pathParameters[AppRoutes.pacienteIdParam]!;
+                      return shellPage(
+                        context,
+                        state,
+                        MedicacionListaRoute(
+                          pacienteId: id,
+                          onVolver: () => context.canPop()
+                              ? context.pop()
+                              : context.go(AppRoutes.paciente(id)),
+                          onRegistrar: () =>
+                              context.go(AppRoutes.nuevaMedicacion(id)),
+                          onAbrir: (medicamento) => context.go(
+                            AppRoutes.medicamento(id, medicamento.id),
+                          ),
+                        ),
+                      );
+                    },
+                    routes: [
+                      // Before `:medicamentoId`, or "nueva" would be read as
+                      // an id. Own header and an `x`: covers the shell.
+                      GoRoute(
+                        path: AppRoutes.nuevaMedicacionSegment,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        pageBuilder: (context, state) {
+                          final router = GoRouter.of(context);
+                          final id =
+                              state.pathParameters[AppRoutes.pacienteIdParam]!;
+                          void cerrar() => router.go(AppRoutes.medicacion(id));
+                          return formPage<void>(
+                            context,
+                            state,
+                            MedicamentoFormRoute(
+                              pacienteId: id,
+                              onCerrar: cerrar,
+                              onBaja: cerrar,
+                            ),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: ':${AppRoutes.medicamentoIdParam}',
+                        parentNavigatorKey: _rootNavigatorKey,
+                        pageBuilder: (context, state) {
+                          final router = GoRouter.of(context);
+                          final id =
+                              state.pathParameters[AppRoutes.pacienteIdParam]!;
+                          // `go` to the list, never `pop`: it also serves a
+                          // deep link, and rebuilds the list after a baja.
+                          void cerrar() => router.go(AppRoutes.medicacion(id));
+                          return formPage<void>(
+                            context,
+                            state,
+                            MedicamentoFormRoute(
+                              pacienteId: id,
+                              medicamentoId: state
+                                  .pathParameters[AppRoutes.medicamentoIdParam],
+                              onCerrar: cerrar,
+                              onBaja: cerrar,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                   GoRoute(
                     path: AppRoutes.medicionSegment,
                     parentNavigatorKey: _rootNavigatorKey,
@@ -326,15 +405,54 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: AppRoutes.catalogo,
-            pageBuilder: (context, state) => shellPage(
-              context,
-              state,
-              const FeaturePlaceholder(
-                title: 'Catálogo de alimentos',
-                description: 'Alimentos, porciones y restricciones del TCA-HN.',
-                icon: Icons.menu_book_outlined,
+            pageBuilder: (context, state) =>
+                shellPage(context, state, const CatalogoBusquedaRoute()),
+            routes: [
+              // Full screen, like every other form: its own header and an `x`.
+              // Declared before `:alimentoId` so it is not read as a food id.
+              GoRoute(
+                path: AppRoutes.nuevoAlimentoSegment,
+                parentNavigatorKey: _rootNavigatorKey,
+                pageBuilder: (context, state) =>
+                    formPage(context, state, const AlimentoFormRoute()),
               ),
-            ),
+              GoRoute(
+                path: ':${AppRoutes.alimentoIdParam}',
+                pageBuilder: (context, state) => shellPage(
+                  context,
+                  state,
+                  AlimentoDetalleRoute(
+                    alimentoId:
+                        state.pathParameters[AppRoutes.alimentoIdParam]!,
+                  ),
+                ),
+                routes: [
+                  GoRoute(
+                    path: AppRoutes.editarAlimentoSegment,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    pageBuilder: (context, state) => formPage(
+                      context,
+                      state,
+                      AlimentoFormRoute(
+                        alimentoId:
+                            state.pathParameters[AppRoutes.alimentoIdParam]!,
+                      ),
+                    ),
+                  ),
+                  GoRoute(
+                    path: AppRoutes.historialAlimentoSegment,
+                    pageBuilder: (context, state) => shellPage(
+                      context,
+                      state,
+                      AlimentoHistorialRoute(
+                        alimentoId:
+                            state.pathParameters[AppRoutes.alimentoIdParam]!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           GoRoute(
             path: AppRoutes.agenda,
