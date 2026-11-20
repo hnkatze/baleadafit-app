@@ -237,20 +237,35 @@ Future<bool?> _confirmar(
 }) {
   return showDialog<bool>(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text(titulo),
-      content: cuerpo == null ? null : Text(cuerpo),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancelar'),
+    builder: (context) {
+      final colors = Theme.of(context).colorScheme;
+      return AlertDialog(
+        // The way out is twice: a big red cross in the corner, and a real
+        // button, because a bare text action does not read as one.
+        title: Row(
+          children: [
+            Expanded(child: Text(titulo)),
+            IconButton(
+              key: const Key('cerrar-dialogo'),
+              tooltip: 'Cancelar',
+              onPressed: () => Navigator.of(context).pop(false),
+              icon: Icon(Icons.close, size: 28, color: colors.error),
+            ),
+          ],
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(accion),
-        ),
-      ],
-    ),
+        content: cuerpo == null ? null : Text(cuerpo),
+        actions: [
+          OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(accion),
+          ),
+        ],
+      );
+    },
   );
 }
 

@@ -956,4 +956,35 @@ void main() {
       );
     }
   });
+
+  testWidgets('the confirmation offers a red cross to back out', (
+    tester,
+  ) async {
+    var llamadas = 0;
+    final adapter = FakeHttpAdapter((_) async {
+      llamadas++;
+      return jsonBody({
+        'ok': false,
+        'error': {'codigo': 'NO_DEBERIA', 'mensaje': 'no se pidió nada'},
+      }, status: 500);
+    });
+    await _pump(tester, cargar: () async => _plan(), adapter: adapter);
+    await pumpStable(tester);
+    final colors = Theme.of(tester.element(find.byType(PlanDetalleScreen)))
+        .colorScheme;
+
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+
+    final cerrar = find.byKey(const Key('cerrar-dialogo'));
+    expect(cerrar, findsOneWidget);
+    expect(tester.widget<Icon>(find.byIcon(Icons.close)).color, colors.error);
+
+    await tester.tap(cerrar);
+    await pumpStable(tester);
+
+    // Backing out writes nothing and leaves the draft with its action.
+    expect(llamadas, 0);
+    expect(find.text('Activar plan'), findsOneWidget);
+  });
 }
