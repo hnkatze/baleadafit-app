@@ -6,8 +6,10 @@ import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/format/numeros.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
+import '../data/medicamento.dart';
 import '../data/paciente_ficha.dart';
 import '../data/patients_providers.dart';
 import 'evolucion_chart.dart';
@@ -111,6 +113,7 @@ class PacienteFichaScreen extends ConsumerWidget {
                   onVerHistorial: onVerHistorial,
                   onVerPlanes: onVerPlanes,
                   onGenerarPlan: onGenerarPlan,
+                  onMedicamentos: onMedicamentos,
                 ),
               ),
             ),
@@ -129,6 +132,7 @@ class _Contenido extends StatelessWidget {
     required this.onVerHistorial,
     this.onVerPlanes,
     this.onGenerarPlan,
+    this.onMedicamentos,
   });
 
   final PacienteFicha ficha;
@@ -136,6 +140,7 @@ class _Contenido extends StatelessWidget {
   final VoidCallback? onVerHistorial;
   final VoidCallback? onVerPlanes;
   final VoidCallback? onGenerarPlan;
+  final VoidCallback? onMedicamentos;
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +190,12 @@ class _Contenido extends StatelessWidget {
                   onVerPlanes: onVerPlanes,
                 ),
               _ProximaConsulta(consulta: proxima),
+              // Current clinical context, not history: it goes before the
+              // measurements, which are the history.
+              _Medicacion(
+                medicamentos: ficha.situacion.medicamentos,
+                onTap: onMedicamentos,
+              ),
               if (conMediciones)
                 _Mediciones(ficha: ficha, onVerHistorial: onVerHistorial),
             ],
@@ -1347,6 +1358,112 @@ class _ProximaConsulta extends StatelessWidget {
     );
   }
 }
+
+/// The `Medicación` block: up to [_filasMedicacion] rows and the total, or the
+/// empty invitation. The whole card opens the medication list.
+class _Medicacion extends StatelessWidget {
+  const _Medicacion({required this.medicamentos, required this.onTap});
+
+  final List<Medicamento> medicamentos;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+    final vacia = medicamentos.isEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _Seccion('Medicación'),
+        AppCard(
+          onTap: onTap,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (vacia)
+                Row(
+                  children: [
+                    Icon(
+                      Icons.medication_outlined,
+                      size: AppDimensions.iconMd,
+                      color: colors.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: AppDimensions.spaceSm),
+                    Expanded(
+                      child: Text(
+                        'Sin medicación registrada',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                for (final medicamento in medicamentos.take(_filasMedicacion))
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: AppDimensions.spaceSm,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.medication_outlined,
+                          size: AppDimensions.iconMd,
+                          color: colors.primary,
+                        ),
+                        const SizedBox(width: AppDimensions.spaceSm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                medicamento.nombre,
+                                style: textTheme.titleSmall,
+                              ),
+                              if (medicamento.composicion case final linea?)
+                                Text(
+                                  linea,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colors.onSurfaceVariant,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              if (vacia) ...[
+                const SizedBox(height: AppDimensions.spaceSm),
+                // A real button, not a coloured text: the ficha's other cards
+                // carry solid actions and this one is the way into the module.
+                AppButton(
+                  label: 'Registrar medicamento',
+                  icon: Icons.add,
+                  onPressed: onTap,
+                ),
+              ] else
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Ver todo · ${medicamentos.length}',
+                    style: textTheme.labelLarge?.copyWith(color: colors.primary),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// How many medications the card lists before pointing at the full screen.
+const _filasMedicacion = 3;
 
 class _Mediciones extends StatelessWidget {
   const _Mediciones({required this.ficha, required this.onVerHistorial});
