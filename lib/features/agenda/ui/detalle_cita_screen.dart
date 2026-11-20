@@ -151,8 +151,8 @@ class _DetalleCitaScreenState extends ConsumerState<DetalleCitaScreen> {
       builder: (context) {
         final colors = Theme.of(context).colorScheme;
         return AlertDialog(
-          // Same way out as the plan confirmations: a red cross in the corner
-          // and a real button, because a bare text action does not read as one.
+          // Same way out as the plan confirmations: only the red cross in the
+          // corner, never a second button beside the action.
           title: Row(
             children: [
               const Expanded(child: Text('¿Cancelar esta cita?')),
@@ -165,10 +165,6 @@ class _DetalleCitaScreenState extends ConsumerState<DetalleCitaScreen> {
             ],
           ),
           actions: [
-            OutlinedButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('No'),
-            ),
             // Cancelling an appointment is destructive: the action says so.
             FilledButton(
               style: FilledButton.styleFrom(

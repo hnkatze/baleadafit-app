@@ -620,8 +620,16 @@ void main() {
     );
     expect(adapter.requests, isEmpty);
 
-    await tester.tap(
+    // The only way out is the cross: no second Cancel button in the dialog.
+    expect(
       find.descendant(of: dialogo, matching: find.text('Cancelar')),
+      findsNothing,
+    );
+    await tester.tap(
+      find.descendant(
+        of: dialogo,
+        matching: find.byKey(const Key('cerrar-dialogo')),
+      ),
     );
     await pumpStable(tester);
 
@@ -735,7 +743,7 @@ void main() {
     await tester.tap(
       find.descendant(
         of: find.byType(AlertDialog),
-        matching: find.text('Cancelar'),
+        matching: find.byKey(const Key('cerrar-dialogo')),
       ),
     );
     await pumpStable(tester);
@@ -807,7 +815,10 @@ void main() {
     expect(adapter.requests, isEmpty);
 
     await tester.tap(
-      find.descendant(of: dialogo, matching: find.text('Cancelar')),
+      find.descendant(
+        of: dialogo,
+        matching: find.byKey(const Key('cerrar-dialogo')),
+      ),
     );
     await pumpStable(tester);
 

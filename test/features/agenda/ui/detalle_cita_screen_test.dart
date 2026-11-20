@@ -187,7 +187,7 @@ void main() {
     await _hasta(tester, find.text('Cancelar cita'));
     await tester.tap(find.text('Cancelar cita'));
     await pumpStable(tester);
-    await tester.tap(find.text('No'));
+    await tester.tap(find.byKey(const Key('cerrar-dialogo')));
     await pumpStable(tester);
 
     expect(repo.parches, isEmpty);

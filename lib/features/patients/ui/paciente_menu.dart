@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_failure.dart';
 import '../../../core/theme/app_dimensions.dart';
-import '../../../shared/widgets/app_button.dart';
 import '../data/patients_providers.dart';
 
 /// What the overflow menu of the ficha can ask for.
@@ -170,7 +169,19 @@ class _ConfirmarBaja extends StatelessWidget {
         foregroundColor: colors.onErrorContainer,
         child: const Icon(Icons.person_off_outlined),
       ),
-      title: Text('¿Dar de baja a $nombre?'),
+      // The way out is the red cross in the corner, and only that: a second
+      // Cancel button beside the destructive action invites the wrong tap.
+      title: Row(
+        children: [
+          Expanded(child: Text('¿Dar de baja a $nombre?')),
+          IconButton(
+            key: const Key('cerrar-dialogo'),
+            tooltip: 'Cancelar',
+            onPressed: () => Navigator.pop(context, false),
+            icon: Icon(Icons.close, size: 28, color: colors.error),
+          ),
+        ],
+      ),
       content: Text(
         'Deja de aparecer en tus pacientes activos. Su ficha, mediciones y '
         'planes se conservan, y lo encontrás en el filtro «Dados de baja».',
@@ -179,14 +190,6 @@ class _ConfirmarBaja extends StatelessWidget {
       actions: [
         Row(
           children: [
-            Expanded(
-              child: AppButton(
-                label: 'Cancelar',
-                variant: AppButtonVariant.secondary,
-                onPressed: () => Navigator.pop(context, false),
-              ),
-            ),
-            const SizedBox(width: AppDimensions.spaceXs),
             Expanded(
               // Destructive, so it takes the error role instead of the brand
               // mint the primary variant carries.

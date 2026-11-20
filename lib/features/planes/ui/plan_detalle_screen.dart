@@ -240,8 +240,8 @@ Future<bool?> _confirmar(
     builder: (context) {
       final colors = Theme.of(context).colorScheme;
       return AlertDialog(
-        // The way out is twice: a big red cross in the corner, and a real
-        // button, because a bare text action does not read as one.
+        // The way out is the big red cross in the corner, and only that: a
+        // second Cancel button beside the action invites the wrong tap.
         title: Row(
           children: [
             Expanded(child: Text(titulo)),
@@ -255,10 +255,6 @@ Future<bool?> _confirmar(
         ),
         content: cuerpo == null ? null : Text(cuerpo),
         actions: [
-          OutlinedButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(accion),

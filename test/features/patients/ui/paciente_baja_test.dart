@@ -136,7 +136,9 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Cancelar'), findsOneWidget);
+    // The only way out is the cross in the corner: no second Cancel button.
+    expect(find.widgetWithText(OutlinedButton, 'Cancelar'), findsNothing);
+    expect(find.byKey(const Key('cerrar-dialogo')), findsOneWidget);
     expect(repository.bajas, isEmpty);
   });
 
@@ -148,7 +150,7 @@ void main() {
     await _pump(tester, repository, onBack: () => salio = true);
     await _abrirConfirmacion(tester);
 
-    await tester.tap(find.text('Cancelar'));
+    await tester.tap(find.byKey(const Key('cerrar-dialogo')));
     await tester.pumpAndSettle();
 
     expect(find.text('¿Dar de baja a Paciente De Prueba?'), findsNothing);
