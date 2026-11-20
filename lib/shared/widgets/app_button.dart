@@ -87,7 +87,11 @@ class _Label extends StatelessWidget {
       children: [
         Icon(icon, size: AppDimensions.iconSm),
         const SizedBox(width: AppDimensions.spaceSm),
-        Text(label),
+        // A long label inside a narrow container (a card) would overflow the
+        // row instead of shrinking; the ellipsis only shows when it must.
+        Flexible(
+          child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
       ],
     );
   }
