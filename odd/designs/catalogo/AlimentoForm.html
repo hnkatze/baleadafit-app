@@ -1,0 +1,154 @@
+
+"<!DOCTYPE html>
+<html lang="es"><head><style data-dc-design-system-vars="">@layer{:root{--primary:#006c49;--on-primary:#ffffff;--primary-container:#10b981;--on-primary-container:#00422b;--primary-fixed:#6ffbbe;--primary-fixed-dim:#4edea3;--on-primary-fixed-variant:#005236;--secondary:#1b6b51;--on-secondary:#ffffff;--secondary-container:#a6f2d1;--on-secondary-container:#237157;--tertiary:#006c4b;--on-tertiary:#ffffff;--tertiary-container:#00b982;--on-tertiary-container:#00422c;--surface:#f9f9ff;--surface-container-lowest:#ffffff;--surface-container-low:#f0f3ff;--surface-container:#e7eeff;--surface-container-high:#dee8ff;--surface-container-highest:#d8e3fb;--on-surface:#111c2d;--on-surface-variant:#3c4a42;--inverse-surface:#263143;--inverse-on-surface:#ecf1ff;--outline:#6c7a71;--outline-variant:#bbcabf;--error:#ba1a1a;--on-error:#ffffff;--error-container:#ffdad6;--on-error-container:#93000a;--space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:32px;--space-xxl:48px;--radius-xs:4px;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-full:999px;--screen-width:390px;--button-height:48px;--field-height:44px;--top-bar-height:56px;--drawer-width:290px;--icon-sm:18px;--icon-md:24px;--avatar:32px;--font-sans:"Plus Jakarta Sans", system-ui, sans-serif;--font-mono:"JetBrains Mono", ui-monospace, monospace;--text-display-large:800 36px/1.22 var(--font-sans);--text-display-medium:800 32px/1.25 var(--font-sans);--text-display-small:800 28px/1.29 var(--font-sans);--text-headline-large:700 30px/1.27 var(--font-sans);--text-headline-medium:700 24px/1.33 var(--font-sans);--text-headline-small:600 20px/1.4 var(--font-sans);--text-title-large:600 16px/1.5 var(--font-sans);--text-title-medium:600 14px/1.43 var(--font-sans);--text-title-small:600 12px/1.33 var(--font-sans);--text-body-large:400 16px/1.63 var(--font-sans);--text-body-medium:400 14px/1.57 var(--font-sans);--text-body-small:400 13px/1.38 var(--font-sans);--text-label-large:600 16px/1.5 var(--font-sans);--text-label-medium:600 12px/1.33 var(--font-sans);--text-label-small:700 11px/1.27 var(--font-sans);--text-data:500 13px/1.38 var(--font-mono);}}</style>
+
+
+<meta charset="utf-8">
+<title>Alta / edición de alimento</title>
+<script src="f73fd66c-d782-48bf-bb90-764534810bc2"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400,0..1,0&amp;display=block">
+<style>
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Regular.ttf");font-weight:400}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-SemiBold.ttf");font-weight:600}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-Bold.ttf");font-weight:700}
+@font-face{font-family:"Plus Jakarta Sans";src:url("ds/baleadafit/fonts/PlusJakartaSans-ExtraBold.ttf");font-weight:800}
+@font-face{font-family:"JetBrains Mono";src:url("ds/baleadafit/fonts/JetBrainsMono-Medium.ttf");font-weight:500}
+body{margin:0}
+.ms{font-family:"Material Symbols Outlined";font-weight:400;font-style:normal;line-height:1;letter-spacing:normal;white-space:nowrap;-webkit-font-smoothing:antialiased}
+a{color:#006c49;text-decoration:none}a:hover{color:#005236}
+input:focus,select:focus{outline:none;border-color:#006c49}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 2000px; box-sizing: border-box; background: #f9f9ff; color: #111c2d; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+<header style="height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding: 0 4px; border-bottom: 1px solid #bbcabf;">
+<a href="AlimentoDetalle.dc.html" aria-label="Cerrar sin guardar" style="width: 48px; height: 48px; display: grid; place-items: center; color: #111c2d;"><span class="ms" style="font-size: 24px;">close</span></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column;">
+<span style="font-size: 16px; line-height: 1.5; font-weight: 600;">Editar alimento</span>
+<span style="font-size: 11px; line-height: 1.27; font-weight: 700; letter-spacing: 0.44px; color: #3c4a42;">Mismo formulario para el alta</span>
+</div>
+</header>
+
+<form style="flex-grow: 1; padding: 20px 16px 104px; display: flex; flex-direction: column; gap: 20px;">
+
+<div style="background: #f0f3ff; border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;">
+<span class="ms" style="font-size: 18px; color: #3c4a42;">info</span>
+<span style="font-size: 12px; line-height: 1.45; color: #3c4a42;">Todos los valores son <b>por porción</b>. Si vaciás un campo, se conserva el valor guardado. Cambiar un nutriente crea una versión nueva.</span>
+</div>
+
+<section style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700;"><span style="width: 28px; height: 28px; border-radius: 8px; background: #e7eeff; color: #006c49; display: grid; place-items: center;"><span class="ms" style="font-size: 18px;">badge</span></span>1 · Identidad</h2>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="nombre" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Nombre</label>
+<input id="nombre" value="Pollo a la plancha" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid #006c49; background: #f0f3ff; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111c2d;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="categoria" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Categoría</label>
+<sc-raw-select id="categoria" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111c2d;">
+<option>Plato típico</option><option selected="">Proteína</option><option>Cereal y tubérculo</option><option>Leguminosa</option><option>Lácteo</option><option>Fruta</option><option>Verdura</option><option>Grasa</option><option>Bebida</option>
+</sc-raw-select>
+</div>
+<label style="position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px;">
+<span class="ms" style="font-size: 20px; color: #006c49;">flag</span>
+<span style="flex-grow: 1; font-size: 14px;">Típico hondureño</span>
+<input type="checkbox" style="position: absolute; right: 0; opacity: 0; margin: 0; width: 44px; height: 26px;">
+<span aria-hidden="true" style="width: 44px; height: 26px; border-radius: 999px; background: #bbcabf; position: relative; flex-shrink: 0;"><span style="position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #ffffff;"></span></span>
+</label>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="fuente" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Fuente</label>
+<input id="fuente" value="USDA" placeholder="INCAP, USDA, etiqueta del producto…" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111c2d;">
+</div>
+</section>
+
+<section style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700;"><span style="width: 28px; height: 28px; border-radius: 8px; background: #e7eeff; color: #006c49; display: grid; place-items: center;"><span class="ms" style="font-size: 18px;">scale</span></span>2 · Porción</h2>
+<div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="porcion" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Descripción</label>
+<input id="porcion" value="1 pieza mediana" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111c2d;">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="gramos" style="font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Gramos</label>
+<input id="gramos" inputmode="decimal" value="100" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;">
+</div>
+</div>
+</section>
+
+<section style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700;"><span style="width: 28px; height: 28px; border-radius: 8px; background: #e7eeff; color: #006c49; display: grid; place-items: center;"><span class="ms" style="font-size: 18px;">nutrition</span></span>3 · Composición por porción</h2>
+
+<span style="font-size: 11px; font-weight: 700; letter-spacing: 0.44px; color: #3c4a42;">ENERGÍA Y MACROS</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="kcal" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Energía · kcal</label><input id="kcal" inputmode="decimal" value="165" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="prot" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Proteína · g</label><input id="prot" inputmode="decimal" value="31" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="carb" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Carbohidrato · g</label><input id="carb" inputmode="decimal" value="0" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="grasa" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Grasa · g</label><input id="grasa" inputmode="decimal" value="4" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="fibra" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Fibra · g</label><input id="fibra" inputmode="decimal" value="0" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+</div>
+
+<span style="margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.44px; color: #3c4a42;">MICRONUTRIENTES</span>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<div style="display: flex; align-items: center; gap: 6px;"><label for="sodio" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Sodio · mg</label><span style="display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border-radius: 999px; border: 1px dashed #8a5a00; color: #6b4500; font-size: 10px; font-weight: 700;"><span class="ms" style="font-size: 12px;">info</span>Estimado</span></div>
+<input id="sodio" inputmode="decimal" value="74" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px dashed #8a5a00; background: #fff8ec; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;">
+<span style="font-size: 11px; line-height: 1.45; color: #3c4a42;">Se guarda como aproximado. Verificar con INCAP.</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="potasio" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Potasio · mg</label><input id="potasio" inputmode="decimal" value="256" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="fosforo" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Fósforo · mg</label><input id="fosforo" inputmode="decimal" value="228" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="azucar" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Azúcares · g</label><input id="azucar" inputmode="decimal" value="0" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="sat" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Grasas sat. · g</label><input id="sat" inputmode="decimal" value="1" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="ig" style="font-size: 12px; font-weight: 600; color: #3c4a42;">Índice glucémico</label>
+<input id="ig" inputmode="decimal" placeholder="Sin dato" style="box-sizing: border-box; height: 44px; border-radius: 8px; border: 1.6px solid transparent; background: #f0f3ff; padding: 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #111c2d;">
+<span style="font-size: 11px; line-height: 1.45; color: #3c4a42;">Dejalo vacío si el alimento no tiene carbohidratos: queda “sin dato”, no 0.</span>
+</div>
+</section>
+
+<section style="background: #ffffff; border: 1px solid #bbcabf; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700;"><span style="width: 28px; height: 28px; border-radius: 8px; background: #e7eeff; color: #006c49; display: grid; place-items: center;"><span class="ms" style="font-size: 18px;">restaurant</span></span>4 · Uso</h2>
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px;">
+<legend style="padding: 0; margin-bottom: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Tiempos de comida</legend>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #bbcabf; background: none; color: #3c4a42; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 600;"><span class="ms" style="font-size: 16px;">free_breakfast</span>Desayuno</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #bbcabf; background: none; color: #3c4a42; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 600;"><span class="ms" style="font-size: 16px;">bakery_dining</span>Merienda AM</button>
+<button type="button" aria-pressed="true" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1.6px solid #006c49; background: #e7eeff; color: #006c49; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 700;"><span class="ms" style="font-size: 16px;">check</span>Almuerzo</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #bbcabf; background: none; color: #3c4a42; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 600;"><span class="ms" style="font-size: 16px;">nutrition</span>Merienda PM</button>
+<button type="button" aria-pressed="true" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1.6px solid #006c49; background: #e7eeff; color: #006c49; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 700;"><span class="ms" style="font-size: 16px;">check</span>Cena</button>
+</div>
+</fieldset>
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px;">
+<legend style="padding: 0; margin-bottom: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.24px; color: #3c4a42;">Contiene (de las 6 restricciones)</legend>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #bbcabf; background: none; color: #3c4a42; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 600;"><span class="ms" style="font-size: 16px;">warning</span>Lactosa</button>
+<button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #bbcabf; background: none; color: #3c4a42; display: inline-flex; align-items: center; gap: 4px; font-family: inherit; font-size: 12px; font-weight: 600;"><span class="ms" style="font-size: 16px;">warning</span>Gluten</button>
+<span style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px dashed #bbcabf; color: #3c4a42; display: inline-flex; align-items: center; font-size: 12px; font-style: italic;">[4 más de GET /restricciones]</span>
+</div>
+<span style="font-size: 11px; line-height: 1.45; color: #3c4a42;">Ninguna marcada: aparece aunque se excluyan restricciones en la búsqueda.</span>
+</fieldset>
+</section>
+
+</form>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 16px; background: #f9f9ff; border-top: 1px solid #bbcabf;">
+<a href="AlimentoDetalle.dc.html" style="height: 48px; border-radius: 8px; background: #006c49; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; line-height: 1.5; font-weight: 600; letter-spacing: -0.08px;"><span class="ms" style="font-size: 18px;">save</span>Guardar cambios</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:2000}}">
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+
+
+</body></html>"
+  
