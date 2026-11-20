@@ -1,3 +1,5 @@
+import 'medicamento.dart';
+
 /// What `GET /pacientes/{id}/ficha` answers.
 ///
 /// The OpenAPI types every block in this payload as `object` without a schema
@@ -258,6 +260,7 @@ class SituacionFicha {
   const SituacionFicha({
     this.condiciones = const [],
     this.restricciones = const [],
+    this.medicamentos = const [],
     this.alergias,
     this.cirugias,
     this.suplementos,
@@ -269,6 +272,7 @@ class SituacionFicha {
     return SituacionFicha(
       condiciones: _codigos(json['condiciones'], 'condicion'),
       restricciones: _codigos(json['restricciones'], 'restriccion'),
+      medicamentos: _medicamentos(json['medicacion']),
       alergias: _string(json['alergias']),
       cirugias: _string(json['cirugias']),
       suplementos: _string(json['suplementos']),
@@ -279,6 +283,12 @@ class SituacionFicha {
   /// Catalogue codes, which is what `PATCH /pacientes/{id}` takes back.
   final List<String> condiciones;
   final List<String> restricciones;
+
+  /// The only source of the medication module: no endpoint lists medications on
+  /// its own. The contract does not declare whether this filters by `activo`
+  /// nor which order it uses, so the screen shows what arrives and says so.
+  final List<Medicamento> medicamentos;
+
   final String? alergias;
   final String? cirugias;
   final String? suplementos;
@@ -560,6 +570,18 @@ List<T> _list<T>(Object? value, T Function(Map<String, dynamic>) fromJson) {
 /// Reads catalogue codes out of a relation list. Each entry is either the
 /// relation object (code under [relacion]), an object with the code itself, or
 /// a bare string; anything else is skipped.
+List<Medicamento> _medicamentos(Object? value) {
+  if (value is! List) return const <Medicamento>[];
+  final medicamentos = <Medicamento>[];
+  for (final item in value) {
+    final entrada = _map(item);
+    if (entrada == null) continue;
+    final medicamento = Medicamento.tryFromJson(entrada);
+    if (medicamento != null) medicamentos.add(medicamento);
+  }
+  return medicamentos;
+}
+
 List<String> _codigos(Object? value, String relacion) {
   if (value is! List) return <String>[];
   final codigos = <String>[];
