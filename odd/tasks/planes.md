@@ -212,17 +212,48 @@ Una sola etiqueta para los dos, no dos: la lista vacía ya trae `Generar plan` e
 vacío, así que la ficha no necesita rotular la acción dos veces. Es el único cambio de este módulo
 fuera de `lib/features/planes/` y del router.
 
+**S26 — Fidelidad visual, medida contra los artboards (pedido del humano).** La lista y el editor se
+dibujan como sus artboards, no como salió la primera implementación. **Tarjeta de la lista
+(`PlanesLista.html`)**: borde de 1 px `outlineVariant`, radio 12, relleno 16, separación interna 10; el
+nombre a 16/600; la insignia de estado es una píldora **con color** — `secondaryContainer` sobre
+`onSecondaryContainer` para `ACTIVO`, `surfaceContainer` sobre `onSurfaceVariant` para `ARCHIVADO` y
+`BORRADOR`; la etiqueta de origen es una píldora **con borde** `outlineVariant` y texto
+`onSurfaceVariant`; las cuatro métricas van sobre un separador `surfaceContainer` con el rótulo a
+10/700 y el valor en mono; la línea de fecha va a 12 en `outline`; la tarjeta archivada se atenúa
+(título y valores en `onSurfaceVariant`); el botón fijo `Generar plan` lleva el icono `add`. **Fila del
+editor (`EditarTiempoComida.html`)**: una sola línea horizontal con el nombre y `1 taza · 205 kcal por
+porción` a la izquierda, el control de porciones en medio y el `close` a la derecha; `-` y `+` son
+**botones de 28×28 con borde** `outlineVariant` y radio 8, no iconos sueltos, y el valor va en mono a
+13/600 centrado en 28 de ancho; el aviso de reemplazo va en un bloque `surfaceContainerLow` con icono
+`info`. El color de la insignia y el botón del editor se dibujan **dentro del módulo**: `AppPill` no
+lleva color y no se toca, porque otros consumidores dependen de su forma actual.
+
+**S27 — Detalle: la tira ocupa el ancho y cada tiempo lleva su icono (pedido del humano).** La tira
+de días deja de dibujar cuadrados fijos de 40 con scroll: los días que el plan trae **reparten el ancho
+disponible** (`Expanded`, alto 40, radio 10), con el elegido en `primary`/`onPrimary` y el resto con
+borde `outlineVariant` y texto `onSurfaceVariant`. Cada tiempo de comida lleva, a la izquierda de su
+nombre, un **icono dentro de un círculo de 36** con tinte del sistema: `Desayuno` `breakfast_dining`
+sobre `secondaryContainer`; `Merienda · mañana` `local_cafe` sobre `surfaceContainer`; `Almuerzo`
+`lunch_dining` sobre `primaryContainer`; `Merienda · tarde` `cookie` sobre `surfaceContainer`; `Cena`
+`dinner_dining` sobre `tertiaryContainer`. La card sigue **blanca**: el color es un acento, la
+información (`pctKcal`, `meta … kcal`, cantidad de alimentos y la lista) manda. La paleta del sistema es
+toda verde, así que el contraste sale del ritmo tinte/neutro y del icono, no de colores nuevos: agregar
+ámbar o azul exigiría tokens nuevos en el sistema de diseño y no entra acá.
+
 ## Tasks
 
 | ID | Specs | Tarea | Superficie | Estado |
 |----|-------|-------|-----------|--------|
-| T1 | S1, S2, S3, S4, S6, S23 | Capa de datos: **agrega `ApiClient.put<T>`** (hoy no existe; `delete`/`deleteAck` sí) porque reemplazar ítems es `PUT`, `Plan`, `PlanDetalle`, `DiaPlan`, `TiempoComida`, `PlanItem`, `Totales`, `PlanesRepository` (lista, generar, detalle, activar, reemplazar ítems, eliminar), providers y formateadores del módulo | `lib/core/network/api_client.dart`, `lib/features/planes/data/` | pending |
+| T1 | S1, S2, S3, S4, S6, S23 | Capa de datos: **agrega `ApiClient.put<T>`** (hoy no existe; `delete`/`deleteAck` sí) porque reemplazar ítems es `PUT`, `Plan`, `PlanDetalle`, `DiaPlan`, `TiempoComida`, `PlanItem`, `Totales`, `PlanesRepository` (lista, generar, detalle, activar, reemplazar ítems, eliminar), providers y formateadores del módulo | `lib/core/network/api_client.dart`, `lib/features/planes/data/` | hecho |
 | T2 | S5, S6, S7, S22, S23 | Pantalla de lista y estado vacío, con su ruta bajo el paciente | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
 | T3 | S8, S9, S10, S11, S12, S22, S23 | Pantalla del generador, con el aviso de origen, con su ruta bajo el paciente | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
 | T4 | S13, S14, S15, S16, S22, S23 | Detalle semanal: cabecera, tira de días, filas de tiempo, solo lectura, con su ruta anidada bajo el paciente | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
-| T5 | S19, S20, S21, S22, S23 | Editor de un tiempo de comida y su ruta; las filas del detalle del borrador pasan a abrirlo | `lib/features/planes/ui/`, `lib/core/router/` | pending |
+| T5 | S19, S20, S21, S22, S23 | Editor de un tiempo de comida y su ruta; las filas del detalle del borrador pasan a abrirlo | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
 | T6 | S24, S25 | Cableado: acción `Ver planes` (C12) en la ficha, en los dos estados (con plan y sin plan), hacia la lista, y actualización de este documento | `lib/features/patients/ui/paciente_ficha_screen.dart`, `lib/core/router/` | hecho |
 | T7 | S17, S18 | Acciones del detalle: activar y eliminar con confirmación | `lib/features/planes/ui/` | pending |
+| T8 | S25 | **Defecto:** la lista solo se alcanza desde la ficha cuando hay plan activo. Llevar `Ver planes` también al estado sin plan | `lib/features/patients/ui/paciente_ficha_screen.dart` | hecho |
+| T9 | S26 | **Fidelidad visual:** la tarjeta de la lista y la fila del editor vuelven a lo que dibujan sus artboards | `lib/features/planes/ui/` | hecho |
+| T10 | S27 | **Detalle:** la tira de días ocupa el ancho y cada tiempo lleva su icono con tinte | `lib/features/planes/ui/plan_detalle_screen.dart` | hecho |
 
 Orden fijado por el contrato: el detalle y el editor consumen lo que la capa de datos expone, el
 generador abre el detalle que crea y el editor solo se alcanza desde un borrador. En T4 las filas de
@@ -258,6 +289,8 @@ Lo que el inventario de los artboards no trae y la pantalla necesita. **Las vali
 | C23 | Ficha sin plan (S25) | `Agregá tu primer plan`, la línea que lo explica y la acción `Generar plan` | el artboard no dibuja ese estado; el humano pidió que el banner solo informe |
 | C24 | Generador sin red ni API (S12) | `No pudimos generar el plan. Probá de nuevo.` | lo que no es un `ApiFailure` necesita un mensaje propio para no dejar el formulario bloqueado |
 | C25 | Nota del generador (S12) | `Con IA puede tardar hasta 3 minutos` | el artboard dice 25 segundos y el recomendador tarda hasta 180 |
+| C26 | Fallo del editor (S22) | `No pudimos guardar el tiempo. Probá de nuevo.` | mismo patrón que C24: lo que no es un `ApiFailure` necesita mensaje propio para no dejar el botón colgado |
+| C27 | Tiempo ausente (S20) | `Este tiempo de comida ya no está en el plan.` con la acción `Volver al plan` | el plan pudo cambiar entre abrir el detalle y abrir el editor; el artboard no dibuja ese estado |
 | C12 | Entrada desde la ficha (S25) | `Ver planes` | acción nueva en `Plan y adherencia`; el artboard solo dibuja la vuelta |
 
 `Merienda · mañana` y `Merienda · tarde` se escriben **con el punto medio** del inventario (` · `),
@@ -415,3 +448,80 @@ que dos planes del mismo paciente pedidos el mismo día nazcan con el mismo nomb
 120 caracteres, así que cuando no cabe el paciente cede el espacio y la marca de tiempo nunca: es lo
 que distingue un plan de otro. Sin ficha cargada todavía, cae a `Plan 2026-11-16_14:35`. El campo sigue
 siendo editable, y la pantalla deja de sugerir en cuanto la nutricionista escribe encima.
+
+**L19 — T5 hecho: el editor y el catálogo que le faltaba.** `EditarTiempoScreen` implementa S19 y S20
+con la copy del inventario de `EditarTiempoComida.html` y el formato de S4: aviso de reemplazo,
+resumen `35% del día · meta 525 kcal`, `3 de 12 alimentos`, filas `1 taza · 205 kcal por porción` con
+control de porciones en cuartos entre 0.25 y 6, `Sin alimentos` con `0 de 12 alimentos`, y `Agregar
+alimento` con su ayuda. `Guardar tiempo` manda **la lista completa** por `PUT
+/planes/{id}/tiempos/{dia}/{tipo}/items`; `items: []` se guarda sin bloquear nada, porque el esquema
+declara tope de 12 y ningún mínimo (L10). Con doce alimentos `Agregar alimento` deja de responder en
+vez de fallar al guardar. Las filas del detalle abren el editor **solo** en `BORRADOR` (S16).
+
+Hallazgo que obligó a ampliar el módulo: la app **no tenía catálogo de alimentos**, y sin él no había
+con qué llenar el selector. Se agregó lo mínimo que el editor necesita — `GET /alimentos` con `q` y
+`limit` — en `lib/features/planes/data/alimento_catalogo.dart` y `alimentos_repository.dart`, con su
+provider. El módulo de catálogo (#10) es el dueño natural de esa consulta cuando exista; hoy lee
+`id`, `nombre`, `porcionDescripcion`, `porcionGramos` y `kcal`, y nada más.
+
+Dos cadenas autoradas nuevas: C26 (el fallo del guardado, mismo patrón que C24) y C27 (un tiempo que
+ya no está en el plan, para el caso en que el plan cambie entre abrir el detalle y abrir el editor).
+
+**L20 — Corregido: cómo se entra al editor y cómo se vuelve.** La primera versión empujaba el editor
+con `push` como hijo de la ruta del detalle y esperaba el `PlanDetalle` del guardado en el `pop`, para
+que el detalle mostrara la respuesta del `PUT` sin releer (S20). El test de ruta probó que no funciona:
+al empujar el editor como hijo con `parentNavigatorKey` de la raíz, el detalle se pierde y al volver se
+aterriza en la lista — el `pop` deja `/pacientes/{id}/planes` en la configuración. Se cambió al patrón
+que el generador ya usa (L13, L14): la fila hace `go` al editor y el editor se va con `go` al detalle,
+tanto al guardar como al cerrar sin guardar.
+
+Consecuencia, para que quede dicha y no se lea como descuido: la respuesta del `PUT` ya no es lo que el
+detalle dibuja. Después de guardar se invalida `planDetalleProvider` y el detalle **relee** el plan; la
+respuesta del `PUT` solo prueba que la escritura ocurrió. Sigue cumpliendo lo que S20 busca —nada se
+parchea a mano y la pantalla muestra lo que el API tiene— al precio de un `GET` por guardado. Se
+prefirió eso a una navegación que pierde el detalle, que es un defecto visible para quien usa la app.
+
+
+**L21 — Pedido del humano sobre el dispositivo (verbatim).** «ok, belleza, ya me deja agregar, funciona,
+creo que le falra como estilos, a la lista de planes, nose colores o iconos, y tambien la lista de
+planes aunque no tengamos planes activos deberia ser accesible, por si tengo en borrador y no activos, y
+los botones de  - N + nose les falta estilos, no parecen botones, nose lo mas practico para el usuario
+pls»
+
+Se abre con eso: **T8** (la lista se alcanza siempre) y **T9** (fidelidad visual de la tarjeta y del
+control de porciones contra `PlanesLista.html` y `EditarTiempoComida.html`). El pedido de estilos no
+inventa nada: los dos artboards ya dibujan borde, insignias con color, valores en mono y `-`/`+` como
+botones de 28×28; lo que pasó es que la primera implementación no los siguió. S26 fija esos valores.
+Lo de la lista es un defecto contra S25: `Ver planes` se dibuja solo con `plan != null`, así que un
+paciente con planes en borrador y ninguno activo no tiene por dónde entrar.
+
+**L22 — Desviación deliberada en el control de porciones.** El artboard dibuja `-` y `+` como cuadrados
+de 28×28, y así se dibujan: el borde y el icono siguen midiendo 28. Lo que no sigue al artboard es el
+**área táctil**, que pasa a 40 porque 28 es menos de lo que un dedo acierta en un teléfono, y el pedido
+era «lo más práctico para el usuario». La decisión de dibujo queda igual; cambia sólo lo que se puede
+tocar. Hay un test por cada mitad: la caja de 28 y el objetivo de 40.
+
+**L23 — Los tres ajustes del dispositivo (verbatim del humano).** «si son decimales no tienen el mismo
+tamano del entero, esa animacion no es bonita, y lo que te comente, si un paciente no tiene un plan
+activo, que me deje, ver la lista de planes por si tiene borradores, porque ahorita sale generar, esta
+bien, pero no sabemos si tiene un plan borrador o archivado». Y, al preguntarle cuál animación: «oesa
+esa animacionde hacerlo grande y peque».
+
+1. **Decimales más chicos que los enteros.** El valor de porciones iba dentro de un `FittedBox` de 28 px,
+   así que `1.25` se encogía y `1` no: mismo estilo, tamaño distinto. Pasa a una ranura fija de 34 px
+   —lo que mide `0.25` a 13 px de la mono— y el texto deja de encogerse. Todos los valores se dibujan
+   al mismo tamaño.
+2. **La animación del toque.** El halo que crece y se encoge dentro del cuadradito de 28 px desaparece:
+   `NoSplash` en `-`, `+` y la `x`, con un cambio de tono suave mientras el botón está apretado. Sigue
+   habiendo respuesta al toque, sin el círculo.
+3. **`Ver planes` donde se ve.** El botón que se había puesto dentro de la alerta de `Sin plan activo`
+   se mueve a la tarjeta `Agregá tu primer plan`, junto a `Generar plan`: es la tarjeta que el humano
+   tiene delante cuando el paciente no tiene plan activo, y ahí decide si mira la lista (puede haber
+   borradores o archivados) o genera. La alerta vuelve a solo informar, como pidió L17.
+
+**L24 — El color del detalle, elegido por el humano.** «ahora en el detalle del plan vamos a trabajar, los
+dias de la semana estan en cuadros es correcto, pero no llegan hasta el extremo derecho queda un espacio
+en mi 14 pro max, lo que signidica que tiene un ancho fijo, segundo tenemos los tiempos, si sale desayuno
+merienda etc etc, pero eso podria ser mas colorido, o algo asi, los titulos o las cards, pero que la info
+siga siendo la protagonista claro». Entre las tres opciones de color propuestas eligió **la del icono con
+tinte y la card blanca**. Los días dejan de tener ancho fijo. S27 fija los valores.

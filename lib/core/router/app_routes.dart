@@ -60,6 +60,25 @@ abstract final class AppRoutes {
   static String plan(String pacienteId, String planId) =>
       '${planesDe(pacienteId)}/${Uri.encodeComponent(planId)}';
 
+  /// Path segment under one plan that names its meal times.
+  static const tiemposSegment = 'tiempos';
+
+  /// Path parameter of the day of a meal time (`LUNES`…`DOMINGO`, no accent)
+  /// and of the meal time itself (`DESAYUNO`…`CENA`): the route carries the
+  /// codes the contract uses and the router maps them back to its enums.
+  static const diaParam = 'dia';
+  static const tipoParam = 'tipo';
+
+  /// Location of the editor of one meal time of one day of one plan.
+  static String editarTiempo(
+    String pacienteId,
+    String planId,
+    String dia,
+    String tipo,
+  ) =>
+      '${plan(pacienteId, planId)}/$tiemposSegment/'
+      '${Uri.encodeComponent(dia)}/${Uri.encodeComponent(tipo)}';
+
   /// Path segment under [agenda] that opens the new-appointment form.
   static const nuevaCitaSegment = 'nueva';
 

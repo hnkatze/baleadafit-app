@@ -13,24 +13,32 @@ import '../data/plan.dart';
 import '../data/planes_formato.dart';
 import '../data/planes_providers.dart';
 
-/// The week of one plan, read only.
+/// The week of one plan, read only for an `ACTIVO` or `ARCHIVADO` plan.
 ///
 /// The shell owns the top bar, so the screen draws its own back row inside the
 /// scroll. It draws **only the days the plan carries** (`dias`), one expanded at
 /// a time, and every figure of a total comes from the payload: the app never
 /// adds or multiplies kcal.
 ///
-/// Editing, activating and deleting are not part of this screen yet; the state
-/// of the plan (`estado`) is shown, never used to infer content.
+/// Only a `BORRADOR` opens the meal-time editor, through [onEditarTiempo]: the
+/// contract does not say what happens to the meals a patient already recorded
+/// when the items of an active plan change, so an active plan is never edited
+/// from here. The state (`estado`) is shown, never used to infer content.
 class PlanDetalleScreen extends ConsumerStatefulWidget {
   const PlanDetalleScreen({
     required this.planId,
     required this.onBack,
+    this.onEditarTiempo,
     super.key,
   });
 
   final String planId;
   final VoidCallback onBack;
+
+  /// Opens the editor of one meal time of one day. The editor comes back here
+  /// by navigation, so this screen is rebuilt and re-reads the plan. When it is
+  /// null the rows carry no chevron, whatever the state of the plan.
+  final void Function(DiaSemana dia, TipoComida tipo)? onEditarTiempo;
 
   @override
   ConsumerState<PlanDetalleScreen> createState() => _PlanDetalleScreenState();
@@ -51,9 +59,12 @@ class _PlanDetalleScreenState extends ConsumerState<PlanDetalleScreen> {
     }
   }
 
+  void _reintentar() => ref.invalidate(planDetalleProvider(widget.planId));
+
   @override
   Widget build(BuildContext context) {
     final plan = ref.watch(planDetalleProvider(widget.planId));
+    final onEditar = widget.onEditarTiempo;
 
     return Material(
       type: MaterialType.transparency,
@@ -70,15 +81,17 @@ class _PlanDetalleScreenState extends ConsumerState<PlanDetalleScreen> {
                 padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXl),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (error, _) => _FalloCarga(
-                error: error,
-                onReintentar: () =>
-                    ref.invalidate(planDetalleProvider(widget.planId)),
-              ),
+              error: (error, _) =>
+                  _FalloCarga(error: error, onReintentar: _reintentar),
               data: (detalle) => _Contenido(
                 plan: detalle,
                 elegido: _elegido,
                 onElegir: (dia) => setState(() => _elegido = dia),
+                onEditar: onEditar,
+                // Only a draft is editable: the contract does not regulate what
+                // happens to a patient's recorded meals when an active plan
+                // changes.
+                editable: detalle.estado == EstadoPlan.borrador,
               ),
             ),
           ],
@@ -152,11 +165,19 @@ class _Contenido extends StatelessWidget {
     required this.plan,
     required this.elegido,
     required this.onElegir,
+    required this.onEditar,
+    required this.editable,
   });
 
   final PlanDetalle plan;
   final DiaSemana? elegido;
   final ValueChanged<DiaSemana> onElegir;
+
+  /// Opens the editor of a meal time; null when the screen cannot edit.
+  final void Function(DiaSemana dia, TipoComida tipo)? onEditar;
+
+  /// Whether the plan is a draft, the only state the contract lets edit.
+  final bool editable;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +198,7 @@ class _Contenido extends StatelessWidget {
           const SizedBox(height: AppDimensions.spaceMd),
           _TiraDeDias(dias: dias, actual: actual!.dia, onElegir: onElegir),
           const SizedBox(height: AppDimensions.spaceMd),
-          _DiaExpandido(dia: actual),
+          _DiaExpandido(dia: actual, onEditar: onEditar, editable: editable),
         ],
       ],
     );
@@ -393,20 +414,19 @@ class _TiraDeDias extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spaceSm),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (final dia in dias) ...[
-                _ChipDia(
-                  dia: dia.dia,
-                  seleccionado: dia.dia == actual,
-                  onTap: () => onElegir(dia.dia),
+        Row(
+          children: [
+            for (var i = 0; i < dias.length; i++) ...[
+              if (i > 0) const SizedBox(width: 6),
+              Expanded(
+                child: _ChipDia(
+                  dia: dias[i].dia,
+                  seleccionado: dias[i].dia == actual,
+                  onTap: () => onElegir(dias[i].dia),
                 ),
-                const SizedBox(width: 6),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
       ],
     );
@@ -439,11 +459,12 @@ class _ChipDia extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox.square(
-          dimension: 40,
+        child: SizedBox(
+          height: 40,
           child: Center(
             child: Text(
               dia.abreviatura,
+              maxLines: 1,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: seleccionado
                     ? colors.onPrimary
@@ -460,9 +481,15 @@ class _ChipDia extends StatelessWidget {
 /// The expanded day: its title with its own totals and deviation, then its
 /// meal times in `orden`.
 class _DiaExpandido extends StatelessWidget {
-  const _DiaExpandido({required this.dia});
+  const _DiaExpandido({
+    required this.dia,
+    required this.onEditar,
+    required this.editable,
+  });
 
   final DiaPlan dia;
+  final void Function(DiaSemana dia, TipoComida tipo)? onEditar;
+  final bool editable;
 
   @override
   Widget build(BuildContext context) {
@@ -502,7 +529,12 @@ class _DiaExpandido extends StatelessWidget {
         ),
         const SizedBox(height: AppDimensions.spaceSm),
         for (final (_, tiempo) in indexados) ...[
-          _FilaDeTiempo(tiempo: tiempo),
+          _FilaDeTiempo(
+            tiempo: tiempo,
+            onTap: editable && onEditar != null
+                ? () => onEditar!(dia.dia, tiempo.tipo)
+                : null,
+          ),
           const SizedBox(height: AppDimensions.spaceSm),
         ],
       ],
@@ -512,10 +544,14 @@ class _DiaExpandido extends StatelessWidget {
 
 /// One meal time: `25% · meta 375 kcal · 2 alimentos`. The figure is
 /// `kcalMeta`, so it is labelled as a goal; the percentage is `pctKcal × 100`.
+///
+/// A draft opens its editor when [onTap] is given; an active or archived plan
+/// gets no chevron and cannot be tapped.
 class _FilaDeTiempo extends StatelessWidget {
-  const _FilaDeTiempo({required this.tiempo});
+  const _FilaDeTiempo({required this.tiempo, this.onTap});
 
   final TiempoComida tiempo;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -530,6 +566,8 @@ class _FilaDeTiempo extends StatelessWidget {
     ].join(' · ');
 
     return AppCard(
+      key: Key('tiempo-${tiempo.tipo.codigo}'),
+      onTap: onTap,
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.spaceMd,
         vertical: AppDimensions.spaceMd - 4,
@@ -537,7 +575,22 @@ class _FilaDeTiempo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(tiempo.tipo.etiqueta, style: textTheme.titleMedium),
+          Row(
+            children: [
+              _IconoDeTiempo(tipo: tiempo.tipo),
+              const SizedBox(width: AppDimensions.spaceSm + 4),
+              Expanded(
+                child: Text(tiempo.tipo.etiqueta, style: textTheme.titleMedium),
+              ),
+              if (onTap != null)
+                Icon(
+                  Icons.chevron_right,
+                  key: Key('editar-${tiempo.tipo.codigo}'),
+                  size: AppDimensions.iconSm,
+                  color: colors.onSurfaceVariant,
+                ),
+            ],
+          ),
           const SizedBox(height: 2),
           Text(
             resumen,
@@ -557,6 +610,56 @@ class _FilaDeTiempo extends StatelessWidget {
           else
             for (final item in items) _FilaDeAlimento(item: item),
         ],
+      ),
+    );
+  }
+}
+
+/// The decorative icon of a meal time in a 36 px tinted circle. It is out of
+/// the semantics tree: the row reads as its text.
+class _IconoDeTiempo extends StatelessWidget {
+  const _IconoDeTiempo({required this.tipo});
+
+  final TipoComida tipo;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final (icono, fondo, frente) = switch (tipo) {
+      TipoComida.desayuno => (
+        Icons.breakfast_dining,
+        colors.secondaryContainer,
+        colors.onSecondaryContainer,
+      ),
+      TipoComida.meriendaAm => (
+        Icons.local_cafe,
+        colors.surfaceContainer,
+        colors.onSurfaceVariant,
+      ),
+      TipoComida.almuerzo => (
+        Icons.lunch_dining,
+        colors.primaryContainer,
+        colors.onPrimaryContainer,
+      ),
+      TipoComida.meriendaPm => (
+        Icons.cookie,
+        colors.surfaceContainer,
+        colors.onSurfaceVariant,
+      ),
+      TipoComida.cena => (
+        Icons.dinner_dining,
+        colors.tertiaryContainer,
+        colors.onTertiaryContainer,
+      ),
+    };
+
+    return ExcludeSemantics(
+      child: Container(
+        key: Key('icono-${tipo.codigo}'),
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(color: fondo, shape: BoxShape.circle),
+        child: Icon(icono, size: AppDimensions.iconSm + 4, color: frente),
       ),
     );
   }

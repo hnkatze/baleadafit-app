@@ -2,11 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/paged.dart';
 import '../../auth/data/auth_providers.dart';
+import 'alimentos_repository.dart';
 import 'plan.dart';
 import 'planes_repository.dart';
 
 final planesRepositoryProvider = Provider<PlanesRepository>(
   (ref) => PlanesRepository(ref.watch(apiClientProvider)),
+);
+
+/// The food catalogue, only for the picker of the meal-time editor.
+final alimentosRepositoryProvider = Provider<AlimentosRepository>(
+  (ref) => AlimentosRepository(ref.watch(apiClientProvider)),
 );
 
 /// The plans of one patient, keyed by patient id, in the order of the API

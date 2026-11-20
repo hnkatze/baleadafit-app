@@ -93,6 +93,7 @@ Future<void> _pump(
   WidgetTester tester, {
   required Future<PlanDetalle> Function() cargar,
   VoidCallback? onBack,
+  void Function(DiaSemana, TipoComida)? onEditarTiempo,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -100,7 +101,11 @@ Future<void> _pump(
       child: MaterialApp(
         theme: AppTheme.light,
         home: Scaffold(
-          body: PlanDetalleScreen(planId: 'p1', onBack: onBack ?? () {}),
+          body: PlanDetalleScreen(
+            planId: 'p1',
+            onBack: onBack ?? () {},
+            onEditarTiempo: onEditarTiempo,
+          ),
         ),
       ),
     ),
@@ -362,5 +367,172 @@ void main() {
 
     expect(find.text('Cinco comidas al día, sin frituras.'), findsOneWidget);
     expect(find.text('Ver más'), findsNothing);
+  });
+
+  testWidgets('a draft draws the chevron and a row opens the editor', (
+    tester,
+  ) async {
+    final llamadas = <(DiaSemana, TipoComida)>[];
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      onEditarTiempo: (dia, tipo) => llamadas.add((dia, tipo)),
+    );
+    await pumpStable(tester);
+
+    for (final tipo in ['DESAYUNO', 'ALMUERZO', 'CENA']) {
+      expect(find.byKey(Key('editar-$tipo')), findsOneWidget);
+    }
+
+    await tester.ensureVisible(find.byKey(const Key('tiempo-ALMUERZO')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('tiempo-ALMUERZO')));
+    await pumpStable(tester);
+
+    expect(llamadas, [(DiaSemana.lunes, TipoComida.almuerzo)]);
+  });
+
+  testWidgets('an active or archived plan has neither chevron nor tap', (
+    tester,
+  ) async {
+    for (final estado in ['ACTIVO', 'ARCHIVADO']) {
+      var llamadas = 0;
+      await _pump(
+        tester,
+        cargar: () async => _plan(estado: estado),
+        onEditarTiempo: (dia, tipo) => llamadas++,
+      );
+      await pumpStable(tester);
+
+      expect(find.byKey(const Key('editar-DESAYUNO')), findsNothing);
+
+      await tester.tap(find.byKey(const Key('tiempo-DESAYUNO')));
+      await pumpStable(tester);
+
+      expect(llamadas, 0, reason: estado);
+    }
+  });
+
+  testWidgets('tapping a draft row leaves what the screen drew untouched', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      onEditarTiempo: (dia, tipo) {},
+    );
+    await pumpStable(tester);
+
+    await tester.tap(find.byKey(const Key('tiempo-DESAYUNO')));
+    await pumpStable(tester);
+
+    // Nothing is patched locally: the detail only changes by re-reading.
+    expect(find.text('MIE'), findsOneWidget);
+  });
+
+  testWidgets('the day chips share the width and the strip does not scroll', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await _pump(tester, cargar: () async => _plan());
+    await pumpStable(tester);
+
+    for (final abreviatura in ['LUN', 'MIE']) {
+      final chip = find.ancestor(
+        of: find.text(abreviatura),
+        matching: find.byType(InkWell),
+      );
+      expect(tester.getSize(chip).width, greaterThan(40));
+      expect(tester.getSize(chip).height, 40);
+    }
+    final lun = tester.getRect(
+      find.ancestor(of: find.text('LUN'), matching: find.byType(InkWell)),
+    );
+    final mie = tester.getRect(
+      find.ancestor(of: find.text('MIE'), matching: find.byType(InkWell)),
+    );
+    expect(mie.right - lun.left, greaterThan(800));
+    expect(
+      find.ancestor(
+        of: find.text('LUN'),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is SingleChildScrollView &&
+              w.scrollDirection == Axis.horizontal,
+        ),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('every meal time draws its icon in its tinted circle', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      cargar: () async => _plan(
+        dias: [
+          _dia('LUNES', [
+            _tiempo('DESAYUNO', 1),
+            _tiempo('MERIENDA_AM', 2),
+            _tiempo('ALMUERZO', 3),
+            _tiempo('MERIENDA_PM', 4),
+            _tiempo('CENA', 5),
+          ]),
+        ],
+      ),
+    );
+    await pumpStable(tester);
+    final colors = Theme.of(tester.element(find.byType(PlanDetalleScreen)))
+        .colorScheme;
+
+    final esperado = {
+      'DESAYUNO': (
+        Icons.breakfast_dining,
+        colors.secondaryContainer,
+        colors.onSecondaryContainer,
+      ),
+      'MERIENDA_AM': (
+        Icons.local_cafe,
+        colors.surfaceContainer,
+        colors.onSurfaceVariant,
+      ),
+      'ALMUERZO': (
+        Icons.lunch_dining,
+        colors.primaryContainer,
+        colors.onPrimaryContainer,
+      ),
+      'MERIENDA_PM': (
+        Icons.cookie,
+        colors.surfaceContainer,
+        colors.onSurfaceVariant,
+      ),
+      'CENA': (
+        Icons.dinner_dining,
+        colors.tertiaryContainer,
+        colors.onTertiaryContainer,
+      ),
+    };
+    for (final MapEntry(key: codigo, value: (icono, fondo, frente))
+        in esperado.entries) {
+      final circulo = find.byKey(Key('icono-$codigo'));
+      expect(circulo, findsOneWidget, reason: codigo);
+      expect(tester.getSize(circulo), const Size(36, 36), reason: codigo);
+      final decoracion =
+          tester.widget<Container>(circulo).decoration! as BoxDecoration;
+      expect(decoracion.color, fondo, reason: codigo);
+      final dibujado = tester.widget<Icon>(
+        find.descendant(of: circulo, matching: find.byType(Icon)),
+      );
+      expect(dibujado.icon, icono, reason: codigo);
+      expect(dibujado.color, frente, reason: codigo);
+      expect(
+        find.ancestor(of: circulo, matching: find.byType(ExcludeSemantics)),
+        findsWidgets,
+        reason: codigo,
+      );
+    }
   });
 }

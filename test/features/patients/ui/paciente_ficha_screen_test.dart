@@ -403,6 +403,45 @@ void main() {
       expect(find.text('Sin entrar a la app'), findsNothing);
     });
 
+    testWidgets('with only drafts it still reaches the plans list', (
+      tester,
+    ) async {
+      var abiertos = 0;
+      final json = _sinMediciones()
+        ..['planes'] = [
+          {
+            'id': 'plan-b',
+            'nombre': 'Borrador',
+            'estado': 'BORRADOR',
+            'origen': 'REGLAS',
+          },
+        ];
+      await _pump(tester, ficha: _de(json), onVerPlanes: () => abiertos++);
+
+      expect(find.text('Plan y adherencia'), findsNothing);
+      expect(find.text('Ver planes'), findsOneWidget);
+
+      await tester.tap(find.text('Ver planes'));
+      await tester.pump();
+
+      expect(abiertos, 1);
+    });
+
+    testWidgets('without the alert it still reaches the plans list', (
+      tester,
+    ) async {
+      var abiertos = 0;
+      final json = _sinMediciones()..['alertas'] = <Object?>[];
+      await _pump(tester, ficha: _de(json), onVerPlanes: () => abiertos++);
+
+      expect(find.text('Ver planes'), findsOneWidget);
+
+      await tester.tap(find.text('Ver planes'));
+      await tester.pump();
+
+      expect(abiertos, 1);
+    });
+
     testWidgets('invites to create the first plan below the alert', (
       tester,
     ) async {

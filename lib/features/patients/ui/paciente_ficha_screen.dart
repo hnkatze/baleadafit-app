@@ -155,7 +155,10 @@ class _Contenido extends StatelessWidget {
               // before any other block.
               if (plan == null) ...[
                 _SinPlanAlerta(alertas: ficha.alertas),
-                _PrimerPlan(onGenerarPlan: onGenerarPlan),
+                _PrimerPlan(
+                  onGenerarPlan: onGenerarPlan,
+                  onVerPlanes: onVerPlanes,
+                ),
               ],
               // With no measurement there is nothing to calculate from, so
               // the BMI, composition and requirement blocks are not drawn at
@@ -443,12 +446,17 @@ class _SinPlanAlerta extends StatelessWidget {
 }
 
 /// The invitation under the alert: the banner only informs, this card is where
-/// the first plan is created. Without a plan, `Plan y adherencia` is not drawn,
-/// so this is the only way in.
+/// the plan list and the first plan are reached. Without a plan, `Plan y
+/// adherencia` is not drawn, so this is the only way in.
+///
+/// `Ver planes` comes first: a patient with no **active** plan may still have
+/// drafts or archived ones, and opening the list is how you find out. The list
+/// itself offers `Generar plan` when it is empty.
 class _PrimerPlan extends StatelessWidget {
-  const _PrimerPlan({this.onGenerarPlan});
+  const _PrimerPlan({this.onGenerarPlan, this.onVerPlanes});
 
   final VoidCallback? onGenerarPlan;
+  final VoidCallback? onVerPlanes;
 
   @override
   Widget build(BuildContext context) {
@@ -470,14 +478,26 @@ class _PrimerPlan extends StatelessWidget {
                 color: colors.onSurfaceVariant,
               ),
             ),
-            if (onGenerarPlan != null) ...[
+            if (onGenerarPlan != null || onVerPlanes != null) ...[
               const SizedBox(height: AppDimensions.spaceSm),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: AppButton(
-                  label: 'Generar plan',
-                  onPressed: onGenerarPlan,
-                ),
+              Wrap(
+                spacing: AppDimensions.spaceSm,
+                runSpacing: AppDimensions.spaceSm,
+                children: [
+                  if (onGenerarPlan != null)
+                    AppButton(
+                      label: 'Generar plan',
+                      expand: false,
+                      onPressed: onGenerarPlan,
+                    ),
+                  if (onVerPlanes != null)
+                    AppButton(
+                      label: 'Ver planes',
+                      variant: AppButtonVariant.secondary,
+                      expand: false,
+                      onPressed: onVerPlanes,
+                    ),
+                ],
               ),
             ],
           ],

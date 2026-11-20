@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/format/fechas.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_card.dart';
-import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
 import '../../patients/data/patients_providers.dart';
 import '../data/plan.dart';
@@ -147,11 +146,20 @@ class _TarjetaPlan extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
     final linea = fechaDelPlan(plan);
+    final archivado = plan.estado == EstadoPlan.archivado;
+    final radio = BorderRadius.circular(AppDimensions.radiusMd);
+    // An archived plan is attenuated: its title and figures read as past.
+    final colorValor = archivado ? colors.onSurfaceVariant : colors.onSurface;
 
-    return AppCard(
+    return Material(
+      color: colors.surfaceContainerLowest,
+      shape: RoundedRectangleBorder(
+        borderRadius: radio,
+        side: BorderSide(color: colors.outlineVariant),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onAbrir,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spaceMd),
           child: Column(
@@ -160,55 +168,73 @@ class _TarjetaPlan extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(plan.nombre, style: textTheme.titleMedium),
+                    child: Text(
+                      plan.nombre,
+                      style: textTheme.titleLarge?.copyWith(
+                        color: colorValor,
+                        letterSpacing: 0,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: AppDimensions.spaceSm),
-                  AppPill(label: plan.estado.codigo),
+                  _InsigniaEstado(estado: plan.estado),
                 ],
               ),
-              const SizedBox(height: AppDimensions.spaceXs),
-              Text(
-                plan.origen.etiqueta,
-                style: textTheme.labelSmall?.copyWith(
-                  color: colors.onSurfaceVariant,
+              const SizedBox(height: _separacion),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _EtiquetaOrigen(etiqueta: plan.origen.etiqueta),
+              ),
+              const SizedBox(height: _separacion),
+              Container(
+                padding: const EdgeInsets.only(top: _separacion),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: colors.surfaceContainer),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _Metrica(
+                        etiqueta: 'KCAL',
+                        valor: formatearKcal(plan.kcalObjetivo),
+                        color: colorValor,
+                      ),
+                    ),
+                    Expanded(
+                      child: _Metrica(
+                        etiqueta: 'PROT',
+                        valor: formatearGramos(plan.proteinaG),
+                        color: colorValor,
+                      ),
+                    ),
+                    Expanded(
+                      child: _Metrica(
+                        etiqueta: 'CARB',
+                        valor: formatearGramos(plan.carbohidratoG),
+                        color: colorValor,
+                      ),
+                    ),
+                    Expanded(
+                      child: _Metrica(
+                        etiqueta: 'GRASA',
+                        valor: formatearGramos(plan.grasaG),
+                        color: colorValor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppDimensions.spaceMd),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _Metrica(
-                      etiqueta: 'KCAL',
-                      valor: formatearKcal(plan.kcalObjetivo),
-                    ),
-                  ),
-                  Expanded(
-                    child: _Metrica(
-                      etiqueta: 'PROT',
-                      valor: formatearGramos(plan.proteinaG),
-                    ),
-                  ),
-                  Expanded(
-                    child: _Metrica(
-                      etiqueta: 'CARB',
-                      valor: formatearGramos(plan.carbohidratoG),
-                    ),
-                  ),
-                  Expanded(
-                    child: _Metrica(
-                      etiqueta: 'GRASA',
-                      valor: formatearGramos(plan.grasaG),
-                    ),
-                  ),
-                ],
-              ),
               if (linea != null) ...[
-                const SizedBox(height: AppDimensions.spaceMd),
+                const SizedBox(height: _separacion),
                 Text(
                   linea,
-                  style: textTheme.labelSmall?.copyWith(
-                    color: colors.onSurfaceVariant,
+                  style: textTheme.labelMedium?.copyWith(
+                    color: colors.outline,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0,
                   ),
                 ),
               ],
@@ -220,12 +246,85 @@ class _TarjetaPlan extends StatelessWidget {
   }
 }
 
-/// One cell of the card grid: the label above, the figure under it.
+/// Internal gap of the card (10 in the artboard).
+const double _separacion = 10;
+
+/// The state of a plan as a coloured pill: `ACTIVO` in the secondary container,
+/// `BORRADOR` and `ARCHIVADO` in the neutral one.
+class _InsigniaEstado extends StatelessWidget {
+  const _InsigniaEstado({required this.estado});
+
+  final EstadoPlan estado;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final activo = estado == EstadoPlan.activo;
+
+    return Container(
+      key: const Key('insignia-estado'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spaceSm + 2,
+        vertical: AppDimensions.spaceXs,
+      ),
+      decoration: BoxDecoration(
+        color: activo ? colors.secondaryContainer : colors.surfaceContainer,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+      ),
+      child: Text(
+        estado.codigo,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: activo ? colors.onSecondaryContainer : colors.onSurfaceVariant,
+          letterSpacing: 0,
+        ),
+      ),
+    );
+  }
+}
+
+/// Where the plan came from, in a pill with a 1 px `outlineVariant` border.
+class _EtiquetaOrigen extends StatelessWidget {
+  const _EtiquetaOrigen({required this.etiqueta});
+
+  final String etiqueta;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      key: const Key('etiqueta-origen'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spaceSm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(color: colors.outlineVariant),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+      ),
+      child: Text(
+        etiqueta,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: colors.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+        ),
+      ),
+    );
+  }
+}
+
+/// One cell of the card grid: the label above, the figure under it in mono.
 class _Metrica extends StatelessWidget {
-  const _Metrica({required this.etiqueta, required this.valor});
+  const _Metrica({
+    required this.etiqueta,
+    required this.valor,
+    required this.color,
+  });
 
   final String etiqueta;
   final String valor;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -237,9 +336,16 @@ class _Metrica extends StatelessWidget {
       children: [
         Text(
           etiqueta,
-          style: textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
+          style: textTheme.labelSmall?.copyWith(
+            color: colors.onSurfaceVariant,
+            fontSize: 10,
+          ),
         ),
-        Text(valor, style: textTheme.titleSmall),
+        Text(
+          valor,
+          style: AppTypography.data(context)
+              .copyWith(color: color, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }
@@ -359,7 +465,11 @@ class _BotonGenerar extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spaceLg),
-          child: AppButton(label: 'Generar plan', onPressed: onGenerar),
+          child: AppButton(
+            label: 'Generar plan',
+            icon: Icons.add,
+            onPressed: onGenerar,
+          ),
         ),
       ),
     );

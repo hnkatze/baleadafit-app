@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:baleadafit/core/network/api_failure.dart';
 import 'package:baleadafit/core/network/paged.dart';
+import 'package:baleadafit/core/theme/app_theme.dart';
+import 'package:baleadafit/core/theme/app_typography.dart';
 import 'package:baleadafit/features/planes/data/plan.dart';
 import 'package:baleadafit/features/planes/data/planes_providers.dart';
 import 'package:baleadafit/features/planes/ui/plan_lista_screen.dart';
@@ -72,6 +74,7 @@ Future<void> _pump(
         }),
       ],
       child: MaterialApp(
+        theme: AppTheme.light,
         home: Scaffold(
           body: PlanListaScreen(
             pacienteId: _paciente,
@@ -86,6 +89,15 @@ Future<void> _pump(
   await tester.pump();
 }
 
+ColorScheme _colores(WidgetTester tester) =>
+    Theme.of(tester.element(find.byType(PlanListaScreen))).colorScheme;
+
+BoxDecoration _decoracion(WidgetTester tester, Finder f) =>
+    tester.widget<Container>(f).decoration! as BoxDecoration;
+
+Color? _colorDelTexto(WidgetTester tester, String texto) =>
+    tester.widget<Text>(find.text(texto)).style?.color;
+
 void main() {
   testWidgets('draws one card per plan with its metrics', (tester) async {
     await _pump(tester, planes: [_plan()]);
@@ -98,6 +110,93 @@ void main() {
     expect(find.text('93.8g'), findsOneWidget);
     expect(find.text('187.5g'), findsOneWidget);
     expect(find.text('41.7g'), findsOneWidget);
+  });
+
+  testWidgets('colours the state badge: ACTIVO in the secondary container', (
+    tester,
+  ) async {
+    await _pump(tester, planes: [_plan()]);
+    final c = _colores(tester);
+
+    final deco = _decoracion(tester, find.byKey(const Key('insignia-estado')));
+    expect(deco.color, c.secondaryContainer);
+    expect(_colorDelTexto(tester, 'ACTIVO'), c.onSecondaryContainer);
+  });
+
+  testWidgets('colours BORRADOR and ARCHIVADO in the neutral container', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      planes: [
+        _plan(id: 'b', nombre: 'Borrador', estado: EstadoPlan.borrador),
+        _plan(id: 'a', nombre: 'Archivado', estado: EstadoPlan.archivado),
+      ],
+    );
+    final c = _colores(tester);
+
+    final insignias = find.byKey(const Key('insignia-estado'));
+    expect(insignias, findsNWidgets(2));
+    for (final i in [0, 1]) {
+      final deco = _decoracion(tester, insignias.at(i));
+      expect(deco.color, c.surfaceContainer);
+    }
+    expect(_colorDelTexto(tester, 'BORRADOR'), c.onSurfaceVariant);
+    expect(_colorDelTexto(tester, 'ARCHIVADO'), c.onSurfaceVariant);
+  });
+
+  testWidgets('draws the origin as a bordered pill', (tester) async {
+    await _pump(tester, planes: [_plan()]);
+    final c = _colores(tester);
+
+    final deco = _decoracion(tester, find.byKey(const Key('etiqueta-origen')));
+    expect(deco.border, Border.all(color: c.outlineVariant));
+    expect(deco.color, isNull);
+    expect(_colorDelTexto(tester, 'Por reglas'), c.onSurfaceVariant);
+  });
+
+  testWidgets('draws the figures in the mono style', (tester) async {
+    await _pump(tester, planes: [_plan()]);
+
+    for (final valor in ['1.500', '93.8g', '187.5g', '41.7g']) {
+      expect(
+        tester.widget<Text>(find.text(valor)).style?.fontFamily,
+        AppTypography.monoFamily,
+      );
+    }
+  });
+
+  testWidgets('attenuates the title and figures of an archived plan', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      planes: [
+        _plan(),
+        _plan(id: 'v', nombre: 'Viejo', estado: EstadoPlan.archivado),
+      ],
+    );
+    final c = _colores(tester);
+
+    expect(_colorDelTexto(tester, 'Viejo'), c.onSurfaceVariant);
+    expect(_colorDelTexto(tester, 'Plan 2026-11-07'), c.onSurface);
+    final valores = find.text('1.500');
+    expect(tester.widget<Text>(valores.at(0)).style?.color, c.onSurface);
+    expect(tester.widget<Text>(valores.at(1)).style?.color, c.onSurfaceVariant);
+  });
+
+  testWidgets('the fixed Generar plan button carries the add icon', (
+    tester,
+  ) async {
+    await _pump(tester, planes: [_plan()]);
+
+    expect(
+      find.descendant(
+        of: find.widgetWithText(AppButton, 'Generar plan'),
+        matching: find.byIcon(Icons.add),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('opens the plan that was tapped', (tester) async {
