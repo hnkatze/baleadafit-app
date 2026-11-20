@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_failure.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/format/numeros.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
@@ -987,18 +988,18 @@ class _Requerimiento extends StatelessWidget {
 
     // Each row is left out when the API did not calculate it, never zeroed.
     final filas = [
-      if (r.tmb != null) ('Metabolismo basal (TMB)', '${_miles(r.tmb!)} kcal'),
+      if (r.tmb != null) ('Metabolismo basal (TMB)', '${formatearKcal(r.tmb!)} kcal'),
       if (r.factorActividad != null)
         (
           actividad == null ? '× Actividad' : '× Actividad $actividad',
           r.factorActividad.toString(),
         ),
       if (r.gastoTotal != null)
-        ('= Gasto total', '${_miles(r.gastoTotal!)} kcal'),
+        ('= Gasto total', '${formatearKcal(r.gastoTotal!)} kcal'),
       if (r.ajusteMeta != null)
         (
           meta == null ? 'Ajuste por meta' : 'Ajuste por meta ($meta)',
-          '${_firmado(r.ajusteMeta!)} kcal',
+          '${formatearKcalFirmada(r.ajusteMeta!)} kcal',
         ),
     ];
     final macros = [
@@ -1056,7 +1057,7 @@ class _Requerimiento extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            _miles(r.kcalObjetivo!),
+                            formatearKcal(r.kcalObjetivo!),
                             style: textTheme.headlineMedium,
                           ),
                           const SizedBox(width: AppDimensions.spaceXs),
@@ -1547,24 +1548,6 @@ String _uno(num value) => value.toStringAsFixed(1);
 /// A whole number without decimals, otherwise one: `174`, `60.5`.
 String _entero(num value) =>
     value == value.roundToDouble() ? value.round().toString() : _uno(value);
-
-/// Thousands with a dot, the way the artboard writes calories: `1.662`.
-String _miles(num value) {
-  final digits = value.round().abs().toString();
-  final grouped = StringBuffer();
-  for (var i = 0; i < digits.length; i++) {
-    if (i > 0 && (digits.length - i) % 3 == 0) grouped.write('.');
-    grouped.write(digits[i]);
-  }
-  return '${value.round() < 0 ? '−' : ''}$grouped';
-}
-
-/// Signed calories with a real minus sign (U+2212): `−500`, `+300`, `0`.
-String _firmado(num value) {
-  final rounded = value.round();
-  if (rounded == 0) return '0';
-  return rounded < 0 ? _miles(rounded) : '+${_miles(rounded)}';
-}
 
 /// Signed one-decimal change: `0.0`, `−0.8`, `+0.4`. A change that rounds to
 /// zero is written without a sign so `-0.0` never shows.

@@ -106,7 +106,7 @@ void main() {
     expect(find.text('ACTIVO'), findsOneWidget);
     expect(find.text('Por reglas'), findsOneWidget);
     expect(find.text('KCAL'), findsOneWidget);
-    expect(find.text('1.500'), findsOneWidget);
+    expect(find.text('1,500'), findsOneWidget);
     expect(find.text('93.8g'), findsOneWidget);
     expect(find.text('187.5g'), findsOneWidget);
     expect(find.text('41.7g'), findsOneWidget);
@@ -158,7 +158,7 @@ void main() {
   testWidgets('draws the figures in the mono style', (tester) async {
     await _pump(tester, planes: [_plan()]);
 
-    for (final valor in ['1.500', '93.8g', '187.5g', '41.7g']) {
+    for (final valor in ['1,500', '93.8g', '187.5g', '41.7g']) {
       expect(
         tester.widget<Text>(find.text(valor)).style?.fontFamily,
         AppTypography.monoFamily,
@@ -180,7 +180,7 @@ void main() {
 
     expect(_colorDelTexto(tester, 'Viejo'), c.onSurfaceVariant);
     expect(_colorDelTexto(tester, 'Plan 2026-11-07'), c.onSurface);
-    final valores = find.text('1.500');
+    final valores = find.text('1,500');
     expect(tester.widget<Text>(valores.at(0)).style?.color, c.onSurface);
     expect(tester.widget<Text>(valores.at(1)).style?.color, c.onSurfaceVariant);
   });

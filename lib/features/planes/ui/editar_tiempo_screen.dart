@@ -9,7 +9,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_search_select_field.dart';
 import '../data/alimento_catalogo.dart';
 import '../data/plan.dart';
-import '../data/planes_formato.dart';
+import '../../../core/format/numeros.dart';
 import '../data/planes_providers.dart';
 import '../data/planes_repository.dart';
 

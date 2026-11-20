@@ -258,15 +258,15 @@ void main() {
 
     expect(find.text('Requerimiento diario'), findsOneWidget);
     expect(find.text('Metabolismo basal (TMB)'), findsOneWidget);
-    expect(find.text('1.662 kcal'), findsOneWidget);
+    expect(find.text('1,662 kcal'), findsOneWidget);
     expect(find.text('× Actividad sedentaria'), findsOneWidget);
     expect(find.text('1.2'), findsOneWidget);
     expect(find.text('= Gasto total'), findsOneWidget);
-    expect(find.text('1.994 kcal'), findsOneWidget);
+    expect(find.text('1,994 kcal'), findsOneWidget);
     expect(find.text('Ajuste por meta (bajar)'), findsOneWidget);
     expect(find.text('−500 kcal'), findsOneWidget);
     expect(find.text('Objetivo'), findsOneWidget);
-    expect(find.text('1.500'), findsOneWidget);
+    expect(find.text('1,500'), findsOneWidget);
     expect(find.text('PROTEÍNA'), findsOneWidget);
     expect(find.text('93.8 g'), findsOneWidget);
     expect(find.text('CARBOS'), findsOneWidget);

@@ -10,7 +10,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
 import '../data/plan.dart';
-import '../data/planes_formato.dart';
+import '../../../core/format/numeros.dart';
 import '../data/planes_providers.dart';
 import 'plan_insignia.dart';
 

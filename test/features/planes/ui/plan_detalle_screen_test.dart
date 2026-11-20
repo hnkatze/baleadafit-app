@@ -190,7 +190,7 @@ void main() {
     expect(find.text('BORRADOR'), findsOneWidget);
     expect(find.text('Por reglas'), findsOneWidget);
     expect(find.text('KCAL / DÍA'), findsOneWidget);
-    expect(find.text('1.500'), findsOneWidget);
+    expect(find.text('1,500'), findsOneWidget);
     expect(find.text('93.8g'), findsOneWidget);
     expect(find.text('187.5g'), findsOneWidget);
     expect(find.text('41.7g'), findsOneWidget);
@@ -201,9 +201,9 @@ void main() {
     expect(find.text('Totales de la semana'), findsOneWidget);
     // Fraction 0.004 is +0.4%, with no space and a dot.
     expect(find.text('+0.4%'), findsOneWidget);
-    // Two days carried: the goal is 1.500 × 2, never a fixed week of seven.
+    // Two days carried: the goal is 1,500 × 2, never a fixed week of seven.
     expect(
-      find.text('10.542 kcal reales de 3.000 kcal meta (2 días)'),
+      find.text('10,542 kcal reales de 3,000 kcal meta (2 días)'),
       findsOneWidget,
     );
   });
@@ -227,7 +227,7 @@ void main() {
     }
     // The first day is expanded with its own totals and deviation.
     expect(find.text('Lunes'), findsOneWidget);
-    expect(find.text('1.506 kcal · +0.4%'), findsOneWidget);
+    expect(find.text('1,506 kcal · +0.4%'), findsOneWidget);
 
     await tester.tap(find.text('MIE'));
     await pumpStable(tester);
@@ -297,7 +297,7 @@ void main() {
     await pumpStable(tester);
 
     expect(
-      find.text('10.542 kcal reales de 1.500 kcal meta (1 día)'),
+      find.text('10,542 kcal reales de 1,500 kcal meta (1 día)'),
       findsOneWidget,
     );
   });

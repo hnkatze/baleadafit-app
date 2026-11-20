@@ -1,5 +1,5 @@
-/// Number formatting of the meal-plan module: one format, the one the patient
-/// file already uses. A dot for thousands and for decimals, no space before the
+/// App-wide number formatting, the single source for every screen. The format
+/// of Honduras: a comma for thousands, a dot for decimals, no space before the
 /// `%`, whole numbers without decimals and otherwise one decimal.
 ///
 /// Which helper a field takes is a decision per field, never generic:
@@ -26,13 +26,13 @@ String formatearNumero(num valor) {
 /// Grams: `93.8g`, `100g`.
 String formatearGramos(num valor) => '${formatearNumero(valor)}g';
 
-/// Thousands with a dot: `1.500`, `10.542`. A negative uses a real minus.
+/// Thousands with a comma: `1,500`, `10,542`. A negative uses a real minus.
 String formatearKcal(num valor) {
   final redondeado = valor.round();
   final digitos = redondeado.abs().toString();
   final agrupado = StringBuffer();
   for (var i = 0; i < digitos.length; i++) {
-    if (i > 0 && (digitos.length - i) % 3 == 0) agrupado.write('.');
+    if (i > 0 && (digitos.length - i) % 3 == 0) agrupado.write(',');
     agrupado.write(digitos[i]);
   }
   return '${redondeado < 0 ? _menos : ''}$agrupado';

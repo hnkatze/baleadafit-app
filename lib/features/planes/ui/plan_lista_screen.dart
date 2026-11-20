@@ -9,7 +9,7 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_refresh.dart';
 import '../../patients/data/patients_providers.dart';
 import '../data/plan.dart';
-import '../data/planes_formato.dart';
+import '../../../core/format/numeros.dart';
 import '../data/planes_providers.dart';
 import 'plan_insignia.dart';
 

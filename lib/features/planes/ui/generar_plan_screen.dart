@@ -9,7 +9,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../patients/data/patients_providers.dart';
 import '../data/plan.dart';
-import '../data/planes_formato.dart';
+import '../../../core/format/numeros.dart';
 import '../data/planes_providers.dart';
 import '../data/planes_repository.dart';
 
@@ -179,7 +179,7 @@ class _GenerarPlanScreenState extends ConsumerState<GenerarPlanScreen> {
     if (textoKcal.isNotEmpty) {
       kcal = int.tryParse(textoKcal);
       if (kcal == null || kcal < 1000 || kcal > 5000) {
-        errores['kcal'] = 'Entre 1.000 y 5.000.';
+        errores['kcal'] = 'Entre 1,000 y 5,000.';
       }
     }
 
@@ -346,7 +346,7 @@ class _GenerarPlanScreenState extends ConsumerState<GenerarPlanScreen> {
                     label: 'Kcal objetivo · opcional',
                     hint: 'Calculado automáticamente',
                     helperText:
-                        '1.000 a 5.000. Si lo dejás vacío, se calcula con '
+                        '1,000 a 5,000. Si lo dejás vacío, se calcula con '
                         'Mifflin-St Jeor y la meta del paciente.',
                     keyboardType: TextInputType.number,
                     enabled: editable,
