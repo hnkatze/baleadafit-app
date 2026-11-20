@@ -12,6 +12,7 @@ import '../../../shared/widgets/app_refresh.dart';
 import '../data/plan.dart';
 import '../data/planes_formato.dart';
 import '../data/planes_providers.dart';
+import 'plan_insignia.dart';
 
 /// The week of one plan, read only for an `ACTIVO` or `ARCHIVADO` plan.
 ///
@@ -29,6 +30,7 @@ class PlanDetalleScreen extends ConsumerStatefulWidget {
     required this.planId,
     required this.onBack,
     this.onEditarTiempo,
+    this.onVolverALista,
     super.key,
   });
 
@@ -40,6 +42,10 @@ class PlanDetalleScreen extends ConsumerStatefulWidget {
   /// null the rows carry no chevron, whatever the state of the plan.
   final void Function(DiaSemana dia, TipoComida tipo)? onEditarTiempo;
 
+  /// Asked for once a draft has been deleted: the plan is gone, so the router
+  /// takes the user back to the list of the patient.
+  final VoidCallback? onVolverALista;
+
   @override
   ConsumerState<PlanDetalleScreen> createState() => _PlanDetalleScreenState();
 }
@@ -49,8 +55,24 @@ class _PlanDetalleScreenState extends ConsumerState<PlanDetalleScreen> {
   /// refresh) the first day of the plan is shown instead.
   DiaSemana? _elegido;
 
+  /// The detail `activar` answered. There is no navigation after activating, so
+  /// it replaces what the provider holds until the next refresh or retry.
+  PlanDetalle? _local;
+
+  /// An activation or a deletion is in flight: the button spins and the menu
+  /// is off.
+  bool _enCurso = false;
+
+  /// What the API said when the last action failed; null when there is none.
+  ApiFailure? _fallo;
+
   /// Completes when the plan is fresh; a failure is drawn by the error state.
   Future<void> _refrescar() async {
+    // The refresh shows what the API says, not the plan replaced locally.
+    setState(() {
+      _local = null;
+      _fallo = null;
+    });
     final carga = ref.refresh(planDetalleProvider(widget.planId).future);
     try {
       await carga;
@@ -59,42 +81,242 @@ class _PlanDetalleScreenState extends ConsumerState<PlanDetalleScreen> {
     }
   }
 
-  void _reintentar() => ref.invalidate(planDetalleProvider(widget.planId));
+  void _reintentar() {
+    setState(() {
+      _local = null;
+      _fallo = null;
+    });
+    ref.invalidate(planDetalleProvider(widget.planId));
+  }
+
+  Future<void> _activar(PlanDetalle plan) async {
+    if (_enCurso) return;
+    final confirmo = await _confirmar(
+      context,
+      titulo: '¿Activar este plan?',
+      cuerpo: _avisoDeActivar,
+      accion: 'Activar plan',
+    );
+    if (confirmo != true || !mounted) return;
+    setState(() {
+      _enCurso = true;
+      _fallo = null;
+    });
+    try {
+      final activo = await ref
+          .read(planesRepositoryProvider)
+          .activar(widget.planId);
+      ref.invalidate(planesDePacienteProvider(plan.pacienteId));
+      if (!mounted) return;
+      setState(() => _local = activo);
+    } on ApiFailure catch (fallo) {
+      if (mounted) setState(() => _fallo = fallo);
+    } catch (_) {
+      // Anything that is not an API failure must still free the actions and say
+      // something: a stuck button with no message is not a state.
+      if (mounted) {
+        setState(
+          () => _fallo = const ApiFailure(
+            mensaje: 'No pudimos activar el plan. Probá de nuevo.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _enCurso = false);
+    }
+  }
+
+  Future<void> _eliminar(PlanDetalle plan) async {
+    if (_enCurso) return;
+    final confirmo = await _confirmar(
+      context,
+      titulo: '¿Eliminar este borrador?',
+      accion: 'Eliminar borrador',
+    );
+    if (confirmo != true || !mounted) return;
+    setState(() {
+      _enCurso = true;
+      _fallo = null;
+    });
+    try {
+      await ref.read(planesRepositoryProvider).eliminar(widget.planId);
+      ref.invalidate(planesDePacienteProvider(plan.pacienteId));
+      widget.onVolverALista?.call();
+    } on ApiFailure catch (fallo) {
+      if (mounted) setState(() => _fallo = fallo);
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () => _fallo = const ApiFailure(
+            mensaje: 'No pudimos eliminar el plan. Probá de nuevo.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _enCurso = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final plan = ref.watch(planDetalleProvider(widget.planId));
+    final remoto = ref.watch(planDetalleProvider(widget.planId));
+    final local = _local;
+    final AsyncValue<PlanDetalle> plan = local == null
+        ? remoto
+        : AsyncData(local);
     final onEditar = widget.onEditarTiempo;
+    final cargado = plan.asData?.value;
+    // Only a draft carries actions: `ACTIVO` and `ARCHIVADO` are read only.
+    final borrador = cargado?.estado == EstadoPlan.borrador;
 
     return Material(
       type: MaterialType.transparency,
-      child: AppRefresh(
-        onRefresh: _refrescar,
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: AppDimensions.screenPadding,
-          children: [
-            _Cabecera(onBack: widget.onBack, plan: plan.asData?.value),
-            const SizedBox(height: AppDimensions.spaceMd),
-            plan.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppDimensions.spaceXl),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (error, _) =>
-                  _FalloCarga(error: error, onReintentar: _reintentar),
-              data: (detalle) => _Contenido(
-                plan: detalle,
-                elegido: _elegido,
-                onElegir: (dia) => setState(() => _elegido = dia),
-                onEditar: onEditar,
-                // Only a draft is editable: the contract does not regulate what
-                // happens to a patient's recorded meals when an active plan
-                // changes.
-                editable: detalle.estado == EstadoPlan.borrador,
+      child: Column(
+        children: [
+          Expanded(
+            child: AppRefresh(
+              onRefresh: _refrescar,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: AppDimensions.screenPadding,
+                children: [
+                  _Cabecera(
+                    onBack: widget.onBack,
+                    plan: cargado,
+                    onEliminar: borrador && !_enCurso
+                        ? () => _eliminar(cargado!)
+                        : null,
+                  ),
+                  const SizedBox(height: AppDimensions.spaceMd),
+                  plan.when(
+                    loading: () => const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppDimensions.spaceXl,
+                      ),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (error, _) =>
+                        _FalloCarga(error: error, onReintentar: _reintentar),
+                    data: (detalle) => _Contenido(
+                      plan: detalle,
+                      elegido: _elegido,
+                      onElegir: (dia) => setState(() => _elegido = dia),
+                      onEditar: onEditar,
+                      // Only a draft is editable: the contract does not
+                      // regulate what happens to a patient's recorded meals
+                      // when an active plan changes.
+                      editable: detalle.estado == EstadoPlan.borrador,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+          if (borrador)
+            _BarraDeActivar(
+              enCurso: _enCurso,
+              fallo: _fallo,
+              onActivar: () => _activar(cargado!),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+const _avisoDeActivar =
+    'Lo va a ver el paciente en su app; el plan activo anterior pasa a '
+    'archivado.';
+
+/// Asks before an action that cannot be taken back; true only when confirmed.
+Future<bool?> _confirmar(
+  BuildContext context, {
+  required String titulo,
+  required String accion,
+  String? cuerpo,
+}) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(titulo),
+      content: cuerpo == null ? null : Text(cuerpo),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(accion),
+        ),
+      ],
+    ),
+  );
+}
+
+/// The fixed bottom of a draft: the failure of the last action, the notice and
+/// `Activar plan`.
+class _BarraDeActivar extends StatelessWidget {
+  const _BarraDeActivar({
+    required this.enCurso,
+    required this.fallo,
+    required this.onActivar,
+  });
+
+  final bool enCurso;
+  final ApiFailure? fallo;
+  final VoidCallback onActivar;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+    final fallo = this.fallo;
+
+    return Material(
+      color: colors.surface,
+      elevation: 8,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimensions.spaceLg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (fallo != null) ...[
+                Text(
+                  fallo.mensaje,
+                  key: const Key('fallo'),
+                  style: textTheme.bodySmall?.copyWith(color: colors.error),
+                ),
+                // The message alone does not say what the server rejected.
+                if (fallo.codigo != null || fallo.statusCode != null)
+                  Text(
+                    [
+                      if (fallo.codigo != null) fallo.codigo!,
+                      if (fallo.statusCode != null) 'HTTP ${fallo.statusCode}',
+                    ].join(' · '),
+                    key: const Key('fallo-codigo'),
+                    style: textTheme.labelSmall?.copyWith(color: colors.error),
+                  ),
+                const SizedBox(height: AppDimensions.spaceSm),
+              ],
+              AppButton(
+                label: 'Activar plan',
+                isLoading: enCurso,
+                onPressed: onActivar,
+              ),
+              const SizedBox(height: AppDimensions.spaceSm),
+              Text(
+                _avisoDeActivar,
+                textAlign: TextAlign.center,
+                style: textTheme.labelSmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -104,10 +326,18 @@ class _PlanDetalleScreenState extends ConsumerState<PlanDetalleScreen> {
 /// Back arrow, plan name and the line under it: `Borrador · sin publicar`, or
 /// the date line of the list for an activated or archived plan.
 class _Cabecera extends StatelessWidget {
-  const _Cabecera({required this.onBack, required this.plan});
+  const _Cabecera({
+    required this.onBack,
+    required this.plan,
+    required this.onEliminar,
+  });
 
   final VoidCallback onBack;
   final PlanDetalle? plan;
+
+  /// Deletes the draft; null hides the menu (any other state, or a request in
+  /// flight).
+  final VoidCallback? onEliminar;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +368,19 @@ class _Cabecera extends StatelessWidget {
                   ),
               ],
             ),
+          ),
+        if (plan != null && plan.estado == EstadoPlan.borrador)
+          PopupMenuButton<String>(
+            tooltip: 'Eliminar borrador',
+            icon: const Icon(Icons.more_vert, size: AppDimensions.iconMd),
+            enabled: onEliminar != null,
+            onSelected: (_) => onEliminar?.call(),
+            itemBuilder: (context) => const [
+              PopupMenuItem<String>(
+                value: 'eliminar',
+                child: Text('Eliminar borrador'),
+              ),
+            ],
           ),
       ],
     );
@@ -223,7 +466,7 @@ class _TarjetaDeEstado extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppPill(label: plan.estado.codigo),
+              PlanInsignia(estado: plan.estado),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppDimensions.spaceSm,

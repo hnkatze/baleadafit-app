@@ -250,7 +250,7 @@ toda verde, así que el contraste sale del ritmo tinte/neutro y del icono, no de
 | T4 | S13, S14, S15, S16, S22, S23 | Detalle semanal: cabecera, tira de días, filas de tiempo, solo lectura, con su ruta anidada bajo el paciente | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
 | T5 | S19, S20, S21, S22, S23 | Editor de un tiempo de comida y su ruta; las filas del detalle del borrador pasan a abrirlo | `lib/features/planes/ui/`, `lib/core/router/` | hecho |
 | T6 | S24, S25 | Cableado: acción `Ver planes` (C12) en la ficha, en los dos estados (con plan y sin plan), hacia la lista, y actualización de este documento | `lib/features/patients/ui/paciente_ficha_screen.dart`, `lib/core/router/` | hecho |
-| T7 | S17, S18 | Acciones del detalle: activar y eliminar con confirmación | `lib/features/planes/ui/` | pending |
+| T7 | S17, S18 | Acciones del detalle: activar y eliminar con confirmación | `lib/features/planes/ui/` | hecho |
 | T8 | S25 | **Defecto:** la lista solo se alcanza desde la ficha cuando hay plan activo. Llevar `Ver planes` también al estado sin plan | `lib/features/patients/ui/paciente_ficha_screen.dart` | hecho |
 | T9 | S26 | **Fidelidad visual:** la tarjeta de la lista y la fila del editor vuelven a lo que dibujan sus artboards | `lib/features/planes/ui/` | hecho |
 | T10 | S27 | **Detalle:** la tira de días ocupa el ancho y cada tiempo lleva su icono con tinte | `lib/features/planes/ui/plan_detalle_screen.dart` | hecho |
@@ -290,6 +290,7 @@ Lo que el inventario de los artboards no trae y la pantalla necesita. **Las vali
 | C24 | Generador sin red ni API (S12) | `No pudimos generar el plan. Probá de nuevo.` | lo que no es un `ApiFailure` necesita un mensaje propio para no dejar el formulario bloqueado |
 | C25 | Nota del generador (S12) | `Con IA puede tardar hasta 3 minutos` | el artboard dice 25 segundos y el recomendador tarda hasta 180 |
 | C26 | Fallo del editor (S22) | `No pudimos guardar el tiempo. Probá de nuevo.` | mismo patrón que C24: lo que no es un `ApiFailure` necesita mensaje propio para no dejar el botón colgado |
+| C28 | Fallos de las acciones (S17, S18) | `No pudimos activar el plan. Probá de nuevo.` y `No pudimos eliminar el plan. Probá de nuevo.` | mismo patrón que C24 y C26: lo que no es un `ApiFailure` no puede dejar el botón colgado sin mensaje |
 | C27 | Tiempo ausente (S20) | `Este tiempo de comida ya no está en el plan.` con la acción `Volver al plan` | el plan pudo cambiar entre abrir el detalle y abrir el editor; el artboard no dibuja ese estado |
 | C12 | Entrada desde la ficha (S25) | `Ver planes` | acción nueva en `Plan y adherencia`; el artboard solo dibuja la vuelta |
 
@@ -525,3 +526,15 @@ en mi 14 pro max, lo que signidica que tiene un ancho fijo, segundo tenemos los 
 merienda etc etc, pero eso podria ser mas colorido, o algo asi, los titulos o las cards, pero que la info
 siga siendo la protagonista claro». Entre las tres opciones de color propuestas eligió **la del icono con
 tinte y la card blanca**. Los días dejan de tener ancho fijo. S27 fija los valores.
+
+**L25 — T7 hecho: el borrador se activa y se elimina.** `Activar plan` va en la barra fija del borrador
+con su aviso y su confirmación (C4); el menú `more_vert` trae `Eliminar borrador` con la suya (C5). El
+detalle que devuelve el `POST` reemplaza lo que la pantalla muestra, así que después de activar el plan
+se dibuja `ACTIVO` sin chevron, sin botón y sin menú, con la línea `Activo el …`. Eliminar invalida la
+lista del paciente y vuelve a ella por el callback del router. Los dos deciden por `codigo`, nunca por el
+texto del mensaje, y un fallo deja las acciones usables.
+
+Se cerró además la deuda visual que quedaba: la insignia del estado es ahora `PlanInsignia`
+(`lib/features/planes/ui/plan_insignia.dart`), la misma en la lista y en el detalle, y el detalle dejó de
+dibujar `AppPill` para el estado. Y C28 cubre lo que no es un `ApiFailure` al activar o eliminar: sin ese
+mensaje el botón quedaba habilitado pero mudo.

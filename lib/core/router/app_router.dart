@@ -237,6 +237,10 @@ GoRouter createAppRouter({
                               onBack: () => context.canPop()
                                   ? context.pop()
                                   : context.go(AppRoutes.planesDe(id)),
+                              // A deleted draft is gone: `go`, never `pop`, so the
+                              // list is rebuilt and does not show it.
+                              onVolverALista: () =>
+                                  context.go(AppRoutes.planesDe(id)),
                               // A `go`, like the generator: the editor leaves by
                               // `go` too, which rebuilds this detail.
                               onEditarTiempo: (dia, tipo) => context.go(

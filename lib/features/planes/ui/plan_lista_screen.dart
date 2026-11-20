@@ -11,6 +11,7 @@ import '../../patients/data/patients_providers.dart';
 import '../data/plan.dart';
 import '../data/planes_formato.dart';
 import '../data/planes_providers.dart';
+import 'plan_insignia.dart';
 
 /// The plans of one patient, reached from the patient file.
 ///
@@ -177,7 +178,7 @@ class _TarjetaPlan extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: AppDimensions.spaceSm),
-                  _InsigniaEstado(estado: plan.estado),
+                  PlanInsignia(estado: plan.estado),
                 ],
               ),
               const SizedBox(height: _separacion),
@@ -248,39 +249,6 @@ class _TarjetaPlan extends StatelessWidget {
 
 /// Internal gap of the card (10 in the artboard).
 const double _separacion = 10;
-
-/// The state of a plan as a coloured pill: `ACTIVO` in the secondary container,
-/// `BORRADOR` and `ARCHIVADO` in the neutral one.
-class _InsigniaEstado extends StatelessWidget {
-  const _InsigniaEstado({required this.estado});
-
-  final EstadoPlan estado;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final activo = estado == EstadoPlan.activo;
-
-    return Container(
-      key: const Key('insignia-estado'),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spaceSm + 2,
-        vertical: AppDimensions.spaceXs,
-      ),
-      decoration: BoxDecoration(
-        color: activo ? colors.secondaryContainer : colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
-      ),
-      child: Text(
-        estado.codigo,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: activo ? colors.onSecondaryContainer : colors.onSurfaceVariant,
-          letterSpacing: 0,
-        ),
-      ),
-    );
-  }
-}
 
 /// Where the plan came from, in a pill with a 1 px `outlineVariant` border.
 class _EtiquetaOrigen extends StatelessWidget {

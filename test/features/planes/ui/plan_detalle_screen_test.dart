@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:baleadafit/core/network/api_client.dart';
 import 'package:baleadafit/core/network/api_failure.dart';
+import 'package:baleadafit/core/network/paged.dart';
 import 'package:baleadafit/core/theme/app_theme.dart';
 import 'package:baleadafit/features/planes/data/plan.dart';
 import 'package:baleadafit/features/planes/data/planes_providers.dart';
+import 'package:baleadafit/features/planes/data/planes_repository.dart';
 import 'package:baleadafit/features/planes/ui/plan_detalle_screen.dart';
+import 'package:dio/dio.dart' show ResponseBody;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../support/fake_http_adapter.dart';
 import '../../../support/pump.dart';
 
 Map<String, Object?> _item(String nombre, double porciones, double kcal) => {
@@ -47,8 +52,18 @@ PlanDetalle _plan({
   String estado = 'BORRADOR',
   Object? justificacion = 'Generado por reglas: sin grasa corporal.',
   List<Map<String, Object?>>? dias,
-}) => PlanDetalle.fromJson({
+}) => PlanDetalle.fromJson(
+  _planJson(estado: estado, justificacion: justificacion, dias: dias),
+);
+
+Map<String, Object?> _planJson({
+  String estado = 'BORRADOR',
+  Object? justificacion = 'Generado por reglas: sin grasa corporal.',
+  List<Map<String, Object?>>? dias,
+  String aprobadoEn = '2026-11-07T15:00:00Z',
+}) => {
   'id': 'p1',
+  'pacienteId': 'pac1',
   'nombre': 'Plan 2026-11-07',
   'estado': estado,
   'origen': 'REGLAS',
@@ -58,7 +73,7 @@ PlanDetalle _plan({
   'grasaG': 41.7,
   'justificacion': justificacion,
   'creadoEn': '2026-11-07T15:00:00Z',
-  'aprobadoEn': '2026-11-07T15:00:00Z',
+  'aprobadoEn': aprobadoEn,
   'totales': {'kcal': 10542},
   'desviacion': 0.004,
   'dias':
@@ -87,17 +102,33 @@ PlanDetalle _plan({
         ]),
         _dia('MIERCOLES', [_tiempo('DESAYUNO', 1)]),
       ],
-});
+};
 
 Future<void> _pump(
   WidgetTester tester, {
   required Future<PlanDetalle> Function() cargar,
   VoidCallback? onBack,
   void Function(DiaSemana, TipoComida)? onEditarTiempo,
+  VoidCallback? onVolverALista,
+  FakeHttpAdapter? adapter,
+  void Function()? alCargarLista,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [planDetalleProvider.overrideWith((ref, id) => cargar())],
+      overrides: [
+        planDetalleProvider.overrideWith((ref, id) => cargar()),
+        if (adapter != null)
+          planesRepositoryProvider.overrideWithValue(
+            PlanesRepository(ApiClient(dioWith(adapter))),
+          ),
+        planesDePacienteProvider.overrideWith((ref, id) {
+          alCargarLista?.call();
+          return const Paged<Plan>(
+            items: [],
+            meta: PageMeta(limit: 100, offset: 0, total: 0, hasMore: false),
+          );
+        }),
+      ],
       child: MaterialApp(
         theme: AppTheme.light,
         home: Scaffold(
@@ -105,6 +136,7 @@ Future<void> _pump(
             planId: 'p1',
             onBack: onBack ?? () {},
             onEditarTiempo: onEditarTiempo,
+            onVolverALista: onVolverALista,
           ),
         ),
       ),
@@ -532,6 +564,395 @@ void main() {
         find.ancestor(of: circulo, matching: find.byType(ExcludeSemantics)),
         findsWidgets,
         reason: codigo,
+      );
+    }
+  });
+
+  testWidgets('a draft draws Activar plan, its notice and the delete menu', (
+    tester,
+  ) async {
+    await _pump(tester, cargar: () async => _plan());
+    await pumpStable(tester);
+
+    expect(find.text('Activar plan'), findsOneWidget);
+    expect(
+      find.text(
+        'Lo va a ver el paciente en su app; el plan activo anterior pasa a '
+        'archivado.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    expect(find.byTooltip('Eliminar borrador'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await pumpStable(tester);
+
+    expect(find.text('Eliminar borrador'), findsOneWidget);
+  });
+
+  testWidgets('Cancelar on the activation dialog sends nothing', (
+    tester,
+  ) async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({'ok': true, 'data': _planJson(estado: 'ACTIVO')}),
+    );
+    await _pump(tester, cargar: () async => _plan(), adapter: adapter);
+    await pumpStable(tester);
+
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+
+    final dialogo = find.byType(AlertDialog);
+    expect(
+      find.descendant(of: dialogo, matching: find.text('¿Activar este plan?')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: dialogo,
+        matching: find.text(
+          'Lo va a ver el paciente en su app; el plan activo anterior pasa a '
+          'archivado.',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(adapter.requests, isEmpty);
+
+    await tester.tap(
+      find.descendant(of: dialogo, matching: find.text('Cancelar')),
+    );
+    await pumpStable(tester);
+
+    expect(adapter.requests, isEmpty);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('BORRADOR'), findsOneWidget);
+    expect(find.text('Activar plan'), findsOneWidget);
+  });
+
+  testWidgets('confirming activates and the screen becomes read only', (
+    tester,
+  ) async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': true,
+        'data': _planJson(estado: 'ACTIVO', aprobadoEn: '2026-11-09T15:00:00Z'),
+      }, status: 201),
+    );
+    var volvio = false;
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      adapter: adapter,
+      onEditarTiempo: (dia, tipo) {},
+      onVolverALista: () => volvio = true,
+    );
+    await pumpStable(tester);
+    expect(find.byIcon(Icons.chevron_right), findsWidgets);
+
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Activar plan'),
+      ),
+    );
+    await pumpStable(tester);
+
+    expect(adapter.requests.single.method, 'POST');
+    expect(adapter.requests.single.path, '/planes/p1/activar');
+    expect(find.text('ACTIVO'), findsOneWidget);
+    expect(find.text('BORRADOR'), findsNothing);
+    expect(find.textContaining('Activo el'), findsOneWidget);
+    expect(find.text('Borrador · sin publicar'), findsNothing);
+    expect(find.text('Activar plan'), findsNothing);
+    expect(find.byIcon(Icons.chevron_right), findsNothing);
+    expect(find.byIcon(Icons.more_vert), findsNothing);
+    expect(volvio, isFalse);
+  });
+
+  testWidgets('a refresh drops the plan replaced locally', (tester) async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({'ok': true, 'data': _planJson(estado: 'ACTIVO')}),
+    );
+    await _pump(tester, cargar: () async => _plan(), adapter: adapter);
+    await pumpStable(tester);
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Activar plan'),
+      ),
+    );
+    await pumpStable(tester);
+    expect(find.text('ACTIVO'), findsOneWidget);
+
+    await tester.fling(find.byType(ListView), const Offset(0, 400), 1000);
+    await pumpStable(tester, frames: 30);
+
+    // The provider still says BORRADOR: the refresh shows what the API says.
+    expect(find.text('BORRADOR'), findsOneWidget);
+    expect(find.text('Activar plan'), findsOneWidget);
+  });
+
+  testWidgets('a 400 on activate shows the API message and keeps working', (
+    tester,
+  ) async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': false,
+        'error': {
+          'codigo': 'REGLA_X',
+          'mensaje': 'El plan no se puede activar.',
+        },
+      }, status: 400),
+    );
+    await _pump(tester, cargar: () async => _plan(), adapter: adapter);
+    await pumpStable(tester);
+
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Activar plan'),
+      ),
+    );
+    await pumpStable(tester);
+
+    expect(find.text('El plan no se puede activar.'), findsOneWidget);
+    expect(find.text('REGLA_X · HTTP 400'), findsOneWidget);
+    expect(find.text('BORRADOR'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    // The button and the menu work again.
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Cancelar'),
+      ),
+    );
+    await pumpStable(tester);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await pumpStable(tester);
+    expect(find.text('Eliminar borrador'), findsOneWidget);
+  });
+
+  testWidgets('the activate button spins while the request runs', (
+    tester,
+  ) async {
+    final respuesta = Completer<ResponseBody>();
+    final adapter = FakeHttpAdapter((_) => respuesta.future);
+    var volvio = false;
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      adapter: adapter,
+      onVolverALista: () => volvio = true,
+    );
+    await pumpStable(tester);
+
+    await tester.tap(find.text('Activar plan'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Activar plan'),
+      ),
+    );
+    await pumpStable(tester);
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('Activar plan'), findsNothing);
+    expect(volvio, isFalse);
+
+    respuesta.complete(
+      jsonBody({'ok': true, 'data': _planJson(estado: 'ACTIVO')}),
+    );
+    await pumpStable(tester);
+
+    expect(find.text('ACTIVO'), findsOneWidget);
+  });
+
+  testWidgets('Cancelar on the delete dialog sends nothing', (tester) async {
+    final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
+    var volvio = false;
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      adapter: adapter,
+      onVolverALista: () => volvio = true,
+    );
+    await pumpStable(tester);
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await pumpStable(tester);
+    await tester.tap(find.text('Eliminar borrador'));
+    await pumpStable(tester);
+
+    final dialogo = find.byType(AlertDialog);
+    expect(
+      find.descendant(
+        of: dialogo,
+        matching: find.text('¿Eliminar este borrador?'),
+      ),
+      findsOneWidget,
+    );
+    expect(adapter.requests, isEmpty);
+
+    await tester.tap(
+      find.descendant(of: dialogo, matching: find.text('Cancelar')),
+    );
+    await pumpStable(tester);
+
+    expect(adapter.requests, isEmpty);
+    expect(volvio, isFalse);
+    expect(find.byType(AlertDialog), findsNothing);
+  });
+
+  testWidgets('confirming a delete goes back and invalidates the list', (
+    tester,
+  ) async {
+    final adapter = FakeHttpAdapter((_) async => jsonBody({'ok': true}));
+    var volvio = false;
+    var cargasDeLista = 0;
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      adapter: adapter,
+      onVolverALista: () => volvio = true,
+      alCargarLista: () => cargasDeLista++,
+    );
+    await pumpStable(tester);
+    // Keep the list alive, as the list screen would behind the detail.
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(PlanDetalleScreen)),
+    );
+    final suscripcion = container.listen(
+      planesDePacienteProvider('pac1'),
+      (_, _) {},
+    );
+    addTearDown(suscripcion.close);
+    expect(cargasDeLista, 1);
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await pumpStable(tester);
+    await tester.tap(find.text('Eliminar borrador'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Eliminar borrador'),
+      ),
+    );
+    await pumpStable(tester);
+
+    expect(adapter.requests.single.method, 'DELETE');
+    expect(adapter.requests.single.path, '/planes/p1');
+    expect(volvio, isTrue);
+    expect(cargasDeLista, 2);
+  });
+
+  testWidgets('a failed delete shows the API message and stays', (
+    tester,
+  ) async {
+    final adapter = FakeHttpAdapter(
+      (_) async => jsonBody({
+        'ok': false,
+        'error': {'codigo': 'PLAN_NO_BORRADOR', 'mensaje': 'No es borrador.'},
+      }, status: 409),
+    );
+    var volvio = false;
+    await _pump(
+      tester,
+      cargar: () async => _plan(),
+      adapter: adapter,
+      onVolverALista: () => volvio = true,
+    );
+    await pumpStable(tester);
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await pumpStable(tester);
+    await tester.tap(find.text('Eliminar borrador'));
+    await pumpStable(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Eliminar borrador'),
+      ),
+    );
+    await pumpStable(tester);
+
+    expect(find.text('No es borrador.'), findsOneWidget);
+    expect(find.text('PLAN_NO_BORRADOR · HTTP 409'), findsOneWidget);
+    expect(volvio, isFalse);
+    expect(find.text('Activar plan'), findsOneWidget);
+  });
+
+  testWidgets('ACTIVO and ARCHIVADO never draw Activar plan nor the menu', (
+    tester,
+  ) async {
+    for (final estado in ['ACTIVO', 'ARCHIVADO']) {
+      // A fresh tree: the provider of the previous pump must not be reused.
+      await tester.pumpWidget(const SizedBox());
+      await _pump(
+        tester,
+        cargar: () async => _plan(estado: estado),
+        onEditarTiempo: (dia, tipo) {},
+      );
+      await pumpStable(tester);
+
+      expect(find.text(estado), findsOneWidget, reason: estado);
+      expect(find.text('Activar plan'), findsNothing, reason: estado);
+      expect(find.byIcon(Icons.more_vert), findsNothing, reason: estado);
+      expect(find.byTooltip('Eliminar borrador'), findsNothing, reason: estado);
+      expect(find.byIcon(Icons.chevron_right), findsNothing, reason: estado);
+    }
+  });
+
+  testWidgets('the state badge is the tinted one, from the colorScheme', (
+    tester,
+  ) async {
+    final esperado = {
+      'BORRADOR': (
+        (ColorScheme c) => c.surfaceContainer,
+        (ColorScheme c) => c.onSurfaceVariant,
+      ),
+      'ACTIVO': (
+        (ColorScheme c) => c.secondaryContainer,
+        (ColorScheme c) => c.onSecondaryContainer,
+      ),
+      'ARCHIVADO': (
+        (ColorScheme c) => c.surfaceContainer,
+        (ColorScheme c) => c.onSurfaceVariant,
+      ),
+    };
+    for (final MapEntry(key: estado, value: (fondo, frente))
+        in esperado.entries) {
+      await tester.pumpWidget(const SizedBox());
+      await _pump(tester, cargar: () async => _plan(estado: estado));
+      await pumpStable(tester);
+      final colors = Theme.of(tester.element(find.byType(PlanDetalleScreen)))
+          .colorScheme;
+
+      final insignia = tester.widget<Container>(
+        find.byKey(const Key('insignia-estado')),
+      );
+      expect(
+        (insignia.decoration! as BoxDecoration).color,
+        fondo(colors),
+        reason: estado,
+      );
+      expect(
+        tester.widget<Text>(find.text(estado)).style?.color,
+        frente(colors),
+        reason: estado,
       );
     }
   });
