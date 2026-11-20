@@ -5,8 +5,8 @@ import '../../../core/network/api_failure.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
+import '../../../shared/widgets/app_tinted_pill.dart';
 import '../../auth/application/session_controller.dart';
 import '../../patients/data/paciente_resumen.dart';
 import '../../patients/data/patients_providers.dart';
@@ -18,7 +18,11 @@ import '../data/dashboard_resumen.dart';
 /// Only what the API exposes is drawn. The mockup also shows adherence, InBody
 /// readings and the WhatsApp bot; none of that has an endpoint yet.
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({this.onAbrirPaciente, super.key});
+
+  /// Opens the file of a patient by id. The screen does not navigate itself:
+  /// without this callback no row is tappable.
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,10 +66,12 @@ class HomeScreen extends ConsumerWidget {
                 onRetry: () => ref.invalidate(dashboardProvider),
               ),
             ],
-            data: (data) => [_DaySection(data: data)],
+            data: (data) => [
+              _DaySection(data: data, onAbrirPaciente: onAbrirPaciente),
+            ],
           ),
           const SizedBox(height: AppDimensions.spaceLg),
-          const _TusPacientes(),
+          _TusPacientes(onAbrirPaciente: onAbrirPaciente),
         ],
       ),
     );
@@ -155,9 +161,10 @@ String _hora(DateTime date) {
 
 /// The hero of the day: the next appointment and where it sits in the day.
 class _DaySection extends StatelessWidget {
-  const _DaySection({required this.data});
+  const _DaySection({required this.data, this.onAbrirPaciente});
 
   final DashboardResumen data;
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context) {
@@ -167,14 +174,20 @@ class _DaySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _NextAppointmentCard(data: data, proxima: proxima),
+        _NextAppointmentCard(
+          data: data,
+          proxima: proxima,
+          onAbrirPaciente: onAbrirPaciente,
+        ),
         const SizedBox(height: AppDimensions.spaceSm),
         _Metrics(data: data),
         if (restantes.isNotEmpty) ...[
           const SizedBox(height: AppDimensions.spaceLg),
           Text('Después', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppDimensions.spaceSm),
-          ...restantes.map((cita) => _AfterCard(cita: cita)),
+          ...restantes.map(
+            (cita) => _AfterCard(cita: cita, onAbrirPaciente: onAbrirPaciente),
+          ),
         ],
       ],
     );
@@ -182,10 +195,15 @@ class _DaySection extends StatelessWidget {
 }
 
 class _NextAppointmentCard extends StatelessWidget {
-  const _NextAppointmentCard({required this.data, required this.proxima});
+  const _NextAppointmentCard({
+    required this.data,
+    required this.proxima,
+    this.onAbrirPaciente,
+  });
 
   final DashboardResumen data;
   final CitaResumen? proxima;
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context) {
@@ -201,131 +219,165 @@ class _NextAppointmentCard extends StatelessWidget {
               )
               .reduce((a, b) => a.isAfter(b) ? a : b);
 
-    return Container(
-      // The parent Column aligns to the start, so without an explicit width the
-      // card shrinks to its text and leaves a gap on the right when the day is
-      // empty. Stretching keeps it flush with the metrics below.
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppDimensions.spaceMd),
-      decoration: BoxDecoration(
-        color: colors.primaryContainer,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -8,
-            top: 6,
-            child: Opacity(
-              opacity: 0.28,
-              child: CustomPaint(
-                size: const Size(150, 54),
-                painter: _PulsePainter(color: colors.onPrimaryContainer),
-              ),
+    final pacienteId = cita?.paciente?.id;
+    final onTap = pacienteId == null || onAbrirPaciente == null
+        ? null
+        : () => onAbrirPaciente!(pacienteId);
+
+    final contenido = Stack(
+      children: [
+        Positioned(
+          right: -8,
+          top: 6,
+          child: Opacity(
+            opacity: 0.28,
+            child: CustomPaint(
+              size: const Size(150, 54),
+              painter: _PulsePainter(color: colors.onPrimaryContainer),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        ),
+        if (onTap != null)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Icon(
+              Icons.chevron_right,
+              size: 24,
+              color: colors.onPrimaryContainer,
+            ),
+          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              cita == null ? 'HOY' : 'PRÓXIMA CITA',
+              style: textTheme.labelSmall?.copyWith(letterSpacing: 0.8),
+            ),
+            if (cita == null) ...[
+              const SizedBox(height: AppDimensions.spaceXs),
               Text(
-                cita == null ? 'HOY' : 'PRÓXIMA CITA',
-                style: textTheme.labelSmall?.copyWith(letterSpacing: 0.8),
+                data.citasHoy.isEmpty ? 'Sin citas hoy' : 'Sin pendientes',
+                style: textTheme.headlineSmall,
               ),
-              if (cita == null) ...[
-                const SizedBox(height: AppDimensions.spaceXs),
-                Text(
-                  data.citasHoy.isEmpty ? 'Sin citas hoy' : 'Sin pendientes',
-                  style: textTheme.headlineSmall,
+              Text(
+                data.citasHoy.isEmpty
+                    ? 'Buen momento para revisar los planes en borrador.'
+                    : 'Ya pasaron todas las citas del día.',
+                style: textTheme.bodySmall,
+              ),
+            ] else ...[
+              const SizedBox(height: AppDimensions.spaceSm),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    cita.hora,
+                    style: textTheme.displayLarge?.copyWith(
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(width: AppDimensions.spaceSm),
+                  Text(_enCuanto(cita), style: textTheme.titleMedium),
+                ],
+              ),
+              Text(
+                cita.pacienteNombre ?? 'Paciente',
+                style: textTheme.titleLarge,
+              ),
+              Text(
+                '${cita.motivo} · ${cita.duracionMin} min',
+                style: textTheme.bodySmall,
+              ),
+            ],
+            if (data.citasHoy.isNotEmpty && lastEnd != null) ...[
+              const SizedBox(height: AppDimensions.spaceMd),
+              Container(
+                padding: const EdgeInsets.only(top: AppDimensions.spaceSm),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: colors.onPrimaryContainer.withValues(alpha: 0.18),
+                    ),
+                  ),
                 ),
-                Text(
-                  data.citasHoy.isEmpty
-                      ? 'Buen momento para revisar los planes en borrador.'
-                      : 'Ya pasaron todas las citas del día.',
-                  style: textTheme.bodySmall,
-                ),
-              ] else ...[
-                const SizedBox(height: AppDimensions.spaceSm),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
+                child: Column(
                   children: [
-                    Text(
-                      cita.hora,
-                      style: textTheme.displayLarge?.copyWith(
-                        fontFeatures: const [FontFeature.tabularFigures()],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: data.citasHoy.length == 1
+                                    ? '1 cita'
+                                    : '${data.citasHoy.length} citas',
+                                style: textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    ' ${_diaRelativo(data.citasHoy.first.fechaHora, DateTime.now())}',
+                                style: textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          'termina ${_hora(lastEnd)}',
+                          style: textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.spaceXs),
+                    SizedBox(
+                      height: 40,
+                      child: _DayTimeline(
+                        citas: data.citasHoy,
+                        now: DateTime.now(),
                       ),
                     ),
-                    const SizedBox(width: AppDimensions.spaceSm),
-                    Text(_enCuanto(cita), style: textTheme.titleMedium),
                   ],
                 ),
-                Text(
-                  cita.pacienteNombre ?? 'Paciente',
-                  style: textTheme.titleLarge,
-                ),
-                Text(
-                  '${cita.motivo} · ${cita.duracionMin} min',
-                  style: textTheme.bodySmall,
-                ),
-              ],
-              if (data.citasHoy.isNotEmpty && lastEnd != null) ...[
-                const SizedBox(height: AppDimensions.spaceMd),
-                Container(
-                  padding: const EdgeInsets.only(top: AppDimensions.spaceSm),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: colors.onPrimaryContainer.withValues(
-                          alpha: 0.18,
-                        ),
-                      ),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: data.citasHoy.length == 1
-                                      ? '1 cita'
-                                      : '${data.citasHoy.length} citas',
-                                  style: textTheme.bodySmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text:
-                                      ' ${_diaRelativo(data.citasHoy.first.fechaHora, DateTime.now())}',
-                                  style: textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            'termina ${_hora(lastEnd)}',
-                            style: textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppDimensions.spaceXs),
-                      SizedBox(
-                        height: 40,
-                        child: _DayTimeline(
-                          citas: data.citasHoy,
-                          now: DateTime.now(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ],
+          ],
+        ),
+      ],
+    );
+
+    final forma = BorderRadius.circular(AppDimensions.radiusLg);
+    // The parent Column aligns to the start, so without an explicit width the
+    // card shrinks to its text and leaves a gap on the right when the day is
+    // empty. Stretching keeps it flush with the metrics below.
+    if (onTap == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppDimensions.spaceMd),
+        decoration: BoxDecoration(
+          color: colors.primaryContainer,
+          borderRadius: forma,
+        ),
+        child: contenido,
+      );
+    }
+    // The ripple paints on a Material under the content, clipped to the card.
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: colors.primaryContainer,
+        borderRadius: forma,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.spaceMd),
+            child: contenido,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -638,64 +690,110 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _AfterCard extends StatelessWidget {
-  const _AfterCard({required this.cita});
+  const _AfterCard({required this.cita, this.onAbrirPaciente});
 
   final CitaResumen cita;
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.spaceSm),
-      padding: const EdgeInsets.all(AppDimensions.spaceMd),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
+    final pacienteId = cita.paciente?.id;
+    final onTap = pacienteId == null || onAbrirPaciente == null
+        ? null
+        : () => onAbrirPaciente!(pacienteId);
+
+    final contenido = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              cita.hora,
+              style: textTheme.titleMedium?.copyWith(
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            Text(
+              '${cita.duracionMin} min',
+              style: textTheme.bodySmall?.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(width: AppDimensions.spaceMd),
+        Expanded(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                cita.hora,
-                style: textTheme.titleMedium?.copyWith(
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
+                cita.pacienteNombre ?? 'Paciente',
+                style: textTheme.titleSmall,
               ),
               Text(
-                '${cita.duracionMin} min',
+                cita.motivo,
                 style: textTheme.bodySmall?.copyWith(
                   color: colors.onSurfaceVariant,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          const SizedBox(width: AppDimensions.spaceMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cita.pacienteNombre ?? 'Paciente',
-                  style: textTheme.titleSmall,
-                ),
-                Text(
-                  cita.motivo,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
+        if (onTap != null)
+          Icon(Icons.chevron_right, size: 20, color: colors.onSurfaceVariant),
+      ],
+    );
+
+    return _FilaTocable(onTap: onTap, child: contenido);
+  }
+}
+
+/// A bordered row card. With [onTap] the whole card answers the touch, with
+/// the ripple clipped to its own rounded shape; without it, it is inert.
+class _FilaTocable extends StatelessWidget {
+  const _FilaTocable({required this.child, required this.onTap});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final forma = BorderRadius.circular(AppDimensions.radiusMd);
+    const margen = EdgeInsets.only(bottom: AppDimensions.spaceSm);
+    const relleno = EdgeInsets.all(AppDimensions.spaceMd);
+
+    if (onTap == null) {
+      return Container(
+        margin: margen,
+        padding: relleno,
+        decoration: BoxDecoration(
+          color: colors.surfaceContainerLowest,
+          borderRadius: forma,
+          border: Border.all(color: colors.outlineVariant),
+        ),
+        child: child,
+      );
+    }
+    return Padding(
+      padding: margen,
+      child: Material(
+        color: colors.surfaceContainerLowest,
+        shape: RoundedRectangleBorder(
+          borderRadius: forma,
+          side: BorderSide(color: colors.outlineVariant),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(padding: relleno, child: child),
+        ),
       ),
     );
   }
@@ -703,7 +801,9 @@ class _AfterCard extends StatelessWidget {
 
 /// The patients of this nutritionist, with their last weight and plan state.
 class _TusPacientes extends ConsumerWidget {
-  const _TusPacientes();
+  const _TusPacientes({this.onAbrirPaciente});
+
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -721,7 +821,12 @@ class _TusPacientes extends ConsumerWidget {
           children: [
             Text('Tus pacientes', style: textTheme.titleMedium),
             const SizedBox(height: AppDimensions.spaceSm),
-            ...page.items.map((paciente) => _PacienteTile(paciente: paciente)),
+            ...page.items.map(
+              (paciente) => _PacienteTile(
+                paciente: paciente,
+                onAbrirPaciente: onAbrirPaciente,
+              ),
+            ),
           ],
         );
       },
@@ -730,9 +835,10 @@ class _TusPacientes extends ConsumerWidget {
 }
 
 class _PacienteTile extends StatelessWidget {
-  const _PacienteTile({required this.paciente});
+  const _PacienteTile({required this.paciente, this.onAbrirPaciente});
 
   final PacienteResumen paciente;
+  final ValueChanged<String>? onAbrirPaciente;
 
   @override
   Widget build(BuildContext context) {
@@ -740,42 +846,64 @@ class _PacienteTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final medicion = paciente.ultimaMedicion?.resumen;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.spaceSm),
-      padding: const EdgeInsets.all(AppDimensions.spaceMd),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Row(
-        children: [
-          _InitialsAvatar(paciente: paciente),
-          const SizedBox(width: AppDimensions.spaceMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(paciente.nombreCompleto, style: textTheme.titleSmall),
-                if (medicion != null)
-                  Text(
-                    medicion,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+    final abrir = onAbrirPaciente;
+
+    final contenido = Row(
+      children: [
+        _InitialsAvatar(paciente: paciente),
+        const SizedBox(width: AppDimensions.spaceMd),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(paciente.nombreCompleto, style: textTheme.titleSmall),
+              if (medicion != null)
+                Text(
+                  medicion,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
-          AppPill(
-            label: paciente.tienePlanActivo ? 'Con plan' : 'Sin plan',
-            dotColor: paciente.tienePlanActivo
-                ? colors.primary
-                : colors.outline,
-          ),
+        ),
+        _PlanPill(activo: paciente.tienePlanActivo),
+        if (abrir != null) ...[
+          const SizedBox(width: AppDimensions.spaceXs),
+          Icon(Icons.chevron_right, color: colors.onSurfaceVariant),
         ],
-      ),
+      ],
     );
+
+    return _FilaTocable(
+      onTap: abrir == null ? null : () => abrir(paciente.id),
+      child: contenido,
+    );
+  }
+}
+
+/// Plan state of a patient: tinted when active, neutral when not.
+class _PlanPill extends StatelessWidget {
+  const _PlanPill({required this.activo});
+
+  final bool activo;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return activo
+        ? AppTintedPill(
+            label: 'Con plan',
+            background: colors.secondaryContainer,
+            foreground: colors.onSecondaryContainer,
+            dotColor: colors.primary,
+          )
+        : AppTintedPill(
+            label: 'Sin plan',
+            background: colors.surfaceContainer,
+            foreground: colors.onSurfaceVariant,
+          );
   }
 }
 

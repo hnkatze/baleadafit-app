@@ -9,6 +9,7 @@ import 'package:baleadafit/features/home/ui/home_screen.dart';
 import 'package:baleadafit/core/network/paged.dart';
 import 'package:baleadafit/features/patients/data/paciente_resumen.dart';
 import 'package:baleadafit/features/patients/data/patients_providers.dart';
+import 'package:baleadafit/shared/widgets/app_tinted_pill.dart';
 
 import 'dart:async';
 
@@ -66,6 +67,7 @@ Future<void> _pumpHome(
   WidgetTester tester, {
   required Future<DashboardResumen> Function() load,
   Future<Paged<PacienteResumen>> Function()? patients,
+  ValueChanged<String>? onAbrirPaciente,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -80,7 +82,10 @@ Future<void> _pumpHome(
               : patients(),
         ),
       ],
-      child: MaterialApp(theme: AppTheme.light, home: const HomeScreen()),
+      child: MaterialApp(
+        theme: AppTheme.light,
+        home: HomeScreen(onAbrirPaciente: onAbrirPaciente),
+      ),
     ),
   );
 }
@@ -291,5 +296,141 @@ void main() {
     final valor = tester.getCenter(find.text('12')).dy;
 
     expect(icono, closeTo(valor, 1));
+  });
+
+  group('abrir la ficha desde el inicio', () {
+    Future<Paged<PacienteResumen>> dosPacientes() async => _pagina([
+      const PacienteResumen(
+        id: 'pac-con',
+        nombre: 'Ana',
+        apellido: 'Con Plan',
+        planActivo: {'id': 'plan-1'},
+      ),
+      const PacienteResumen(
+        id: 'pac-sin',
+        nombre: 'Beto',
+        apellido: 'Sin Plan',
+      ),
+    ]);
+
+    testWidgets('tapping a Tus pacientes row opens that patient', (
+      tester,
+    ) async {
+      final abiertos = <String>[];
+      await _pumpHome(
+        tester,
+        load: () async => _resumenCon(const []),
+        patients: dosPacientes,
+        onAbrirPaciente: abiertos.add,
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Beto Sin Plan'));
+      await tester.pumpAndSettle();
+
+      expect(abiertos, ['pac-sin']);
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+    });
+
+    testWidgets('tapping the next appointment opens its patient', (
+      tester,
+    ) async {
+      final abiertos = <String>[];
+      await _pumpHome(
+        tester,
+        load: () async => _resumen,
+        onAbrirPaciente: abiertos.add,
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Carlos Mendoza'));
+      await tester.pumpAndSettle();
+
+      expect(abiertos, ['pac-cita-1']);
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    });
+
+    testWidgets('tapping an appointment under Después opens its patient', (
+      tester,
+    ) async {
+      final abiertos = <String>[];
+      await _pumpHome(
+        tester,
+        load: () async => _resumenCon([
+          _cita(id: 'a', hora: _enUnaHora, nombre: 'Carlos'),
+          _cita(
+            id: 'b',
+            hora: DateTime.now().add(const Duration(hours: 4)),
+            nombre: 'Mariana',
+          ),
+        ]),
+        onAbrirPaciente: abiertos.add,
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Mariana Mendoza'));
+      await tester.pumpAndSettle();
+
+      expect(abiertos, ['pac-b']);
+    });
+
+    testWidgets('without the callback nothing is tappable and no chevron', (
+      tester,
+    ) async {
+      await _pumpHome(
+        tester,
+        load: () async => _resumenCon([
+          _cita(id: 'a', hora: _enUnaHora, nombre: 'Carlos'),
+          _cita(
+            id: 'b',
+            hora: DateTime.now().add(const Duration(hours: 4)),
+            nombre: 'Mariana',
+          ),
+        ]),
+        patients: dosPacientes,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.chevron_right), findsNothing);
+      expect(find.byType(InkWell), findsNothing);
+    });
+  });
+
+  testWidgets('the plan pill is tinted with and without an active plan', (
+    tester,
+  ) async {
+    await _pumpHome(
+      tester,
+      load: () async => _resumenCon(const []),
+      patients: () async => _pagina([
+        const PacienteResumen(
+          id: 'pac-con',
+          nombre: 'Ana',
+          apellido: 'Con Plan',
+          planActivo: {'id': 'plan-1'},
+        ),
+        const PacienteResumen(
+          id: 'pac-sin',
+          nombre: 'Beto',
+          apellido: 'Sin Plan',
+        ),
+      ]),
+    );
+    await tester.pumpAndSettle();
+
+    final colors = Theme.of(tester.element(find.byType(HomeScreen)))
+        .colorScheme;
+    AppTintedPill pill(String label) =>
+        tester.widget<AppTintedPill>(find.widgetWithText(AppTintedPill, label));
+
+    final con = pill('Con plan');
+    expect(con.background, colors.secondaryContainer);
+    expect(con.foreground, colors.onSecondaryContainer);
+    expect(con.dotColor, colors.primary);
+
+    final sin = pill('Sin plan');
+    expect(sin.background, colors.surfaceContainer);
+    expect(sin.foreground, colors.onSurfaceVariant);
+    expect(sin.dotColor, isNull);
   });
 }

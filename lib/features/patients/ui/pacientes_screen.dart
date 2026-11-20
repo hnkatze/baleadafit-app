@@ -9,9 +9,9 @@ import '../../../core/router/app_routes.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/app_pill.dart';
 import '../../../shared/widgets/app_refresh.dart';
 import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/app_tinted_pill.dart';
 import '../data/paciente_resumen.dart';
 import '../data/patients_providers.dart';
 
@@ -415,11 +415,21 @@ class _FilaPaciente extends StatelessWidget {
                   ],
                 ),
               ),
-              if (paciente.tienePlanActivo)
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: AppPill(label: 'Con plan', dotColor: colors.primary),
-                ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: paciente.tienePlanActivo
+                    ? AppTintedPill(
+                        label: 'Con plan',
+                        background: colors.secondaryContainer,
+                        foreground: colors.onSecondaryContainer,
+                        dotColor: colors.primary,
+                      )
+                    : AppTintedPill(
+                        label: 'Sin plan',
+                        background: colors.surfaceContainer,
+                        foreground: colors.onSurfaceVariant,
+                      ),
+              ),
             ],
           ),
         ),

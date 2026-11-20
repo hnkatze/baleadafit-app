@@ -3,6 +3,8 @@ import 'package:baleadafit/core/theme/app_theme.dart';
 import 'package:baleadafit/features/patients/data/paciente_resumen.dart';
 import 'package:baleadafit/features/patients/data/patients_providers.dart';
 import 'package:baleadafit/features/patients/ui/pacientes_screen.dart';
+import 'package:baleadafit/shared/widgets/app_pill.dart';
+import 'package:baleadafit/shared/widgets/app_tinted_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -147,6 +149,64 @@ void main() {
     expect(find.text('31 años · Bajar'), findsOneWidget);
     expect(find.text('72.4 kg · 19.5% grasa'), findsOneWidget);
     expect(find.text('Con plan'), findsOneWidget);
+  });
+
+  testWidgets('every row draws its plan pill, with or without a plan', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      page: _pagina([
+        _paciente(id: 'pac-1', nombre: 'Con', apellido: 'Plan', conPlan: true),
+        _paciente(id: 'pac-2', nombre: 'Sin', apellido: 'Plan'),
+      ]),
+    );
+
+    final colors = AppTheme.light.colorScheme;
+    final conPlan = tester.widget<AppTintedPill>(
+      find.widgetWithText(AppTintedPill, 'Con plan'),
+    );
+    final sinPlan = tester.widget<AppTintedPill>(
+      find.widgetWithText(AppTintedPill, 'Sin plan'),
+    );
+
+    expect(find.byType(AppTintedPill), findsNWidgets(2));
+    expect(find.byType(AppPill), findsNothing);
+    expect(conPlan.background, colors.secondaryContainer);
+    expect(conPlan.foreground, colors.onSecondaryContainer);
+    expect(conPlan.dotColor, colors.primary);
+    expect(sinPlan.background, colors.surfaceContainer);
+    expect(sinPlan.foreground, colors.onSurfaceVariant);
+    expect(sinPlan.dotColor, isNull);
+  });
+
+  testWidgets('the plan pill keeps its aligned position at the row top', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      page: _pagina([
+        _paciente(id: 'pac-1', nombre: 'Con', apellido: 'Plan', conPlan: true),
+        _paciente(id: 'pac-2', nombre: 'Sin', apellido: 'Plan'),
+      ]),
+    );
+
+    final conPlan = find.widgetWithText(AppTintedPill, 'Con plan');
+    final sinPlan = find.widgetWithText(AppTintedPill, 'Sin plan');
+    final filaCon = find.ancestor(of: conPlan, matching: find.byType(InkWell));
+    final filaSin = find.ancestor(of: sinPlan, matching: find.byType(InkWell));
+
+    final desfaseCon =
+        tester.getTopRight(conPlan).dy - tester.getTopRight(filaCon).dy;
+    final desfaseSin =
+        tester.getTopRight(sinPlan).dy - tester.getTopRight(filaSin).dy;
+    final derechaCon =
+        tester.getTopRight(filaCon).dx - tester.getTopRight(conPlan).dx;
+    final derechaSin =
+        tester.getTopRight(filaSin).dx - tester.getTopRight(sinPlan).dx;
+
+    expect(desfaseSin, closeTo(desfaseCon, 0.5));
+    expect(derechaSin, closeTo(derechaCon, 0.5));
   });
 
   testWidgets('a row without a birth date omits the age instead of a gap', (

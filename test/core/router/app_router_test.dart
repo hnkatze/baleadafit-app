@@ -11,6 +11,7 @@ import 'package:baleadafit/features/agenda/ui/agenda_screen.dart';
 import 'package:baleadafit/features/patients/data/catalogo_item.dart';
 import 'package:baleadafit/features/planes/data/plan.dart';
 import 'package:baleadafit/features/planes/data/planes_providers.dart';
+import 'package:baleadafit/features/planes/ui/editar_tiempo_screen.dart';
 import 'package:baleadafit/features/planes/ui/plan_detalle_screen.dart';
 import 'package:baleadafit/features/planes/ui/plan_lista_screen.dart';
 import 'package:baleadafit/features/patients/data/paciente_ficha.dart';
@@ -530,5 +531,65 @@ void main() {
     await tester.tap(find.byTooltip('Volver a planes'));
     await pumpStable(tester);
     expect(find.byType(PlanListaScreen), findsOneWidget);
+  });
+
+  testWidgets('reaches the editor of one meal time and backs out', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, session: _session);
+
+    // The day and the meal time travel as the codes of the contract.
+    expect(
+      AppRoutes.editarTiempo('pac-1', 'plan-1', 'LUNES', 'ALMUERZO'),
+      '/pacientes/pac-1/planes/plan-1/tiempos/LUNES/ALMUERZO',
+    );
+
+    router.go(AppRoutes.plan('pac-1', 'plan-1'));
+    await pumpStable(tester);
+    expect(find.byType(PlanDetalleScreen), findsOneWidget);
+
+    router.go(AppRoutes.editarTiempo('pac-1', 'plan-1', 'LUNES', 'ALMUERZO'));
+    await pumpStable(tester);
+
+    // It covers the shell, like the generator: its own bar and an `x`.
+    expect(find.byType(EditarTiempoScreen), findsOneWidget);
+    expect(find.text('Editar tiempo'), findsOneWidget);
+    expect(find.text('Almuerzo · Lunes'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Cerrar sin guardar'));
+    // The fullscreen dialog leaves with a transition longer than `pumpStable`.
+    await tester.pumpAndSettle();
+
+    // Closing without saving goes back to the plan it came from.
+    expect(find.byType(EditarTiempoScreen), findsNothing);
+    expect(find.byType(PlanDetalleScreen), findsOneWidget);
+    expect(
+      router.routerDelegate.currentConfiguration.uri.toString(),
+      AppRoutes.plan('pac-1', 'plan-1'),
+    );
+  });
+
+  testWidgets('builds pages without a transition when motion is reduced', (
+    tester,
+  ) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+
+    final router = await _pumpApp(tester, session: _session);
+    expect(find.byType(HomeScreen), findsOneWidget);
+
+    // A shell page: one frame, no waiting. With a transition the outgoing
+    // page would still be on screen at this point.
+    router.go(AppRoutes.agenda);
+    await tester.pump();
+    expect(find.byType(AgendaScreen), findsOneWidget);
+    expect(find.byType(HomeScreen), findsNothing);
+
+    // A full-screen form: it is on screen after one frame as well.
+    router.go(AppRoutes.nuevaMedicion('pac-1'));
+    await tester.pump();
+    expect(find.byType(NuevaMedicionScreen), findsOneWidget);
+    expect(find.byType(AgendaScreen), findsNothing);
   });
 }

@@ -14,6 +14,8 @@ import '../../features/patients/ui/alta_paciente/editar_paciente_screen.dart';
 import '../../features/patients/ui/nueva_medicion_screen.dart';
 import '../../features/patients/ui/paciente_ficha_screen.dart';
 import '../../features/patients/ui/pacientes_screen.dart';
+import '../../features/planes/data/plan.dart';
+import '../../features/planes/ui/editar_tiempo_screen.dart';
 import '../../features/planes/ui/generar_plan_screen.dart';
 import '../../features/planes/ui/plan_detalle_screen.dart';
 import '../../features/planes/ui/plan_lista_screen.dart';
@@ -21,6 +23,7 @@ import '../../features/shell/ui/app_shell.dart';
 import '../../features/shell/ui/feature_placeholder.dart';
 import '../../features/showcase/ui/theme_gallery_screen.dart';
 import 'app_routes.dart';
+import 'app_transitions.dart';
 
 /// Root navigator, so a route can opt out of the shell and cover the whole app.
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -48,12 +51,23 @@ GoRouter createAppRouter({
         routes: [
           GoRoute(
             path: AppRoutes.home,
-            builder: (context, state) => const HomeScreen(),
+            pageBuilder: (context, state) => shellPage(
+              context,
+              state,
+              HomeScreen(
+                onAbrirPaciente: (pacienteId) =>
+                    context.push(AppRoutes.paciente(pacienteId)),
+              ),
+            ),
           ),
           GoRoute(
             path: AppRoutes.pacientes,
-            builder: (context, state) => PacientesScreen(
-              onNuevoPaciente: () => context.go(AppRoutes.nuevoPaciente),
+            pageBuilder: (context, state) => shellPage(
+              context,
+              state,
+              PacientesScreen(
+                onNuevoPaciente: () => context.go(AppRoutes.nuevoPaciente),
+              ),
             ),
             routes: [
               // Before `:id`, or "nuevo" would be read as a patient id. Like
@@ -66,10 +80,10 @@ GoRouter createAppRouter({
                   // Captured now: the wizard's own context is gone by the
                   // time the second navigation below runs.
                   final router = GoRouter.of(context);
-                  return MaterialPage<void>(
-                    key: state.pageKey,
-                    fullscreenDialog: true,
-                    child: AltaPacienteScreen(
+                  return formPage<void>(
+                    context,
+                    state,
+                    AltaPacienteScreen(
                       onCerrar: () => router.canPop()
                           ? router.pop()
                           : router.go(AppRoutes.pacientes),
@@ -86,36 +100,41 @@ GoRouter createAppRouter({
               // the bar and the drawer stay, and back returns to the list.
               GoRoute(
                 path: ':${AppRoutes.pacienteIdParam}',
-                builder: (context, state) => PacienteFichaScreen(
-                  pacienteId: state.pathParameters[AppRoutes.pacienteIdParam]!,
-                  // A deep link has nothing to pop to, so it lands on the list.
-                  onBack: () => context.canPop()
-                      ? context.pop()
-                      : context.go(AppRoutes.pacientes),
-                  // `go` rather than `push`: the location then names the form,
-                  // and a deep link to it closes onto the ficha like this does.
-                  onNuevaMedicion: () => context.go(
-                    AppRoutes.nuevaMedicion(
-                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                pageBuilder: (context, state) => shellPage(
+                  context,
+                  state,
+                  PacienteFichaScreen(
+                    pacienteId:
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    // A deep link has nothing to pop to, so it lands on the list.
+                    onBack: () => context.canPop()
+                        ? context.pop()
+                        : context.go(AppRoutes.pacientes),
+                    // `go` rather than `push`: the location then names the form,
+                    // and a deep link to it closes onto the ficha like this does.
+                    onNuevaMedicion: () => context.go(
+                      AppRoutes.nuevaMedicion(
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
                     ),
-                  ),
-                  onEditarDatos: () => context.go(
-                    AppRoutes.editarPaciente(
-                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    onEditarDatos: () => context.go(
+                      AppRoutes.editarPaciente(
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
                     ),
-                  ),
-                  // Offered with and without a plan: with none, the list is
-                  // where the first one is generated.
-                  onVerPlanes: () => context.go(
-                    AppRoutes.planesDe(
-                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    // Offered with and without a plan: with none, the list is
+                    // where the first one is generated.
+                    onVerPlanes: () => context.go(
+                      AppRoutes.planesDe(
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
                     ),
-                  ),
-                  // Straight to the generator: the card that invites to create
-                  // the first plan should not make the list a detour.
-                  onGenerarPlan: () => context.go(
-                    AppRoutes.generarPlan(
-                      state.pathParameters[AppRoutes.pacienteIdParam]!,
+                    // Straight to the generator: the card that invites to create
+                    // the first plan should not make the list a detour.
+                    onGenerarPlan: () => context.go(
+                      AppRoutes.generarPlan(
+                        state.pathParameters[AppRoutes.pacienteIdParam]!,
+                      ),
                     ),
                   ),
                 ),
@@ -133,10 +152,10 @@ GoRouter createAppRouter({
                       void cerrar() => router.canPop()
                           ? router.pop()
                           : router.go(AppRoutes.paciente(id));
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        fullscreenDialog: true,
-                        child: EditarPacienteScreen(
+                      return formPage<void>(
+                        context,
+                        state,
+                        EditarPacienteScreen(
                           pacienteId: id,
                           onCerrar: cerrar,
                           onGuardado: cerrar,
@@ -158,10 +177,10 @@ GoRouter createAppRouter({
                       final router = GoRouter.of(context);
                       final id =
                           state.pathParameters[AppRoutes.pacienteIdParam]!;
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        fullscreenDialog: true,
-                        child: GenerarPlanScreen(
+                      return formPage<void>(
+                        context,
+                        state,
+                        GenerarPlanScreen(
                           pacienteId: id,
                           // Changes to the plan list when it lands.
                           onCerrar: () => router.canPop()
@@ -180,17 +199,22 @@ GoRouter createAppRouter({
                   // list and the detail draw their own back row under the bar.
                   GoRoute(
                     path: AppRoutes.planesSegment,
-                    builder: (context, state) {
+                    pageBuilder: (context, state) {
                       final id =
                           state.pathParameters[AppRoutes.pacienteIdParam]!;
-                      return PlanListaScreen(
-                        pacienteId: id,
-                        onAbrir: (planId) =>
-                            context.go(AppRoutes.plan(id, planId)),
-                        onGenerar: () => context.go(AppRoutes.generarPlan(id)),
-                        onBack: () => context.canPop()
-                            ? context.pop()
-                            : context.go(AppRoutes.paciente(id)),
+                      return shellPage(
+                        context,
+                        state,
+                        PlanListaScreen(
+                          pacienteId: id,
+                          onAbrir: (planId) =>
+                              context.go(AppRoutes.plan(id, planId)),
+                          onGenerar: () =>
+                              context.go(AppRoutes.generarPlan(id)),
+                          onBack: () => context.canPop()
+                              ? context.pop()
+                              : context.go(AppRoutes.paciente(id)),
+                        ),
                       );
                     },
                     // The detail is a **child** of the list, not a sibling: a
@@ -200,27 +224,80 @@ GoRouter createAppRouter({
                     routes: [
                       GoRoute(
                         path: ':${AppRoutes.planIdParam}',
-                        builder: (context, state) {
+                        pageBuilder: (context, state) {
                           final id =
                               state.pathParameters[AppRoutes.pacienteIdParam]!;
-                          return PlanDetalleScreen(
-                            planId:
-                                state.pathParameters[AppRoutes.planIdParam]!,
-                            onBack: () => context.canPop()
-                                ? context.pop()
-                                : context.go(AppRoutes.planesDe(id)),
+                          final planId =
+                              state.pathParameters[AppRoutes.planIdParam]!;
+                          return shellPage(
+                            context,
+                            state,
+                            PlanDetalleScreen(
+                              planId: planId,
+                              onBack: () => context.canPop()
+                                  ? context.pop()
+                                  : context.go(AppRoutes.planesDe(id)),
+                              // A `go`, like the generator: the editor leaves by
+                              // `go` too, which rebuilds this detail.
+                              onEditarTiempo: (dia, tipo) => context.go(
+                                AppRoutes.editarTiempo(
+                                  id,
+                                  planId,
+                                  dia.codigo,
+                                  tipo.codigo,
+                                ),
+                              ),
+                            ),
                           );
                         },
+                        routes: [
+                          // The editor covers the shell, like the generator and
+                          // the measurement form: its own bar and an `x`.
+                          GoRoute(
+                            path:
+                                '${AppRoutes.tiemposSegment}/'
+                                ':${AppRoutes.diaParam}/'
+                                ':${AppRoutes.tipoParam}',
+                            parentNavigatorKey: _rootNavigatorKey,
+                            pageBuilder: (context, state) {
+                              final router = GoRouter.of(context);
+                              final id = state
+                                  .pathParameters[AppRoutes.pacienteIdParam]!;
+                              final planId =
+                                  state.pathParameters[AppRoutes.planIdParam]!;
+                              // A day or a meal time outside the contract falls
+                              // back to the first one instead of failing the
+                              // route.
+                              return formPage<void>(
+                                context,
+                                state,
+                                EditarTiempoScreen(
+                                  planId: planId,
+                                  dia: DiaSemana.desdeApi(
+                                    state.pathParameters[AppRoutes.diaParam],
+                                  ),
+                                  tipo: TipoComida.desdeApi(
+                                    state.pathParameters[AppRoutes.tipoParam],
+                                  ),
+                                  onCerrar: () =>
+                                      router.go(AppRoutes.plan(id, planId)),
+                                  onGuardado: () =>
+                                      router.go(AppRoutes.plan(id, planId)),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
                   GoRoute(
                     path: AppRoutes.medicionSegment,
                     parentNavigatorKey: _rootNavigatorKey,
-                    pageBuilder: (context, state) => MaterialPage<bool>(
-                      key: state.pageKey,
-                      fullscreenDialog: true,
-                      child: NuevaMedicionScreen(
+                    pageBuilder: (context, state) => formPage<bool>(
+                      context,
+                      state,
+                      NuevaMedicionScreen(
                         pacienteId:
                             state.pathParameters[AppRoutes.pacienteIdParam]!,
                       ),
@@ -232,24 +309,33 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: AppRoutes.dietas,
-            builder: (context, state) => const FeaturePlaceholder(
-              title: 'Diseñador de dietas',
-              description:
-                  'Recomendador, plan alimenticio y aprobación del plan.',
-              icon: Icons.restaurant_menu,
+            pageBuilder: (context, state) => shellPage(
+              context,
+              state,
+              const FeaturePlaceholder(
+                title: 'Diseñador de dietas',
+                description:
+                    'Recomendador, plan alimenticio y aprobación del plan.',
+                icon: Icons.restaurant_menu,
+              ),
             ),
           ),
           GoRoute(
             path: AppRoutes.catalogo,
-            builder: (context, state) => const FeaturePlaceholder(
-              title: 'Catálogo de alimentos',
-              description: 'Alimentos, porciones y restricciones del TCA-HN.',
-              icon: Icons.menu_book_outlined,
+            pageBuilder: (context, state) => shellPage(
+              context,
+              state,
+              const FeaturePlaceholder(
+                title: 'Catálogo de alimentos',
+                description: 'Alimentos, porciones y restricciones del TCA-HN.',
+                icon: Icons.menu_book_outlined,
+              ),
             ),
           ),
           GoRoute(
             path: AppRoutes.agenda,
-            builder: (context, state) => const AgendaScreen(),
+            pageBuilder: (context, state) =>
+                shellPage(context, state, const AgendaScreen()),
             routes: [
               // Full screen like the other forms: its own header and an `x`,
               // nested under the agenda so closing lands back on the day.
@@ -260,20 +346,21 @@ GoRouter createAppRouter({
                   final dia = DateTime.tryParse(
                     state.uri.queryParameters['dia'] ?? '',
                   );
-                  return MaterialPage(
-                    fullscreenDialog: true,
-                    child: NuevaCitaScreen(dia: dia),
-                  );
+                  return formPage(context, state, NuevaCitaScreen(dia: dia));
                 },
               ),
             ],
           ),
           GoRoute(
             path: AppRoutes.configuracion,
-            builder: (context, state) => const FeaturePlaceholder(
-              title: 'Configuración',
-              description: 'Preferencias de la cuenta y del consultorio.',
-              icon: Icons.settings_outlined,
+            pageBuilder: (context, state) => shellPage(
+              context,
+              state,
+              const FeaturePlaceholder(
+                title: 'Configuración',
+                description: 'Preferencias de la cuenta y del consultorio.',
+                icon: Icons.settings_outlined,
+              ),
             ),
           ),
         ],
